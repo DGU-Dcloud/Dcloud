@@ -8,7 +8,7 @@ import styled from 'styled-components';
  overflow: hidden;
  width: 850px;
  max-width: 100%;
- min-height: 800px;
+ min-height: 950px;
  `;
 
  export const SignUpContainer = styled.div`
@@ -102,7 +102,7 @@ width: 50%;
 height: 100%;
 overflow: hidden;
 transition: transform 0.6s ease-in-out;
-z-index: 100;
+z-index: 7;
 ${props =>
   props.signinIn !== true ? `transform: translateX(-100%);` : null}
 `;
@@ -188,4 +188,12 @@ export const RadioButtonLabel = styled.label`
   &:hover {
     background-color: #ddd;
   }
+`;
+
+export const LogoContainer = styled.div`
+  position: absolute;
+  top: 5px; // 상단 여백 조정
+  left: 50%;
+  transform: translateX(-50%); // 중앙 정렬
+  z-index: 10; // 다른 요소 위에 오도록 z-index 설정
 `;

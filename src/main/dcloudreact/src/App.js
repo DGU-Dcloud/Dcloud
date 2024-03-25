@@ -6,10 +6,16 @@ import * as Components from './Components';
 function App() {
     const [signIn, toggle] = React.useState(true);
     return(
+
+
+
         <Components.Container>
+
+            <Components.LogoContainer>
+                <img src={`/DcloudLogo.png`} alt="React Logo" style={{ maxWidth: '300px', maxHeight: '150px' }} />
+            </Components.LogoContainer>
+
             <Components.SignUpContainer signinIn={signIn}>
-
-
 
                 <Components.Form>
                     <Components.Title>Create Account</Components.Title>
@@ -67,6 +73,7 @@ function App() {
                 </Components.Overlay>
             </Components.OverlayContainer>
         </Components.Container>
+
     )
 }
 
