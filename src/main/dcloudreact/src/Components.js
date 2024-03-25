@@ -6,7 +6,7 @@ import styled from 'styled-components';
  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
  position: relative;
  overflow: hidden;
- width: 678px;
+ width: 850px;
  max-width: 100%;
  min-height: 800px;
  `;
@@ -67,8 +67,8 @@ import styled from 'styled-components';
 
  export const Button = styled.button`
     border-radius: 20px;
-    border: 1px solid #ff4b2b;
-    background-color: #ff4b2b;
+    border: 1px solid #FF6600;
+    background-color: #FF6600;
     color: #ffffff;
     font-size: 12px;
     font-weight: bold;
@@ -108,9 +108,9 @@ ${props =>
 `;
 
 export const Overlay = styled.div`
-background: #ff416c;
-background: -webkit-linear-gradient(to right, #ff4b2b, #ff416c);
-background: linear-gradient(to right, #ff4b2b, #ff416c);
+background: #FF6600;
+background: -webkit-linear-gradient(to right, #FF9933, #FF6600);
+background: linear-gradient(to right, #FF9933, #FF6600);
 background-repeat: no-repeat;
 background-size: cover;
 background-position: 0 0;
@@ -168,7 +168,7 @@ export const RadioButton = styled.input`
   display: none;
 
   &:checked + label {
-    background-color: #ff416c;
+    background-color: #FF6600;
     color: #ffffff;
   }
 `;

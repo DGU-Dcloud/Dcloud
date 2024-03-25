@@ -8,22 +8,20 @@ function App() {
     return(
         <Components.Container>
             <Components.SignUpContainer signinIn={signIn}>
+
+
+
                 <Components.Form>
                     <Components.Title>Create Account</Components.Title>
                     <Components.Input type='text' placeholder='Name' />
 
-
-                       <Components.RadioGroup>
+                    <Components.RadioGroup>
                          <Components.RadioButton type="radio" id="male" name="gender" value="male" defaultChecked />
                          <Components.RadioButtonLabel htmlFor="male">Male</Components.RadioButtonLabel>
 
                          <Components.RadioButton type="radio" id="female" name="gender" value="female" />
                          <Components.RadioButtonLabel htmlFor="female">Female</Components.RadioButtonLabel>
-                       </Components.RadioGroup>
-
-
-
-
+                    </Components.RadioGroup>
 
                     <Components.Input type='date' placeholder='Date of Birth' />
                     <Components.Input type='text' placeholder='ID' />
