@@ -30,7 +30,8 @@ public class Post {
     @JoinColumn(name = "userID")
     private User user;
 
-    @OneToMany(mappedBy = "post")
+    // post를 참조하는 comments객체. post가 삭제되면, comment도 삭제됨을 나타내는 어노테이션.
+    @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private Set<Comment> comments;
 
     public Post() {}

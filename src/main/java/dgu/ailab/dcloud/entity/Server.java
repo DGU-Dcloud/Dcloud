@@ -5,6 +5,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import jakarta.persistence.*;
 
+import java.util.Set;
+
 
 @Entity
 @Table(name = "`SERVER`")
@@ -47,4 +49,8 @@ public class Server {
 
     @Column(name = "sshPort")
     private Integer sshPort;
+
+    //server entity 삭제되면, container entity도 삭제 수정 변경됨.
+    @OneToMany(mappedBy = "server", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Container> containers;
 }
