@@ -3,14 +3,16 @@ package dgu.ailab.dcloud.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "`USER`")
+@Table(name = "user")
 @Data // Lombok의 기능으로, getter, setter, equals, hashcode, tostring 자동 생성해줌.
 public class User {
     @Id // 기본키 매핑 : 사용자가 직접 사용하는 고유의 아이디. GeneratedValue 아님.
@@ -43,4 +45,7 @@ public class User {
     @Column(name = "refreshToken")
     private String refreshToken;
 
+    // 복합키이므로 양방향 매핑
+    @OneToMany(mappedBy = "user", orphanRemoval = true, cascade = CascadeType.ALL)
+    private List<UserRole> userRole = new ArrayList<>();
 }

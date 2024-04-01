@@ -1,15 +1,14 @@
 package dgu.ailab.dcloud.dto;
 
+import dgu.ailab.dcloud.entity.Role;
 import dgu.ailab.dcloud.entity.User;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+import dgu.ailab.dcloud.entity.UserRole;
+import lombok.*;
 
 import java.util.Date;
 
+@Data
 @AllArgsConstructor
-@Setter
-@Getter
 public class SignupDto {
     private String userID;
     private String userName;
@@ -20,8 +19,20 @@ public class SignupDto {
     private String password;
     private Date createdAt;
     private String refreshToken;
+    private String role; // 사용자의 역할 정보
 
     public User toEntity() {
-        return new User(userID, userName, sex, birthDate, phone, email, password, new Date(), refreshToken);
+        User user = new User();
+        user.setUserID(userID);
+        user.setUserName(userName);
+        user.setSex(sex);
+        user.setBirthDate(birthDate);
+        user.setPhone(phone);
+        user.setEmail(email);
+        user.setPassword(password);
+        user.setCreatedAt(new Date());
+        user.setRefreshToken(refreshToken);
+
+        return user;
     }
 }

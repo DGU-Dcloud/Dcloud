@@ -1,6 +1,7 @@
 package dgu.ailab.dcloud.controller;
 
 import dgu.ailab.dcloud.dto.SignupDto;
+import dgu.ailab.dcloud.entity.Role;
 import dgu.ailab.dcloud.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,9 +21,15 @@ public class SignupController {
     @PostMapping("/signup")
     public String signup(@RequestBody SignupDto signupDto) {
         if (userService.isUserExists(signupDto.getUserID())) {
-            return "이미 사용 중인 아이디입니다.";
+            return "This ID is already in use.";
         }
-        userService.signup(signupDto);
-        return "회원가입이 완료되었습니다.";
+
+        Integer roleId = userService.getRoleId(signupDto.getRole());
+        if (roleId == null) {
+            return "Invalid role.";
+        }
+
+        userService.signup(signupDto, roleId);
+        return "Membership registration is complete.";
     }
 }

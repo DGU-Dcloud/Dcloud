@@ -2,18 +2,31 @@ package dgu.ailab.dcloud.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "`USER_ROLE`")
+@NoArgsConstructor
+@Table(name = "`user_role`")
 @Data // Lombok의 기능으로, getter, setter, equals, hashcode, tostring 자동 생성해줌.
 public class UserRole {
     @Id
-    @ManyToOne // 기본적으로 ManyToOne을 통해, 피대상자? 테이블에만 코드를 작성하는게 정석이라 한다. 즉, User entity에서 @OneToMany 어노테이션을 굳이 생성하지 않아도 된다는 뜻.
-    @JoinColumn(name = "userID", referencedColumnName = "userID")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "user_role_id")
+    private Integer userRoleId;
+
+    @Column(name = "user_userid")
+    private String userUserId;
+
+    @Column(name = "role_roleid")
+    private Integer roleRoleId;
+
+    @ManyToOne
+    @JoinColumn(name = "user_userid", referencedColumnName = "userid", insertable = false, updatable = false)
     private User user;
 
     @ManyToOne
-    @JoinColumn(name = "roleID", insertable = false, updatable = false)
+    @JoinColumn(name = "role_roleid", referencedColumnName = "roleid", insertable = false, updatable = false)
     private Role role;
 
 }
