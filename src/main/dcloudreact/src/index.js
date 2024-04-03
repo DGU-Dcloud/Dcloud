@@ -3,11 +3,18 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import MainPage from './MainPage'; // MainPage 컴포넌트 import
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <App />
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<App />} /> {/* 기본 경로 설정 */}
+        <Route path="/mainpage" element={<MainPage />} /> {/* MainPage 컴포넌트에 대한 경로 설정 */}
+      </Routes>
+    </BrowserRouter>
   </React.StrictMode>
 );
 
