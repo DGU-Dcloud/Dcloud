@@ -4,7 +4,8 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import MainPage from './MainPage'; // MainPage 컴포넌트 import
+import MainPage from './MainPage';
+import ContainerRequestForm from './ContainerRequestForm';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -13,6 +14,8 @@ root.render(
       <Routes>
         <Route path="/" element={<App />} /> {/* 기본 경로 설정 */}
         <Route path="/mainpage" element={<MainPage />} /> {/* MainPage 컴포넌트에 대한 경로 설정 */}
+        <Route path="/containerrequestform" element={<ContainerRequestForm />} />
+        <Route path="/mainpage" element={<MainPage />} />
       </Routes>
     </BrowserRouter>
   </React.StrictMode>
