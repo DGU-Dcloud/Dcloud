@@ -51,8 +51,8 @@ function NavigationBar() {
       <nav>
         <ul style={{listStyle: 'none', display: 'flex', gap: '20px', margin: 0, padding: 0}}>
           <li><button style={buttonStyle} onMouseEnter={hoverEffect} onMouseLeave={resetEffect} onClick={() => navigate('/containerrequestform')}>Container Request</button></li>
-          <li><button style={buttonStyle} onMouseEnter={hoverEffect} onMouseLeave={resetEffect} onClick={() => navigate('/containerInquiry')}>Container Inquiry</button></li>
-          <li><button style={buttonStyle} onMouseEnter={hoverEffect} onMouseLeave={resetEffect} onClick={() => navigate('/report')}>Report Errors or Contact Us</button></li>
+          <li><button style={buttonStyle} onMouseEnter={hoverEffect} onMouseLeave={resetEffect} onClick={() => navigate('/containerinquiry')}>Container Inquiry</button></li>
+          <li><button style={buttonStyle} onMouseEnter={hoverEffect} onMouseLeave={resetEffect} onClick={() => navigate('/reporterrors')}>Report Errors or Contact Us</button></li>
           <li><button style={buttonStyle} onMouseEnter={hoverEffect} onMouseLeave={resetEffect} onClick={() => navigate('/mypage')}>My Page</button></li>
         </ul>
       </nav>
