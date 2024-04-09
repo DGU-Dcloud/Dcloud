@@ -51,4 +51,16 @@ public class UserService {
         }
         return -1;
     }
+
+    public boolean authenticate(String userID, String password){
+        // userRepository에서 userID로 사용자 찾음
+        User user = userRepository.findByUserID(userID);
+
+        // 해당하는 사용자가 없거나 or pw 일치하지 않으면 false
+        if (user == null || !user.getPassword().equals(password)) {
+            return false;
+        }
+        // 사용자가 존재하고, 비밀번호도 일치하면 true
+        return true;
+    }
 }
