@@ -10,7 +10,7 @@ function MainPage() {
                        <NavigationBar/>
                        <div style={{ height: '10vh' }}></div>
                        <main style={styles.container}>
-                         <h1>Welcome to the My Page!</h1>
+                         <h1>Welcome to the Main Page!</h1>
                          <p>This is the main area of our application. From here, you can navigate to different sections of our site.</p>
                        </main>
                        <Footer/>

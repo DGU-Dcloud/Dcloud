@@ -9,7 +9,22 @@ import styled from 'styled-components';
  width: 850px;
  max-width: 100%;
  min-height: 950px;
+
  `;
+
+  export const Container1 = styled.div`
+ background: #f6f5f7;
+ display: flex;
+ justify-content: center;
+ align-items: center;
+ flex-direction: column;
+ font-family: "Montserrat", sans-serif;
+ height: 100vh;
+ margin: -20px 0 50px;
+
+  `;
+
+
 
  export const SignUpContainer = styled.div`
   position: absolute;
