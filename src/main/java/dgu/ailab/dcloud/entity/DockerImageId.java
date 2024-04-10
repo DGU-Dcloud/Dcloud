@@ -4,10 +4,12 @@ import jakarta.persistence.Embeddable;
 import lombok.Data;
 
 import java.io.Serializable;
+import lombok.*;
 
 @Embeddable
 @Data
+@Getter
 public class DockerImageId implements Serializable {
-    private String imageName;
-    private String imageTag;
+    public String imageName;
+    public String imageTag;
 }
