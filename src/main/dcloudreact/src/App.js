@@ -61,7 +61,7 @@ function App() {
         };
 
     return(
-        <Components.Container>
+        <Components.Container1><Components.Container>
 
             <Components.LogoContainer>
                 <img src={`/dcloudlogo.png`} alt="dcloudlogo" style={{ maxWidth: '300px', maxHeight: '150px' }} />
@@ -127,7 +127,7 @@ function App() {
                 </Components.Overlay>
             </Components.OverlayContainer>
         </Components.Container>
-
+</Components.Container1>
     )
 }
 
