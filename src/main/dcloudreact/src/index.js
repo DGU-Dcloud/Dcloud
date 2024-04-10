@@ -6,6 +6,9 @@ import reportWebVitals from './reportWebVitals';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import MainPage from './MainPage';
 import ContainerRequestForm from './ContainerRequestForm';
+import ContainerLookup from './ContainerLookup';
+import ReportErrors from './ReportErrors';
+import MyPage from './MyPage';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -15,7 +18,9 @@ root.render(
         <Route path="/" element={<App />} /> {/* 기본 경로 설정 */}
         <Route path="/mainpage" element={<MainPage />} /> {/* MainPage 컴포넌트에 대한 경로 설정 */}
         <Route path="/containerrequestform" element={<ContainerRequestForm />} />
-        <Route path="/mainpage" element={<MainPage />} />
+        <Route path="/mypage" element={<MyPage />} />
+        <Route path="/containerlookup" element={<ContainerLookup />} />
+        <Route path="/reporterrors" element={<ReportErrors />} />
       </Routes>
     </BrowserRouter>
   </React.StrictMode>
