@@ -4,11 +4,13 @@ import dgu.ailab.dcloud.dto.SignupDto;
 import dgu.ailab.dcloud.entity.Role;
 import dgu.ailab.dcloud.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@CrossOrigin // CORS
 public class SignupController {
 
     private final UserService userService;
@@ -18,7 +20,7 @@ public class SignupController {
         this.userService = userService;
     }
 
-    @PostMapping("/signup")
+    @PostMapping("/api/signup")
     public String signup(@RequestBody SignupDto signupDto) {
         if (userService.isUserExists(signupDto.getUserID())) {
             return "This ID is already in use.";

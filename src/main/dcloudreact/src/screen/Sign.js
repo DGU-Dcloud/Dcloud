@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import * as Components from './Components';
+import * as Components from '../css/Components';
 import { useNavigate } from "react-router-dom"; // useNavigate 훅 import
 import MainPage from './MainPage'; // MainPage 컴포넌트 import
 
@@ -43,7 +43,7 @@ function App() {
                 };
 
                 try {
-                    const response = await axios.post('http://localhost/api/signup', formData);
+                    const response = await axios.post('http://localhost:8080/api/signup', formData);
 
                     if (response.data.success) {
                         alert("Signup successful!"); // 성공 알림
