@@ -5,10 +5,12 @@ import { useNavigate } from "react-router-dom"; // useNavigate 훅 import
 import MainPage from './MainPage'; // MainPage 컴포넌트 import
 
 function App() {
-    const [signIn, toggle] = useState(true);
+        const [signIn, toggle] = useState(true);
         const [password, setPassword] = useState('');
         const [confirmPassword, setConfirmPassword] = useState('');
-        const [passwordError, setPasswordError] = useState(false); // 비밀번호 에러 상태
+        const [passwordError, setPasswordError] = useState(false);
+        const [userId, setUserId] = useState('');
+        const [userPassword, setUserPassword] = useState('');
         const navigate = useNavigate();
 
         const handleSignInClick = () => {
@@ -23,8 +25,40 @@ function App() {
             setConfirmPassword(e.target.value);
         };
 
+        // SignIn 폼에 사용자 ID와 비밀번호 입력 핸들러 추가
+        const handleUserIdChange = (e) => {
+            setUserId(e.target.value);
+        };
+
+        const handleUserPasswordChange = (e) => {
+            setUserPassword(e.target.value);
+        };
+        //SIGN IN FORM 제출 핸들러
+          const signInSubmit = async (e) => {
+                e.preventDefault(); // 폼 기본 제출 동작 방지
+
+                try {
+                    const response = await axios.post('http://localhost:8080/api/login', {
+                        userID: userId,
+                        password: userPassword,
+                    });
+
+                    const message = response.data;
+                    if (message === "Login Successful") {
+                        alert("Login successful!");
+                        navigate('/mainpage');
+                    } else {
+                        alert(message); // "Invalid credentials" 등 서버에서 정의된 메시지를 표시
+                    }
+                } catch (error) {
+                    console.error("There was an error during login!", error);
+                    alert("An error occurred during login.");
+                }
+            };
+
+
         // SIGN UP FORM 제출 핸들러
-        const handleSubmit = async (e) => {
+        const signUpSubmit = async (e) => {
             e.preventDefault(); // 폼 기본 제출 동작 방지
 
             // 비밀번호 유효성 검사
@@ -37,26 +71,38 @@ function App() {
 
                 // 폼 데이터를 객체로 준비
                 const formData = {
-                    password, // 비밀번호
-                    confirmPassword, // 비밀번호 확인
-                    // 다른 필요한 폼 데이터를 여기에 추가하세요.
+                    userID: e.target.userID.value, // 사용자 ID
+                    userName: e.target.userName.value, // 사용자 이름
+                    sex: e.target.userGender.value, // 성별
+                    birthDate: e.target.userBirth.value, // 생년월일
+                    phone: e.target.userPhone.value, // 전화번호
+                    email: e.target.userEmail.value, // 이메일
+                    password: e.target.userPW.value, // 비밀번호
+                    role: "user",
+                    refreshToken: "",
                 };
 
-                try {
-                    const response = await axios.post('http://localhost:8080/api/signup', formData);
+               try {
+                       const response = await axios.post('http://localhost:8080/api/signup', formData);
+                       const message = response.data; // 서버로부터 받은 메시지
 
-                    if (response.data.success) {
-                        alert("Signup successful!"); // 성공 알림
-                        // 추가적인 성공 처리 로직 (예: 로그인 페이지로 리다이렉션)
-                    } else {
-                        alert("Signup failed: " + response.data.message); // 실패 알림 및 이유
-                    }
-                } catch (error) {
-                    console.error("There was an error!", error);
-                    alert("An error occurred during SIGN UP."); // 에러 알림
-                }
+                       switch(message) {
+                           case "This ID is already in use.":
+                               alert("Signup failed: This ID is already in use.");
+                               break;
+                           case "Invalid role.":
+                               alert("Signup failed: Invalid role specified.");
+                               break;
+                           case "Membership registration is complete.":
+                               alert("Signup successful!");
+                               // 성공 후 추가적인 로직, 예를 들어 페이지 리다이렉션
+                               break;
 
-
+                       }
+                   } catch (error) {
+                       console.error("There was an error!", error);
+                       alert("An error occurred during SIGN UP.");
+                   }
             }
         };
 
@@ -70,7 +116,7 @@ function App() {
 
             <Components.SignUpContainer signinIn={signIn}>
 
-                <Components.Form onSubmit={handleSubmit}>
+                <Components.Form onSubmit={signUpSubmit}>
                     <Components.Title>Create Account</Components.Title>
                     <Components.Input type='text' placeholder='Name' name='userName' required/>
 
@@ -94,14 +140,14 @@ function App() {
 
 
             <Components.SignInContainer signinIn={signIn}>
-                <Components.Form>
-                    <Components.Title>Sign in</Components.Title>
-                    <Components.Input type='text' placeholder='ID' />
-                    <Components.Input type='password' placeholder='Password' />
-                    <Components.Anchor href='#'>Forgot your password?</Components.Anchor>
-                    <Components.Button onClick={handleSignInClick}>Sign In</Components.Button>
-                </Components.Form>
-            </Components.SignInContainer>
+                        <Components.Form onSubmit={signInSubmit}>
+                            <Components.Title>Sign in</Components.Title>
+                            <Components.Input type='text' placeholder='ID' value={userId} onChange={handleUserIdChange} required/>
+                            <Components.Input type='password' placeholder='Password' value={userPassword} onChange={handleUserPasswordChange} required/>
+                            <Components.Anchor href='#'>Forgot your password?</Components.Anchor>
+                            <Components.Button type='submit'>Sign In</Components.Button>
+                        </Components.Form>
+                    </Components.SignInContainer>
 
             <Components.OverlayContainer signinIn={signIn}>
                 <Components.Overlay signinIn={signIn}>

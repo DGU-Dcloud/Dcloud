@@ -19,7 +19,8 @@ public class SignupDto {
     private String password;
     private Date createdAt;
     private String refreshToken;
-    private String role; // 사용자의 역할 정보
+    private String role="user"; // 사용자의 역할 정보
+
 
     public User toEntity() {
         User user = new User();
@@ -32,7 +33,6 @@ public class SignupDto {
         user.setPassword(password);
         user.setCreatedAt(new Date());
         user.setRefreshToken(refreshToken);
-
         return user;
     }
 }
