@@ -44,7 +44,7 @@ function App() {
                     });
 
                     const message = response.data;
-                    if (message === "Login Successful") {
+                    if (message === "Login Successful") { //로그인 성공시
                         alert("Login successful!");
                         navigate('/mainpage');
                     } else {

@@ -1,15 +1,26 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 function NavigationBar() {
   // 내비게이션 바의 코드는 그대로 유지합니다.
   const navigate = useNavigate();
 
-  const handleLogout = () => {
+//  const handleLogout = () => {
+//    console.log("Logging out...");
+//    navigate('/');
+//  };
+    const handleLogout = () => {
     console.log("Logging out...");
-    navigate('/');
+    axios.post('/api/logout', {}, { withCredentials: true }) // 서버에 로그아웃 요청
+      .then(response => {
+        // 로그아웃 성공 후 홈페이지로 리디렉션
+        navigate('/');
+      })
+      .catch(error => {
+        console.error('Logout failed:', error);
+      });
   };
-
   const headerStyle = {
     display: 'flex',
     justifyContent: 'space-between',
