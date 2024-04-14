@@ -20,16 +20,6 @@ public class AuthController {
         request.getSession().invalidate();
     }
 
-//    @GetMapping("/api/check-auth")
-//    public ResponseEntity<String> checkAuth(HttpSession session) {
-//        String userId = (String) session.getAttribute("userID");
-//        logger.info("Retrieved session user id : {}", userId);
-//        if (userId != null) {
-//            return ResponseEntity.ok("User is authenticated");
-//        } else {
-//            return ResponseEntity.status(401).body("User is not authenticated");
-//        }
-//    }
     @GetMapping("/api/check-auth")
     public ResponseEntity<String> checkAuth(HttpServletRequest request) {
         HttpSession session = request.getSession(false); // 세션이 없다면 null을 반환

@@ -2,12 +2,29 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom'; // 페이지 이동을 위해 useNavigate 훅을 import합니다.
 import NavigationBar from './NavigationBar'; // 경로 확인 필요
 import Footer from './Footer'; // 경로 확인 필요
+import axios from 'axios'; // Import axios to handle HTTP requests.
 
 function ContainerLookup() {
   const navigate = useNavigate();
   const [containers, setContainers] = useState([]); // DB에서 가져온 컨테이너 데이터를 저장할 상태
 
-  useEffect(() => {
+    useEffect(() => {
+        // 세션 검증
+        axios.get('/api/check-auth', { withCredentials: true })
+          .then(response => {
+            // 세션이 유효한 경우에만 서버 데이터 로딩
+            console.log('Response:', response);
+            fetchData();
+          })
+          .catch(error => {
+            // 세션이 유효하지 않은 경우 로그인 페이지로 리디렉션
+            console.error('Session not valid:', error);
+            navigate('/');
+          });
+      }, [navigate]);
+
+
+
       // 데이터를 불러오는 함수
       const fetchData = async () => {
         const response = await fetch('http://localhost:8080/api/containers');
@@ -15,8 +32,6 @@ function ContainerLookup() {
         setContainers(data);
       };
 
-      fetchData().catch(console.error);
-    }, []);
 
   return  (
          <div>

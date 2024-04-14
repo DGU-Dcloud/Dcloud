@@ -41,6 +41,8 @@ function App() {
                     const response = await axios.post('http://localhost:8080/api/login', {
                         userID: userId,
                         password: userPassword,
+                    }, {
+                        withCredentials: true  // 쿠키를 요청과 함께 전송하기 위해 설정
                     });
 
                     const message = response.data;
