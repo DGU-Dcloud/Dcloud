@@ -7,16 +7,6 @@ function MainPage() {
   const navigate = useNavigate();
   const [servers, setServers] = useState([]); // DB에서 가져온 컨테이너 데이터를 저장할 상태
     const [loading, setLoading] = useState(true); // 로딩 상태 관리
-//  useEffect(() => {
-//      // 데이터를 불러오는 함수
-//      const fetchData = async () => {
-//        const response = await fetch('http://localhost:8080/api/servers');
-//        const data = await response.json();
-//        setServers(data);
-//      };
-//
-//      fetchData().catch(console.error);
-//    }, []);
 
 useEffect(() => {
     // 세션 검증

@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import NavigationBar from './NavigationBar'; // 경로 확인 필요
 import Footer from './Footer'; // 경로 확인 필요
+import axios from 'axios'; // Axios import
 
 function ContainerRequestForm() {
   const navigate = useNavigate();
@@ -18,6 +19,21 @@ function ContainerRequestForm() {
       const resetEffect = (e) => {
         e.target.style.background = '#555';
       };
+
+      useEffect(() => {
+              // 세션 검증
+              axios.get('/api/check-auth', { withCredentials: true })
+                .then(response => {
+                  // 세션이 유효한 경우에만 서버 데이터 로딩
+                  console.log('Response:', response);
+
+                })
+                .catch(error => {
+                  // 세션이 유효하지 않은 경우 로그인 페이지로 리디렉션
+                  console.error('Session not valid:', error);
+                  navigate('/');
+                });
+            }, [navigate]);
 
   return (
     <div>

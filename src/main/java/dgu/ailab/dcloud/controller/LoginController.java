@@ -27,7 +27,7 @@ public class LoginController {
     public String login(@RequestBody LoginDto loginDto, HttpServletRequest request) {
         if (userService.authenticate(loginDto.getUserID(), loginDto.getPassword())) {
             HttpSession session = request.getSession();
-            session.setAttribute(loginDto.getUserID(),loginDto.getUserID());
+            session.setAttribute("userID",loginDto.getUserID());
             logger.info("Login successful. UserID stored in session: {}", session.getAttribute(loginDto.getUserID()));
             return "Login Successful";
         } else {
