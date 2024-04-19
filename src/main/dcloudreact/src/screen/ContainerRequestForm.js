@@ -5,153 +5,208 @@ import Footer from './Footer'; // 경로 확인 필요
 import axios from 'axios'; // Axios import
 
 function ContainerRequestForm() {
-  const navigate = useNavigate();
-   const tableData = [
-      ['', 'Image 1', 'Image 2', 'Image 3'],
-      ['Cuda Version', '11.2', '11.8', '-'],
-      ['Tensorflow Version', '2.8.2', '2.12.0', '-'],
-      ['OS', 'Ubuntu 20.04', 'Ubuntu 20.04', 'Ubuntu 20.04']
-    ];
+    const navigate = useNavigate();
+    const [images, setImages] = useState([]); // DB에서 가져온 컨테이너 데이터를 저장할 상태
+    const [selectedImageIndex, setSelectedImageIndex] = useState(null); // 선택된 이미지 인덱스 상태
 
     const hoverEffect = (e) => {
         e.target.style.background = '#777';
-      };
-      const resetEffect = (e) => {
+    };
+    const resetEffect = (e) => {
         e.target.style.background = '#555';
-      };
+    };
+    const handleSelectImage = (index) => {
+        setSelectedImageIndex(index); // 선택된 이미지 인덱스 업데이트
+    };
 
-      useEffect(() => {
-              // 세션 검증
-              axios.get('/api/check-auth', { withCredentials: true })
-                .then(response => {
-                  // 세션이 유효한 경우에만 서버 데이터 로딩
-                  console.log('Response:', response);
 
-                })
-                .catch(error => {
-                  // 세션이 유효하지 않은 경우 로그인 페이지로 리디렉션
-                  console.error('Session not valid:', error);
-                  navigate('/');
-                });
-            }, [navigate]);
+    const requestSubmit = async (e) => {
+        e.preventDefault(); // Prevent the default form submission behavior
 
-  return (
-    <div>
-        <NavigationBar/>
-        <div style={{ height: '10vh' }}></div>
-        <main style={styles.container}>
-      <h1 style={styles.heading}>Container Request Form</h1>
-            <form style={styles.form}>
-              <div style={styles.formGroup}>
-                <p style={styles.label}>Choose a Container Image</p>
-                <div style={styles.radioGroup}>
-                  <label style={styles.radioLabel}>
-                    <input type="radio" name="image" value="image1" required style={styles.radioButton} />
-                    Image 1
-                  </label>
-                   <label style={styles.radioLabel}>
-                    <input type="radio" name="image" value="image2" required style={styles.radioButton} />
-                    Image 2
-                  </label>
-                   <label style={styles.radioLabel}>
-                    <input type="radio" name="image" value="image3" required style={styles.radioButton} />
-                    Image 3
-                  </label>
-                  {/* Repeat for other images */}
-                </div>
-              </div>
+        if (selectedImageIndex === null) {
+            alert("Please select an image.");
+            return;
+        }
 
-              <div style={styles.tableContainer}>
-                <table style={styles.table}>
-                  <tbody>
-                    {tableData.map((row, rowIndex) => (
-                      <tr key={rowIndex}>
-                        {row.map((cell, colIndex) => (
-                          <td key={colIndex} style={styles.tableCell}>{cell}</td>
-                        ))}
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+        // Gather form data
+        const formData = {
+            imageName: images[selectedImageIndex].imageName,
+            imageTag: images[selectedImageIndex].imageTag,
+            environment : document.querySelector('input[name="environment"]:checked').value,
+            studentId: document.querySelector('input[name="studentid"]').value,
+            department: document.querySelector('input[name="department"]').value,
+            professorName: document.querySelector('input[name="professor"]').value,
+            usageDescription: document.querySelector('textarea[name="usage"]').value,
+            gpuModel: document.querySelector('input[name="gpu"]:checked').value,
+            expectedExpirationDate: document.querySelector('input[type="date"]').value
+            // Add other fields from your form as needed
+        };
 
-              <div style={styles.formGroup}>
-                <p style={styles.label}>Environment</p>
-                <div style={styles.radioGroup}>
-                  <label style={styles.radioLabel}>
-                    <input type="radio" name="environment" value="LAB" required style={styles.radioButton} />
-                    LAB
-                  </label>
-                  <label style={styles.radioLabel}>
-                    <input type="radio" name="environment" value="FARM" style={styles.radioButton} />
-                    FARM
-                  </label>
-                </div>
-              </div>
+        try {
+            const response = await axios.post('/api/containerrequest', formData, {
+                withCredentials: true  // Ensure cookies are sent with the request if needed
+            });
+            // Handle response
+            console.log(response.data);
+            alert("Request submitted successfully!");
+            navigate('/mainpage'); // Navigate to another route upon success
+        } catch (error) {
+            console.error("There was an error submitting the request:", error);
+            alert("An error occurred while submitting the request.");
+        }
+    };
 
-              {/* User information inputs */}
-              <div style={styles.inputGroup}>
-                  <p style={styles.label}>Student ID</p>
-                <input type="text" placeholder="e.g., 2018112032" required style={styles.inputField} />
-                 <p style={styles.label}>Department</p>
-                <input type="text" placeholder="e.g., Computer Science" required style={styles.inputField} />
-                 <p style={styles.label}>Professor Name</p>
-                <input type="text" placeholder="e.g., Dongho Kim" required style={styles.inputField} />
-       <p style={styles.label}>Usage</p>
-                 <textarea placeholder="eg.. Project name" required style={{...styles.inputField, height: '100px'}} />
-              </div>
 
-            <div style={styles.formGroup}>
-                <p style={styles.label}>Expected Expiration Date (If you are AI Department students, expected graduation date)</p>
-                <input type="date" required style={styles.inputField} />
-            </div>
 
-              {/* GPU Model selection */}
-              <div style={styles.formGroup}>
-                <p style={styles.label}>Choose a GPU Model</p>
-                <div style={styles.radioGroup}>
-                  <label style={styles.radioLabel}>
-                      <input type="radio" name="gpu" value="RTX2080ti" required style={styles.radioButton} />
-                      RTX 2080ti (only LAB)
-                    </label>
-                  <label style={styles.radioLabel}>
-                    <input type="radio" name="gpu" value="RTX3090" required style={styles.radioButton} />
-                    RTX 3090
-                  </label>
-                  <label style={styles.radioLabel}>
-                    <input type="radio" name="gpu" value="5000" required style={styles.radioButton} />
-                    RTX 5000 (only FARM)
-                  </label>
-                  <label style={styles.radioLabel}>
-                    <input type="radio" name="gpu" value="6000" required style={styles.radioButton} />
-                    RTX 6000 (only LAB)
-                  </label>
-                  {/* Repeat for other GPU models */}
-                </div>
-              </div>
+    useEffect(() => {
+        // 세션 검증
+        axios.get('/api/check-auth', { withCredentials: true })
+        .then(response => {
+            // 세션이 유효한 경우에만 서버 데이터 로딩
+            console.log('Response:', response);
+            fetchData();
+        })
+        .catch(error => {
+            // 세션이 유효하지 않은 경우 로그인 페이지로 리디렉션
+            console.error('Session not valid:', error);
+            navigate('/');
+            });
+        }, [navigate]);
 
-                <p style={styles.cautionText}>
-                <h3>** !Must read! **</h3>
-                While using the server, you are responsible for any problems that arise due to your carelessness, lack of familiarity with the manual, or failure to respond to administrator requests, and future usage restrictions or disadvantages may apply.
-                As data may be deleted while using the server, you should frequently back it up on your personal computer.
-                After the server's scheduled expiration date, containers and storage will be deleted immediately, and the administrator is not responsible for any problems caused by users not backing up their data.
-                If there is a reason to use it after the scheduled expiration date, you must apply for an extension at least 3 days before the scheduled expiration date.
-                If the administrator does not separately notify you of the approval via slack DM, the approval will be rejected and you will not be notified of the reason for the rejection.
-                <br/><br/>Are you signed up for Slack? You must sign up. If you have not signed up, please sign up using the link below.
-                The name displayed must be your real name (in Korean). <br/>
-                <a href="https://dguai-lab.slack.com/join/shared_invite/zt-2fthv9brr-ICV0xL7LyahdVARuazI8bA#/shared-invite/email" target="_blank">
-                Join Slack
-                </a>
-                <br/><br/>
-                Additionally, we will provide a manual for using the server. You can check it at the link below.
-                <br/>
-                <a href="https://docs.google.com/document/d/1PtMqJ25kKMZLJnOQY8vgWyTY3HBWUvP86vFaZ2ldMdg/edit" target="_blank">
-                User Manual
-                </a>
-                </p>
+        const fetchData = async () => {
+            const response = await fetch('http://localhost:8080/api/images');
+            const data = await response.json();
+            console.log("Received data:", data);
+            setImages(data);
+        };
 
-              <button type="submit" style={styles.submitButton} onMouseEnter={hoverEffect} onMouseLeave={resetEffect}>Submit</button>
-            </form>
+    return (
+        <div>
+            <NavigationBar/>
+            <div style={{ height: '10vh' }}></div>
+            <main style={styles.container}>
+                <h1 style={styles.heading}>Container Request Form</h1>
+                    <form onSubmit={requestSubmit} style={styles.form}>
+                      <div style={styles.formGroup}>
+                        <p style={styles.label}>Choose a Container Image</p>
+                      </div>
+
+
+
+                      <div style={styles.tableContainer}>
+                          <table style={styles.table}>
+                              <thead>
+                                  <tr>
+                                      <th style={styles.tableCell}>Select</th> {/* 추가된 선택 열 헤더 */}
+                                      <th style={styles.tableCell}>Image Name</th>
+                                      <th style={styles.tableCell}>Image Tag</th>
+                                      <th style={styles.tableCell}>OS Version</th>
+                                      <th style={styles.tableCell}>TensorFlow Version</th>
+                                      <th style={styles.tableCell}>CUDA Version</th>
+                                  </tr>
+                              </thead>
+                              <tbody>
+                                  {images.map((image, index) => ( // index 추가
+                                      <tr key={index}>
+                                          <td style={styles.tableCell}>
+                                              <input
+                                                  type="radio"
+                                                  name="selectedImage"
+                                                  value={index}
+                                                  onChange={() => handleSelectImage(index)}
+                                                  style={styles.radioButton} required
+                                              />
+                                          </td>
+                                          <td style={styles.tableCell}>{image.imageName}</td>
+                                          <td style={styles.tableCell}>{image.imageTag}</td>
+                                          <td style={styles.tableCell}>{image.osVersion}</td>
+                                          <td style={styles.tableCell}>{image.tfVersion}</td>
+                                          <td style={styles.tableCell}>{image.cudaVersion}</td>
+                                      </tr>
+                                  ))}
+                              </tbody>
+                          </table>
+                      </div>
+
+                      <div style={{ height: '2vh' }}></div>
+
+                      <div style={styles.formGroup}>
+                        <p style={styles.label}>Environment</p>
+                        <div style={styles.radioGroup}>
+                          <label style={styles.radioLabel}>
+                            <input type="radio" name="environment" value="LAB" required style={styles.radioButton} />
+                            LAB
+                          </label>
+                          <label style={styles.radioLabel}>
+                            <input type="radio" name="environment" value="FARM" style={styles.radioButton} />
+                            FARM
+                          </label>
+                        </div>
+                      </div>
+
+                      {/* User information inputs */}
+                      <div style={styles.inputGroup}>
+                          <p style={styles.label}>Student ID</p>
+                        <input type="text" name="studentid" placeholder="e.g., 2018112032" required style={styles.inputField} />
+                         <p style={styles.label}>Department</p>
+                        <input type="text" name="department" placeholder="e.g., Computer Science" required style={styles.inputField} />
+                         <p style={styles.label}>Professor Name</p>
+                        <input type="text" name="professor" placeholder="e.g., Dongho Kim" required style={styles.inputField} />
+                        <p style={styles.label}>Usage</p>
+                         <textarea name="usage" placeholder="eg.. Project name" required style={{...styles.inputField, height: '100px'}} />
+                      </div>
+
+                        <div style={styles.formGroup}>
+                            <p style={styles.label}>Expected Expiration Date (If you are AI Department students, expected graduation date)</p>
+                            <input type="date" required style={styles.inputField} />
+                        </div>
+
+                      {/* GPU Model selection */}
+                      <div style={styles.formGroup}>
+                        <p style={styles.label}>Choose a GPU Model</p>
+                        <div style={styles.radioGroup}>
+                          <label style={styles.radioLabel}>
+                              <input type="radio" name="gpu" value="RTX2080ti" required style={styles.radioButton} />
+                              RTX 2080ti (only LAB)
+                            </label>
+                          <label style={styles.radioLabel}>
+                            <input type="radio" name="gpu" value="RTX3090" required style={styles.radioButton} />
+                            RTX 3090
+                          </label>
+                          <label style={styles.radioLabel}>
+                            <input type="radio" name="gpu" value="RTX5000" required style={styles.radioButton} />
+                            RTX 5000 (only FARM)
+                          </label>
+                          <label style={styles.radioLabel}>
+                            <input type="radio" name="gpu" value="RTX6000" required style={styles.radioButton} />
+                            RTX 6000 (only LAB)
+                          </label>
+                          {/* Repeat for other GPU models */}
+                        </div>
+                      </div>
+
+                        <p style={styles.cautionText}>
+                        <h3>** !Must read! **</h3>
+                        While using the server, you are responsible for any problems that arise due to your carelessness, lack of familiarity with the manual, or failure to respond to administrator requests, and future usage restrictions or disadvantages may apply.
+                        As data may be deleted while using the server, you should frequently back it up on your personal computer.
+                        After the server's scheduled expiration date, containers and storage will be deleted immediately, and the administrator is not responsible for any problems caused by users not backing up their data.
+                        If there is a reason to use it after the scheduled expiration date, you must apply for an extension at least 3 days before the scheduled expiration date.
+                        If the administrator does not separately notify you of the approval via slack DM, the approval will be rejected and you will not be notified of the reason for the rejection.
+                        <br/><br/>Are you signed up for Slack? You must sign up. If you have not signed up, please sign up using the link below.
+                        The name displayed must be your real name (in Korean). <br/>
+                        <a href="https://dguai-lab.slack.com/join/shared_invite/zt-2fthv9brr-ICV0xL7LyahdVARuazI8bA#/shared-invite/email" target="_blank">
+                        Join Slack
+                        </a>
+                        <br/><br/>
+                        Additionally, we will provide a manual for using the server. You can check it at the link below.
+                        <br/>
+                        <a href="https://docs.google.com/document/d/1PtMqJ25kKMZLJnOQY8vgWyTY3HBWUvP86vFaZ2ldMdg/edit" target="_blank">
+                        User Manual
+                        </a>
+                        </p>
+
+                      <button type="submit" style={styles.submitButton} onMouseEnter={hoverEffect} onMouseLeave={resetEffect}>Submit</button>
+                    </form>
 
             </main>
         <Footer/>
