@@ -31,6 +31,7 @@ function MyPage() {
             });
             const data = await response.json();
             setUserInfo(data);
+//            setContainerRequests(data.containerRequests);
           };
   return (
     <div>
