@@ -1,10 +1,19 @@
 package dgu.ailab.dcloud.service;
 
+import dgu.ailab.dcloud.controller.SignupController;
 import dgu.ailab.dcloud.dto.ContainerDto;
+import dgu.ailab.dcloud.dto.ContainerRequestDto;
 import dgu.ailab.dcloud.entity.Container;
+import dgu.ailab.dcloud.entity.ContainerRequest;
 import dgu.ailab.dcloud.repository.ContainerRepository;
+import dgu.ailab.dcloud.repository.ContainerRequestRepository;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -13,10 +22,13 @@ import java.util.stream.Collectors;
 public class ContainerService {
 
     private final ContainerRepository containerRepository;
+    private final ContainerRequestRepository containerRequestRepository;
+    private static final Logger logger = LoggerFactory.getLogger(SignupController.class);
 
     @Autowired
-    public ContainerService(ContainerRepository containerRepository) {
+    public ContainerService(ContainerRepository containerRepository, ContainerRequestRepository containerRequestRepository) {
         this.containerRepository = containerRepository;
+        this.containerRequestRepository = containerRequestRepository;
     }
 
     public List<ContainerDto> getAllContainers() {
@@ -38,7 +50,20 @@ public class ContainerService {
                 container.getJupyterPort(),
                 container.getCreatedAt(),
                 container.getDeletedAt(),
-                container.getNote()
+                container.getNote(),
+                container.getStatus()
         );
+    }
+
+    @Transactional
+    public ContainerRequestDto insertContainerRequest(ContainerRequestDto containerRequestDto) {
+        ContainerRequest containerRequest = containerRequestDto.toEntity();
+
+        logger.info("toString() checkehck {}", containerRequest.toString());
+
+        // Populate the container entity with dto data
+        containerRequestRepository.save(containerRequest);
+
+        return containerRequestDto; // return DTO, possibly update with id if necessary
     }
 }

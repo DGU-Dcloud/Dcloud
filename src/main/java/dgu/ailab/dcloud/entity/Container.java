@@ -1,8 +1,11 @@
 package dgu.ailab.dcloud.entity;
 
 import jakarta.persistence.*;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.io.Serializable;
 import java.util.Date;
 
 @Entity
@@ -30,6 +33,8 @@ public class Container {
     @JoinColumn(name = "userID", referencedColumnName = "userID", insertable = false, updatable = false)
     private User user;
 
+
+
     @Column(name = "createdAt")
     @Temporal(TemporalType.DATE)
     private Date createdAt;
@@ -49,6 +54,13 @@ public class Container {
 
     @Column(name = "note")
     private String note;
+
+    @Column(name = "status")
+    private String status;
+
+    @ManyToOne
+    @JoinColumn(name = "request_id", referencedColumnName = "request_id", insertable = false, updatable = false)
+    private ContainerRequest containerRequest;
 
     // Lombok을 사용하지 않는다면, 필요한 getter와 setter 메소드를 수동으로 추가해야 합니다.
     // 기본 생성자 또한 Lombok @NoArgsConstructor 어노테이션으로 자동 생성할 수 있습니다.

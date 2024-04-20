@@ -18,6 +18,7 @@ import jakarta.servlet.http.HttpSession;
 public class LoginController {
     private final UserService userService;
     private static final Logger logger = LoggerFactory.getLogger(LoginController.class);
+
     @Autowired
     public LoginController(UserService userService) {
         this.userService = userService;
@@ -27,7 +28,7 @@ public class LoginController {
     public String login(@RequestBody LoginDto loginDto, HttpServletRequest request) {
         if (userService.authenticate(loginDto.getUserID(), loginDto.getPassword())) {
             HttpSession session = request.getSession();
-            session.setAttribute("userID",loginDto.getUserID());
+            session.setAttribute("userID", loginDto.getUserID());
             logger.info("Login successful. UserID stored in session: {}", session.getAttribute(loginDto.getUserID()));
             return "Login Successful";
         } else {

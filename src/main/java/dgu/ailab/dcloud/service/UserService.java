@@ -1,6 +1,8 @@
 package dgu.ailab.dcloud.service;
 
+import dgu.ailab.dcloud.dto.ServerDto;
 import dgu.ailab.dcloud.dto.SignupDto;
+import dgu.ailab.dcloud.dto.UserInfoDto;
 import dgu.ailab.dcloud.entity.Role;
 import dgu.ailab.dcloud.entity.User;
 import dgu.ailab.dcloud.entity.UserRole;
@@ -12,6 +14,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -70,5 +76,20 @@ public class UserService {
         }
         // 사용자가 존재하고, 비밀번호도 일치하면 true
         return true;
+    }
+
+//    public User findUserById(String userID) {
+//        User user= userRepository.findByUserID(userID);
+//        return userRepository.findByUserID(userID).orElseThrow(() -> new RuntimeException("User not found"));
+//    }
+
+
+    public UserInfoDto getUserInfo(String userId) {
+        User user = userRepository.findByUserID(userId);
+        if (user != null) {
+            return new UserInfoDto(user.getUserName(), user.getUserID(), user.getBirthDate(), user.getEmail());
+        } else {
+            throw new RuntimeException("User not found with userId: " + userId);
+        }
     }
 }
