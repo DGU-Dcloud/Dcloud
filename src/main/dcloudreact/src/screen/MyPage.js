@@ -1,51 +1,64 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import NavigationBar from './NavigationBar';
 import Footer from './Footer';
+import axios from 'axios'; // Axios import
 
 function MyPage() {
   const navigate = useNavigate();
 
   // Sample user information and container request data
-  const [userInfo, setUserInfo] = useState({
-    name: "홍길동",
-    userId: "gildong123",
-    birthDate: "1990.01.01",
-    email: "gildong@example.com",
-  });
+  const [userInfo, setUserInfo] = useState({});
+  const [containerRequests, setContainerRequests] = useState([]);
 
-  const [containerRequests, setContainerRequests] = useState([
-    { date: "23.04.01", status: "승인대기" },
-    { date: "23.03.25", status: "승인완료" },
-    { date: "23.03.20", status: "반려" },
-  ]);
-
+    useEffect(() => {
+        // 세션 검증
+        axios.get('/api/check-auth', { withCredentials: true })
+          .then(response => {
+            // 세션이 유효한 경우에만 서버 데이터 로딩
+            console.log('Response:', response);
+            fetchData();
+          })
+          .catch(error => {
+            // 세션이 유효하지 않은 경우 로그인 페이지로 리디렉션
+            console.error('Session not valid:', error);
+            navigate('/');
+          });
+      }, [navigate]);
+        const fetchData = async () => {
+            const response = await fetch('http://localhost:8080/api/yourinfo', {
+                credentials: 'include' // 쿠키를 함께 보내준다. 라고 요청해야됨.이렇게 안하니까 서버에서 세션아이디 null나옴.
+            });
+            const data = await response.json();
+            setUserInfo(data);
+//            setContainerRequests(data.containerRequests);
+          };
   return (
     <div>
       <NavigationBar />
       <div style={{ height: '10vh' }}></div>
       <main style={styles.container}>
         <h1>Your Info</h1>
-        <table style={styles.table}>
-          <tbody>
-            <tr>
-              <th style={styles.thRow}>Name</th>
-              <td style={styles.tdRow}>{userInfo.name}</td>
-            </tr>
-            <tr>
-              <th style={styles.thRow}>ID</th>
-              <td style={styles.tdRow}>{userInfo.userId}</td>
-            </tr>
-            <tr>
-              <th style={styles.thRow}>Birth Date</th>
-              <td style={styles.tdRow}>{userInfo.birthDate}</td>
-            </tr>
-            <tr>
-              <th style={styles.thRow}>Email</th>
-              <td style={styles.tdRow}>{userInfo.email}</td>
-            </tr>
-          </tbody>
-        </table>
+                <table style={styles.table}>
+                  <tbody>
+                    <tr>
+                      <th style={styles.thRow}>Name</th>
+                      <td style={styles.tdRow}>{userInfo.userName}</td>
+                    </tr>
+                    <tr>
+                      <th style={styles.thRow}>ID</th>
+                      <td style={styles.tdRow}>{userInfo.userID}</td>
+                    </tr>
+                    <tr>
+                      <th style={styles.thRow}>Birth Date</th>
+                      <td style={styles.tdRow}>{userInfo.birthDate}</td>
+                    </tr>
+                    <tr>
+                      <th style={styles.thRow}>Email</th>
+                      <td style={styles.tdRow}>{userInfo.email}</td>
+                    </tr>
+                  </tbody>
+                </table>
         <div style={{ height: '3vh' }}></div>
         <h1>Container Request Status</h1>
         <table style={styles.table}>

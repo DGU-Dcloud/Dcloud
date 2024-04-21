@@ -45,7 +45,9 @@ public class User {
     @Column(name = "refreshToken")
     private String refreshToken;
 
-    // 복합키이므로 양방향 매핑
+    //유저가 삭제되면, 유저역할도 삭제 수정 변경됨. mappedBy는 유저역할엔티티에 유저라는 필드가 있음을 뜻함.
+    //cascadeType.ALL은 유저 엔티티에 저장,업데이트,삭제 명령이 유저역할 엔티티에도 적용됨을 의미한다.
+    //orphanRemoval=true는 유저와 유저역할 엔티티간 참조가 제거된 경우, 해당 인스턴스는 유저역할 엔티티에서 삭제됨을 의미한다.
     @OneToMany(mappedBy = "user", orphanRemoval = true, cascade = CascadeType.ALL)
     private List<UserRole> userRole = new ArrayList<>();
 }

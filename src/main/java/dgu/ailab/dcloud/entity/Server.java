@@ -50,7 +50,9 @@ public class Server {
     @Column(name = "sshPort")
     private Integer sshPort;
 
-    //server entity 삭제되면, container entity도 삭제 수정 변경됨.
+    //server삭제되면, container도 삭제 수정 변경됨. mappedBy는 Container엔티티에 server라는 필드가 있음을 뜻함.
+    //cascadeType.ALL은 서버 엔티티에 저장,업데이트,삭제 명령이 컨테이너 엔티티에도 적용됨을 의미한다.
+    //orphanRemoval=true는 서버와 컨테이너간 참조가 제거된 경우, 해당 인스턴스는 컨테이너 엔티티에서 삭제됨을 의미한다.
     @OneToMany(mappedBy = "server", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Container> containers;
 }
