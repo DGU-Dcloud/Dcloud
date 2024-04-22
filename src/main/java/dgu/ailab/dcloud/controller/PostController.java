@@ -2,6 +2,8 @@ package dgu.ailab.dcloud.controller;
 
 import dgu.ailab.dcloud.entity.Comment;
 import dgu.ailab.dcloud.entity.Post;
+import dgu.ailab.dcloud.entity.User;
+import dgu.ailab.dcloud.entity.UserRole;
 import dgu.ailab.dcloud.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -13,6 +15,7 @@ import java.util.List;
 @CrossOrigin
 public class PostController {
     private final PostService postService;
+
 
     @Autowired
     public PostController(PostService postService) {
@@ -39,8 +42,8 @@ public class PostController {
 
     // 새 포스트 작성하기
     @PostMapping("/posts")
-    public Post createPost(@RequestBody Post post) {
-        return postService.createPost(post);
+    public Post createPost(@RequestBody Post post, @RequestParam String userId) {
+        return postService.createPost(post, userId);
     }
 
     // 특정 포스트에 댓글 추가하기

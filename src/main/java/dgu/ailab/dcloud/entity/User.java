@@ -1,11 +1,13 @@
 package dgu.ailab.dcloud.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 @Getter
@@ -50,4 +52,11 @@ public class User {
     //orphanRemoval=true는 유저와 유저역할 엔티티간 참조가 제거된 경우, 해당 인스턴스는 유저역할 엔티티에서 삭제됨을 의미한다.
     @OneToMany(mappedBy = "user", orphanRemoval = true, cascade = CascadeType.ALL)
     private List<UserRole> userRole = new ArrayList<>();
+
+    // 사용자의 역할 가져오기
+    public List<Role> getRoles() {
+        return userRole.stream()
+                .map(UserRole::getRole)
+                .collect(Collectors.toList());
+    }
 }
