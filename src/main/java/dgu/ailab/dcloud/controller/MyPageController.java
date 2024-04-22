@@ -1,6 +1,7 @@
 package dgu.ailab.dcloud.controller;
 
 import dgu.ailab.dcloud.dto.ContainerRequestDto;
+import dgu.ailab.dcloud.dto.UserDashboardDto;
 import dgu.ailab.dcloud.dto.UserInfoDto;
 import dgu.ailab.dcloud.service.ContainerService;
 import org.slf4j.Logger;
@@ -32,12 +33,12 @@ public class MyPageController {
     }
 
     @GetMapping("/api/yourinfo")
-    public UserInfoDto getUserInfo(HttpSession session) {
+    public UserDashboardDto getUserInfo(HttpSession session) {
         String userId = (String) session.getAttribute("userID");
         logger.info("Retrieved userId: {}", userId);
         if (userId != null) {
             UserInfoDto userInfo = userService.getUserInfo(userId);
-            List<ContainerRequestDto> containerRequests = containerService.findAllByUserId(userId);
+            List<ContainerRequestDto> containerRequests = containerService.getContainerRequestStatus(userId);
             return new UserDashboardDto(userInfo, containerRequests);
         } else {
             throw new IllegalStateException("No user is logged in or session does not exist");

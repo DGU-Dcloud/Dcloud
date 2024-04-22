@@ -30,7 +30,7 @@ public class ContainerRequest {
     private DockerImages dockerImages;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "userId")
+    @JoinColumn(name = "user_Id")
     private User user;  // User 엔티티와의 연결
 
     @Column(name = "student_id")
@@ -54,6 +54,13 @@ public class ContainerRequest {
 
     @Column(name = "gpu_model")
     private String gpuModel;
+
+    @Column(name = "status")
+    private String status;  // 추가된 필드
+
+    @Column(name = "created_at")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date createdAt; // 추가된 필드
 
     @OneToMany(mappedBy = "containerRequest", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Container> container;
