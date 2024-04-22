@@ -16,6 +16,9 @@ public class Post {
     @Column(name = "postID")
     private Integer postID;
 
+    @Column(name = "kategorie", length = 50)
+    private String kategorie;
+
     @Column(name = "title", length = 255)
     private String title;
 
