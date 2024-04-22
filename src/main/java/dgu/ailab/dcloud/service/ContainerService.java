@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -60,10 +61,38 @@ public class ContainerService {
         ContainerRequest containerRequest = containerRequestDto.toEntity();
 
         logger.info("toString() checkehck {}", containerRequest.toString());
-
+        containerRequest.setStatus("승인대기");
+        containerRequest.setCreatedAt(new Date()); // 현재 시간 설정
         // Populate the container entity with dto data
         containerRequestRepository.save(containerRequest);
 
         return containerRequestDto; // return DTO, possibly update with id if necessary
+    }
+
+
+    public List<ContainerRequestDto> getContainerRequestStatus(String userId) {
+        List<ContainerRequest> containerRequests = containerRequestRepository.findByUserUserID(userId);
+        return containerRequests.stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
+    }
+
+    private ContainerRequestDto convertToDto(ContainerRequest containerRequest) {
+        // 여기에 ContainerRequest를 ContainerRequestDto로 변환하는 로직 구현
+        return new ContainerRequestDto(
+                containerRequest.getRequestId(),
+                containerRequest.getDepartment(),
+                containerRequest.getEnvironment(),
+                containerRequest.getExpectedExpirationDate(),
+                containerRequest.getGpuModel(),
+                containerRequest.getProfessorName(),
+                containerRequest.getStudentId(),
+                containerRequest.getUsageDescription(),
+                containerRequest.getUser() != null ? containerRequest.getUser().getUserID() : null,
+                containerRequest.getDockerImages() != null ? containerRequest.getDockerImages().getId().getImageName() : null,
+                containerRequest.getDockerImages() != null ? containerRequest.getDockerImages().getId().getImageTag() : null,
+                containerRequest.getStatus(),
+                containerRequest.getCreatedAt()
+        );
     }
 }

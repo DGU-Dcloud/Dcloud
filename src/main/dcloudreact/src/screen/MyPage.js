@@ -26,12 +26,20 @@ function MyPage() {
           });
       }, [navigate]);
         const fetchData = async () => {
-            const response = await fetch('http://localhost:8080/api/yourinfo', {
-                credentials: 'include' // 쿠키를 함께 보내준다. 라고 요청해야됨.이렇게 안하니까 서버에서 세션아이디 null나옴.
-            });
-            const data = await response.json();
-            setUserInfo(data);
-//            setContainerRequests(data.containerRequests);
+            try {
+              const response = await fetch('http://localhost:8080/api/yourinfo', {
+                credentials: 'include'
+              });
+              const data = await response.json();
+              setUserInfo(data.userInfo);
+              if (data.containerRequests) { // containerRequests가 있는지 확인
+                setContainerRequests(data.containerRequests);
+              } else {
+                console.log('No containerRequests found:', data);
+              }
+            } catch (error) {
+              console.error('Error fetching data:', error);
+            }
           };
   return (
     <div>
@@ -69,13 +77,18 @@ function MyPage() {
             </tr>
           </thead>
           <tbody>
-            {containerRequests.map((request, index) => (
-              <tr key={index}>
-                <td style={styles.td}>{request.date}</td>
-                <td style={styles.td}>{request.status}</td>
-              </tr>
-            ))}
+            {containerRequests.map((request, index) => {
+              const date = new Date(request.createdAt);
+              const formattedDate = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
+              return (
+                <tr key={index}>
+                  <td style={styles.td}>{formattedDate}</td>
+                  <td style={styles.td}>{request.status}</td>
+                </tr>
+              );
+            })}
           </tbody>
+
         </table>
  <div style={{ height: '3vh' }}></div>
         <h1>Your Active Container</h1>

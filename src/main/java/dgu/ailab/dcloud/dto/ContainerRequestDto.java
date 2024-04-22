@@ -24,6 +24,8 @@ public class ContainerRequestDto {
     private String userId;
     private String imageName;
     private String imageTag;
+    private String status;  // 추가된 필드
+    private Date createdAt; // 추가된 필드
 
     // 기본 생성자
     public ContainerRequestDto() {
@@ -31,8 +33,8 @@ public class ContainerRequestDto {
 
     // 모든 필드를 포함한 생성자
     public ContainerRequestDto(Integer requestId, String department, String environment, Date expectedExpirationDate,
-                               String gpuModel, String professorName, String studentId,
-                               String usageDescription, String userId, String imageName, String imageTag) {
+                               String gpuModel, String professorName, String studentId, String usageDescription,
+                               String userId, String imageName, String imageTag, String status, Date createdAt) {
         this.requestId = requestId;
         this.department = department;
         this.environment = environment;
@@ -44,7 +46,10 @@ public class ContainerRequestDto {
         this.userId = userId;
         this.imageName = imageName;
         this.imageTag = imageTag;
+        this.status = status;  // 추가된 필드
+        this.createdAt = createdAt; // 추가된 필드
     }
+
 
     // DTO를 Entity로 변환하는 메소드
     public ContainerRequest toEntity() {
@@ -57,6 +62,8 @@ public class ContainerRequestDto {
         containerRequest.setExpectedExpirationDate(this.expectedExpirationDate);
         containerRequest.setEnvironment(this.environment);
         containerRequest.setGpuModel(this.gpuModel);
+        containerRequest.setStatus(this.status); // 추가된 필드
+        containerRequest.setCreatedAt(this.createdAt); // 추가된 필드
 
         // Fetch and set the associated user
         if (this.userId != null) {

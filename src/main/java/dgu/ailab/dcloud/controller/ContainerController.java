@@ -32,7 +32,7 @@ public class ContainerController {
         return ResponseEntity.ok(containers);
     }
 
-    @PostMapping("/containerrequest")
+    @PostMapping("/containerrequest") // insert to request form
     public ResponseEntity<ContainerRequestDto> createContainer(@RequestBody ContainerRequestDto containerRequestDto, HttpServletRequest request) {
         HttpSession session = request.getSession(false);
         String userId="";
