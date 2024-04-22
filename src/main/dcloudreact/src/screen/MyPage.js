@@ -41,6 +41,27 @@ function MyPage() {
               console.error('Error fetching data:', error);
             }
           };
+
+
+  const handleLogout = () => {
+      console.log("Logging out...");
+      axios.post('/api/logout', {}, { withCredentials: true }) // 서버에 로그아웃 요청
+        .then(response => {
+          // 로그아웃 성공 후 홈페이지로 리디렉션
+          navigate('/');
+        })
+        .catch(error => {
+          console.error('Logout failed:', error);
+        });
+    };
+     const hoverEffect = (e) => {
+        e.target.style.background = '#777';
+      };
+
+      const resetEffect = (e) => {
+        e.target.style.background = '#555';
+      };
+
   return (
     <div>
       <NavigationBar />
@@ -115,11 +136,32 @@ function MyPage() {
                   </tbody>
                 </table>
       </main>
+      <div style={containerStyle}>
+      <button onClick={handleLogout} style={{...buttonStyle, background: '#444'}} onMouseEnter={hoverEffect} onMouseLeave={resetEffect}>Log out</button>
+      </div>
+      <div style={{ height: '10vh' }}></div>
       <Footer />
     </div>
   );
 }
+const buttonStyle = {
+    padding: '8px 16px',
+    background: '#555',
+    color: 'white',
+    border: 'none',
+    borderRadius: '20px',
+    cursor: 'pointer',
+    transition: 'all 0.2s ease-in-out',
+    fontWeight: 'bold',
+    margin: '0 5px',
 
+
+  };
+  const containerStyle = {
+      display: 'flex',
+      justifyContent: 'center', // 가로 방향으로 중앙 정렬
+      alignItems: 'center', // 세로 방향으로 중앙 정렬
+    };
 const styles = {
   container: {
     display: 'flex',
@@ -173,6 +215,7 @@ const styles = {
       borderRight: '1px solid #e0e0e0',
       color: '#616161',
     }
+
 
 }
 
