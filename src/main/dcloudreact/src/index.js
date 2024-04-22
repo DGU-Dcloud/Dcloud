@@ -10,6 +10,7 @@ import ContainerRequestForm from './screen/ContainerRequestForm';
 import ContainerLookup from './screen/ContainerLookup';
 import ReportErrors from './screen/ReportErrors';
 import MyPage from './screen/MyPage';
+import Forum from './screen/Forum';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -22,6 +23,7 @@ root.render(
         <Route path="/mypage" element={<MyPage />} />
         <Route path="/containerlookup" element={<ContainerLookup />} />
         <Route path="/reporterrors" element={<ReportErrors />} />
+        <Route path="/forum" element={<Forum />} />
 
       </Routes>
     </BrowserRouter>

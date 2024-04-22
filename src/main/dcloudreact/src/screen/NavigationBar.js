@@ -37,6 +37,7 @@ function NavigationBar() {
     borderRadius: '0 0 10px 10px',
   };
 
+
   const buttonStyle = {
     padding: '8px 16px',
     background: '#555',
@@ -62,14 +63,18 @@ function NavigationBar() {
       <header style={headerStyle}>
         <img src="/dcloudlogo.png" onClick={() => navigate('/mainpage')} alt="Logo" style={{height: '65px', cursor: 'pointer'}} />
         <nav>
+
           <ul style={{listStyle: 'none', display: 'flex', gap: '20px', margin: 0, padding: 0}}>
             <li><button style={buttonStyle} onMouseEnter={hoverEffect} onMouseLeave={resetEffect} onClick={() => navigate('/containerrequestform')}>Container Request</button></li>
+            <li><button style={buttonStyle} onMouseEnter={hoverEffect} onMouseLeave={resetEffect} onClick={() => navigate('/forum')}>Forum</button></li>
             <li><button style={buttonStyle} onMouseEnter={hoverEffect} onMouseLeave={resetEffect} onClick={() => navigate('/containerlookup')}>Container Lookup</button></li>
             <li><button style={buttonStyle} onMouseEnter={hoverEffect} onMouseLeave={resetEffect} onClick={() => navigate('/reporterrors')}>Report Errors or Contact Us</button></li>
             <li><button style={buttonStyle} onMouseEnter={hoverEffect} onMouseLeave={resetEffect} onClick={() => navigate('/mypage')}>My Page</button></li>
           </ul>
+
+
         </nav>
-        <button onClick={handleLogout} style={{...buttonStyle, background: '#444'}} onMouseEnter={hoverEffect} onMouseLeave={resetEffect}>Log out</button>
+        <img src="/dcloudlogo.png" onClick={() => navigate('/mainpage')} alt="Logo" style={{visibility: 'hidden',height: '65px', cursor: 'pointer'}} />
       </header>
 
     </>
