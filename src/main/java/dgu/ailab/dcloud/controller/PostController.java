@@ -1,5 +1,6 @@
 package dgu.ailab.dcloud.controller;
 
+import dgu.ailab.dcloud.dto.PostDto;
 import dgu.ailab.dcloud.entity.Comment;
 import dgu.ailab.dcloud.entity.Post;
 import dgu.ailab.dcloud.entity.User;
@@ -42,7 +43,7 @@ public class PostController {
 
     // 새 포스트 작성하기
     @PostMapping("/posts")
-    public Post createPost(@RequestBody Post post, @RequestParam String userId) {
+    public Post createPost(@RequestBody PostDto post, @RequestParam String userId) {
         return postService.createPost(post, userId);
     }
 

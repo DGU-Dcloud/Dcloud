@@ -1,5 +1,6 @@
 package dgu.ailab.dcloud.service;
 
+import dgu.ailab.dcloud.dto.PostDto;
 import dgu.ailab.dcloud.entity.*;
 import dgu.ailab.dcloud.repository.PostRepository;
 import dgu.ailab.dcloud.repository.CommentRepository;
@@ -72,7 +73,7 @@ public class PostService {
     }
 
     // 새 포스트 작성하기
-    public Post createPost(Post post, String userId) {
+    public Post createPost(PostDto postDto, String userId) {
         User user = userRepository.findById(userId).orElse(null);
         if (user == null) {
             throw new PostCreationFailedException("Failed to create post. User not found.");
@@ -80,9 +81,9 @@ public class PostService {
             throw new PostCreationFailedException("Failed to create post. User is not a manager.");
         } else {
             // 현재 날짜 설정
-            post.setCreatedAt(new Date());
-            // 사용자 설정
-            //post.setUser(user);
+            postDto.setCreatedAt(new Date());
+            // PostDto를 Post 엔티티로 변환하여 저장
+            Post post = convertToEntity(postDto, user);
             return postRepository.save(post);
         }
     }
@@ -99,4 +100,13 @@ public class PostService {
         return false;
     }
 
+    private Post convertToEntity(PostDto postDto, User user) {
+        Post post = new Post();
+        post.setCategory(postDto.getCategory());
+        post.setTitle(postDto.getTitle());
+        post.setContent(postDto.getContent());
+        post.setCreatedAt(postDto.getCreatedAt());
+        post.setUser(user);
+        return post;
+    }
 }
