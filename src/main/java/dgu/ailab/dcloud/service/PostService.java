@@ -73,8 +73,9 @@ public class PostService {
     }
 
     // 새 포스트 작성하기
-    public Post createPost(PostDto postDto, String userId) {
-        User user = userRepository.findById(userId).orElse(null);
+    public Post createPost(PostDto postDto) {
+        User user = userRepository.findById(postDto.getUserId()).orElse(null);
+
         if (user == null) {
             throw new PostCreationFailedException("Failed to create post. User not found.");
         } else if (!isManager(user)) {
