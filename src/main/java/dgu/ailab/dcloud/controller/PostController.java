@@ -43,8 +43,8 @@ public class PostController {
 
     // 새 포스트 작성하기
     @PostMapping("/posts")
-    public Post createPost(@RequestBody PostDto post, @RequestParam String userId) {
-        return postService.createPost(post, userId);
+    public Post createPost(@RequestBody PostDto post) {
+        return postService.createPost(post);
     }
 
     // 특정 포스트에 댓글 추가하기
