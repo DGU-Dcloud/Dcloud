@@ -13,3 +13,6 @@
 | :-----: | :-----: |
 | [박민균](https://github.com/parkmingyun99) |  [이지연](https://github.com/JiiiYeonn) |
 
+
+### UI (일부 페이지 미완성)
+![uiux](https://github.com/DGU-Dcloud/Dcloud/assets/86116666/93dad449-f63d-412b-9928-88ac901409b2)
