@@ -1,5 +1,6 @@
 package dgu.ailab.dcloud.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -21,6 +22,7 @@ public class Role {
     private String roleName;
 
     // 복합키이므로 양방향 매핑
+    @JsonIgnore
     @OneToMany(mappedBy = "role", orphanRemoval = true, cascade = CascadeType.ALL)
     private List<UserRole> userRole = new ArrayList<>();
 

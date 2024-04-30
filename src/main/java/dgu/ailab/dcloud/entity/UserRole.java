@@ -1,5 +1,6 @@
 package dgu.ailab.dcloud.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.Getter;
@@ -22,10 +23,12 @@ public class UserRole {
     private Integer roleRoleId;
 
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "user_userid", referencedColumnName = "userid", insertable = false, updatable = false)
     private User user;
 
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "role_roleid", referencedColumnName = "roleid", insertable = false, updatable = false)
     private Role role;
 
