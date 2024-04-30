@@ -25,7 +25,7 @@ public class PostService {
         this.userRepository = userRepository;
     }
     // 모든 게시물을 불러오는 메서드
-    public List<Post> getAllPosts() {
+    public List<Post> getAllPostss() {
         List<Post> allPosts = postRepository.findAll();
 
         // "notice" 카테고리를 제일 위에 위치시키기

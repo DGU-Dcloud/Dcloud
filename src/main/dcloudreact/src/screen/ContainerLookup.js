@@ -93,5 +93,7 @@ const styles = {
     padding: '20px',
     paddingBottom: '10vh',
   },
-}
+};
+
+
 export default ContainerLookup;

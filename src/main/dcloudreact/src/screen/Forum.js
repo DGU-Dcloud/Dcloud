@@ -8,7 +8,6 @@ function Forum() {
   const navigate = useNavigate();
   const [posts, setPosts] = useState([]);
   const [filteredPosts, setFilteredPosts] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [postsPerPage] = useState(10);
   const [searchTerm, setSearchTerm] = useState('');
@@ -28,9 +27,9 @@ function Forum() {
       const response = await axios.get('http://localhost:8080/api/posts');
       setPosts(response.data);
       setFilteredPosts(response.data);
-      setLoading(false);
+
     } catch (error) {
-      setLoading(false);
+
     }
   };
 
@@ -63,10 +62,6 @@ function Forum() {
         ));
       }
     };
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
 
 
   return (

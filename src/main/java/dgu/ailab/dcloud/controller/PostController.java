@@ -26,7 +26,7 @@ public class PostController {
     // 모든 포스트 가져오기
     @GetMapping("/posts")
     public List<Post> getAllPosts() {
-        return postService.getAllPosts();
+        return postService.getAllPostss();
     }
 
     // 특정 포스트 가져오기

@@ -1,26 +1,35 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 function NavigationBar() {
-  // 내비게이션 바의 코드는 그대로 유지합니다.
   const navigate = useNavigate();
+  const [userRole, setUserRole] = useState('');
 
-//  const handleLogout = () => {
-//    console.log("Logging out...");
-//    navigate('/');
-//  };
-    const handleLogout = () => {
-    console.log("Logging out...");
-    axios.post('/api/logout', {}, { withCredentials: true }) // 서버에 로그아웃 요청
+  useEffect(() => {
+    // 로그인 상태 확인 후 사용자의 권한을 설정합니다.
+    // 예시 API는 수정해야 할 수 있습니다.
+    axios.get('/api/user-role', { withCredentials: true })
       .then(response => {
-        // 로그아웃 성공 후 홈페이지로 리디렉션
+        setUserRole(response.data.roleId === 1 ? 'manager' : '');
+      })
+      .catch(error => {
+        console.log('Error fetching user role:', error);
+      });
+
+  }, []);
+
+  const handleLogout = () => {
+    console.log("Logging out...");
+    axios.post('/api/logout', {}, { withCredentials: true })
+      .then(response => {
         navigate('/');
       })
       .catch(error => {
         console.error('Logout failed:', error);
       });
   };
+
   const headerStyle = {
     display: 'flex',
     justifyContent: 'space-between',
@@ -37,7 +46,6 @@ function NavigationBar() {
     borderRadius: '0 0 10px 10px',
   };
 
-
   const buttonStyle = {
     padding: '8px 16px',
     background: '#555',
@@ -50,36 +58,24 @@ function NavigationBar() {
     margin: '0 5px',
   };
 
-  const hoverEffect = (e) => {
-    e.target.style.background = '#777';
-  };
-
-  const resetEffect = (e) => {
-    e.target.style.background = '#555';
-  };
-
   return (
     <>
       <header style={headerStyle}>
         <img src="/dcloudlogo.png" onClick={() => navigate('/mainpage')} alt="Logo" style={{height: '65px', cursor: 'pointer'}} />
         <nav>
-
           <ul style={{listStyle: 'none', display: 'flex', gap: '20px', margin: 0, padding: 0}}>
-            <li><button style={buttonStyle} onMouseEnter={hoverEffect} onMouseLeave={resetEffect} onClick={() => navigate('/containerrequestform')}>Container Request</button></li>
-            <li><button style={buttonStyle} onMouseEnter={hoverEffect} onMouseLeave={resetEffect} onClick={() => navigate('/forum')}>Forum</button></li>
-            <li><button style={buttonStyle} onMouseEnter={hoverEffect} onMouseLeave={resetEffect} onClick={() => navigate('/containerlookup')}>Container Lookup</button></li>
-            <li><button style={buttonStyle} onMouseEnter={hoverEffect} onMouseLeave={resetEffect} onClick={() => navigate('/reporterrors')}>Report Errors or Contact Us</button></li>
-            <li><button style={buttonStyle} onMouseEnter={hoverEffect} onMouseLeave={resetEffect} onClick={() => navigate('/mypage')}>My Page</button></li>
+            <li><button style={buttonStyle} onClick={() => navigate('/containerrequestform')}>Container Request</button></li>
+            <li><button style={buttonStyle} onClick={() => navigate('/forum')}>Forum</button></li>
+            <li><button style={buttonStyle} onClick={() => navigate('/containerlookup')}>Container Lookup</button></li>
+            <li><button style={buttonStyle} onClick={() => navigate('/reporterrors')}>Report Errors or Contact Us</button></li>
+            <li><button style={buttonStyle} onClick={() => navigate('/mypage')}>My Page</button></li>
+            {userRole === 'manager' && <li><button style={buttonStyle} onClick={() => navigate('/admin')}>Admin</button></li>}
           </ul>
-
-
         </nav>
-        <img src="/dcloudlogo.png" onClick={() => navigate('/mainpage')} alt="Logo" style={{visibility: 'hidden',height: '65px', cursor: 'pointer'}} />
+        <img src="/dcloudlogo.png" style={{visibility: 'hidden', height: '65px'}} alt="Hidden Logo" />
       </header>
-
     </>
   );
 }
-
 
 export default NavigationBar;
