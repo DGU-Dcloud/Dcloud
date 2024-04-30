@@ -61,7 +61,7 @@ public class ContainerService {
         ContainerRequest containerRequest = containerRequestDto.toEntity();
 
         logger.info("toString() checkehck {}", containerRequest.toString());
-        containerRequest.setStatus("승인대기");
+        containerRequest.setStatus("Pending");
         containerRequest.setCreatedAt(new Date()); // 현재 시간 설정
         // Populate the container entity with dto data
         containerRequestRepository.save(containerRequest);

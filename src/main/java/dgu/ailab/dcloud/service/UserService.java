@@ -3,6 +3,7 @@ package dgu.ailab.dcloud.service;
 import dgu.ailab.dcloud.dto.ServerDto;
 import dgu.ailab.dcloud.dto.SignupDto;
 import dgu.ailab.dcloud.dto.UserInfoDto;
+import dgu.ailab.dcloud.dto.UserRoleDto;
 import dgu.ailab.dcloud.entity.Role;
 import dgu.ailab.dcloud.entity.User;
 import dgu.ailab.dcloud.entity.UserRole;
@@ -24,12 +25,14 @@ import java.util.stream.Collectors;
 public class UserService {
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
     private final UserRepository userRepository;
+    private final User_roleRepository userRoleRepository;
     private final RoleRepository roleRepository;
     private final User_roleRepository user_roleRepository;
 
     @Autowired
-    public UserService(UserRepository userRepository, RoleRepository roleRepository, User_roleRepository user_roleRepository) {
+    public UserService(UserRepository userRepository, User_roleRepository userRoleRepository, RoleRepository roleRepository, User_roleRepository user_roleRepository) {
         this.userRepository = userRepository;
+        this.userRoleRepository = userRoleRepository;
         this.roleRepository = roleRepository;
         this.user_roleRepository = user_roleRepository;
     }
@@ -88,6 +91,15 @@ public class UserService {
         User user = userRepository.findByUserID(userId);
         if (user != null) {
             return new UserInfoDto(user.getUserName(), user.getUserID(), user.getBirthDate(), user.getEmail());
+        } else {
+            throw new RuntimeException("User not found with userId: " + userId);
+        }
+    }
+
+    public UserRoleDto getUserRoleDto(String userId) {
+        UserRole userRole = userRoleRepository.findByUserUserID(userId);
+        if (userRole != null) {
+            return new UserRoleDto(userRole.getUserUserId(), userRole.getRoleRoleId());
         } else {
             throw new RuntimeException("User not found with userId: " + userId);
         }

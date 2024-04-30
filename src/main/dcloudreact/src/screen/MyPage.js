@@ -62,6 +62,27 @@ function MyPage() {
         e.target.style.background = '#555';
       };
 
+     const getStatusStyle = (status) => {
+         const baseStyle = {
+           textAlign: 'center',
+           padding: '10px',
+           borderBottom: '1px solid #e0e0e0',
+           color: '#616161', // Default color, overridden below
+         };
+
+         switch (status) {
+           case 'Pending':
+             return { ...baseStyle, color: 'blue' };
+           case 'Rejected':
+             return { ...baseStyle, color: 'red' };
+           case 'Approved':
+             return { ...baseStyle, color: 'green' };
+           default:
+             return baseStyle;
+         }
+       };
+
+
   return (
     <div>
       <NavigationBar />
@@ -93,18 +114,25 @@ function MyPage() {
         <table style={styles.table}>
           <thead>
             <tr>
+
               <th style={styles.th}>Request Date</th>
+              <th style={styles.th}>Student ID</th>
+              <th style={styles.th}>Environment</th>
+              <th style={styles.th}>GPU Model</th>
               <th style={styles.th}>Status</th>
             </tr>
           </thead>
           <tbody>
             {containerRequests.map((request, index) => {
               const date = new Date(request.createdAt);
-              const formattedDate = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
-              return (
+              const formattedDate = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')} ${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
+                return (
                 <tr key={index}>
                   <td style={styles.td}>{formattedDate}</td>
-                  <td style={styles.td}>{request.status}</td>
+                  <td style={styles.td}>{request.studentId}</td>
+                  <td style={styles.td}>{request.environment}</td>
+                  <td style={styles.td}>{request.gpuModel}</td>
+                  <td style={getStatusStyle(request.status)}>{request.status}</td>
                 </tr>
               );
             })}
@@ -135,6 +163,25 @@ function MyPage() {
                     ))}
                   </tbody>
                 </table>
+
+
+        <h1>Your Report</h1>
+                        <table style={styles.table}>
+                          <thead>
+                            <tr>
+                              <th style={styles.th}>Category</th>
+                              <th style={styles.th}>SSH Port</th>
+                              <th style={styles.th}>Chatting</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {containerRequests.map((request, index) => (
+                              <tr key={index}>
+
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
       </main>
       <div style={containerStyle}>
       <button onClick={handleLogout} style={{...buttonStyle, background: '#444'}} onMouseEnter={hoverEffect} onMouseLeave={resetEffect}>Log out</button>
