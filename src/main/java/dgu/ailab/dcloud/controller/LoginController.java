@@ -14,6 +14,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import jakarta.servlet.http.HttpSession;
 
+// LoginController는 로그인 기능을 위한 컨트롤러 입니다.
+
 @RestController
 @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")  // CORS 설정 추가
 public class LoginController {

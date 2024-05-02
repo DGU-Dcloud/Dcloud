@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 
 import java.util.List;
 
+// ImageController는 컨테이너 요청 폼에 이미지를 나타내기 위한 컨트롤러 입니다.
+
 @RestController
 @RequestMapping("/api/images")
 @CrossOrigin

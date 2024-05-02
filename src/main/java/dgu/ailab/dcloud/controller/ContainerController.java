@@ -18,6 +18,8 @@ import jakarta.servlet.http.HttpSession;
 import java.util.List;
 import java.util.Map;
 
+// ContainerController는 사용자의 컨테이너 요청을 처리하는 컨트롤러 입니다.
+
 @RestController
 @RequestMapping("/api")
 @CrossOrigin
