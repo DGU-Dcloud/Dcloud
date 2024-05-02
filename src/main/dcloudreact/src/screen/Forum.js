@@ -32,6 +32,9 @@ function Forum() {
 
     }
   };
+  const createPostHandler = () => {
+      navigate('/create-post'); // 예를 들어, 새 글 작성 페이지로 이동
+    };
 
   const handleSearchChange = (event) => {
       setSearchTerm(event.target.value);
@@ -82,6 +85,7 @@ function Forum() {
                     style={{ flex: 1, marginRight: '10px' }}
                   />
                   <button onClick={handleSearch} style={styles.searchButton}>Search</button>
+                  <button onClick={createPostHandler} style={styles.createButton}>Create Post</button> {/* 새 글 작성 버튼 추가 */}
                 </div>
         <table style={styles.table}>
           <thead>
@@ -182,6 +186,16 @@ const styles = {
       cursor: 'pointer',
       fontWeight: 'bold'
     },
+    createButton: {
+        padding: '10px 20px',
+        marginLeft: '10px', // 버튼 간 간격 조정
+        background: '#4CAF50', // 버튼 색상 변경
+        color: 'white',
+        border: 'none',
+        borderRadius: '5px',
+        cursor: 'pointer',
+        fontWeight: 'bold'
+      },
 
 };
 

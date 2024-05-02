@@ -8,6 +8,65 @@ function ReportErrors() {
   const [selectedIssue, setSelectedIssue] = useState('');
   const navigate = useNavigate();
 
+    const handleSubmit = async (event) => {
+      event.preventDefault(); // 폼의 기본 제출 동작 방지
+
+      // 폼 데이터 객체 생성
+        let formData = {};
+        if (selectedIssue === 'Container Connection Error') {
+          formData = {
+            name: event.target.name.value,
+            department: event.target.department.value,
+            studentId: event.target.studentId.value,
+            sshPort: event.target.sshPort.value,
+            category: event.target.category.value,
+          };
+        } else if (selectedIssue === 'Container Relocation Request') {
+          formData = {
+            name: event.target.name.value,
+            department: event.target.department.value,
+            studentId: event.target.studentId.value,
+            sshPort: event.target.sshPort.value,
+            reason: event.target.reason.value,
+            category: event.target.category.value,
+          };
+        } else if (selectedIssue === 'Extend Expiration Date') {
+          formData = {
+            name: event.target.name.value,
+            department: event.target.department.value,
+            studentId: event.target.studentId.value,
+            sshPort: event.target.sshPort.value,
+            permission: event.target.permission.value,
+            reason: event.target.reason.value,
+            category: event.target.category.value,
+          };
+        } else if (selectedIssue === 'Just Inquiry') {
+          formData = {
+            name: event.target.name.value,
+            department: event.target.department.value,
+            studentId: event.target.studentId.value,
+            inquiryDetails: event.target.inquiryDetails.value,
+            category: event.target.category.value,
+          };
+        }
+        console.log('Submitting form data:', formData);
+      try {
+        const response = await axios.post('/api/reports', formData, {
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          withCredentials: true // 쿠키 전송 설정 추가
+        });
+        console.log('Form submitted successfully:', response.data);
+//        navigate('/success'); // 제출 후 사용자를 성공 페이지로 리다이렉트
+      } catch (error) {
+        console.error('Failed to submit form:', error);
+//        navigate('/error'); // 에러 발생시 에러 페이지로 리다이렉트
+      }
+    };
+
+
+
   useEffect(() => {
           // 세션 검증
           axios.get('/api/check-auth', { withCredentials: true })
@@ -33,22 +92,25 @@ function ReportErrors() {
       const resetEffect = (e) => {
         e.target.style.background = '#555';
       };
+
+
     // 선택된 이슈에 따라 표시될 폼을 반환하는 함수
     const renderFormForIssue = () => {
       switch (selectedIssue) {
-        case 'image1':
+        case 'Container Connection Error':
           return <div>
 
               <div style={styles.inputGroup}>
                 <p style={styles.label}>Name</p>
-              <input type="text" placeholder="e.g., PARK MIN GYUN" required style={styles.inputField} />
-               <p style={styles.label}>Department</p>
-              <input type="text" placeholder="e.g., Computer Science" required style={styles.inputField} />
-               <p style={styles.label}>Student ID</p>
-              <input type="text" placeholder="e.g., 2018112032" required style={styles.inputField} />
+                <input type="text" placeholder="e.g., PARK MIN GYUN" required style={styles.inputField} name="name" />
+                <p style={styles.label}>Department</p>
+                <input type="text" placeholder="e.g., Computer Science" required style={styles.inputField} name="department" />
+                <p style={styles.label}>Student ID</p>
+                <input type="text" placeholder="e.g., 2018112032" required style={styles.inputField} name="studentId" />
                 <p style={styles.label}>Container's SSH Port Number</p>
-               <input type="text" placeholder="e.g., 9010" required style={styles.inputField} />
-             </div>
+                <input type="text" placeholder="e.g., 9010" required style={styles.inputField} name="sshPort" />
+              </div>
+
 
 
             <p style={styles.cautionText}>
@@ -78,24 +140,22 @@ function ReportErrors() {
                                     </div></div></div>
 
           </div>;
-        case 'image2':
+        case 'Container Relocation Request':
           return <div>
 
           <div style={styles.inputGroup}>
-                          <p style={styles.label}>Name</p>
-                        <input type="text" placeholder="e.g., PARK MIN GYUN" required style={styles.inputField} />
-                         <p style={styles.label}>Department</p>
-                        <input type="text" placeholder="e.g., Computer Science" required style={styles.inputField} />
-                         <p style={styles.label}>Student ID</p>
-                        <input type="text" placeholder="e.g., 2018112032" required style={styles.inputField} />
-                          <p style={styles.label}>Container's SSH Port Number</p>
-                         <input type="text" placeholder="e.g., 9010" required style={styles.inputField} />
-                       <p style={styles.label}>Why should we move your Container? Please write your reasons in as much detail as possible.</p>
-                        <textarea required style={{...styles.inputField, height: '100px', width: '700px'}} />
-                        <p style={styles.label}> If you require server performance or specific system software version, Please write down.</p>
-                        <textarea required style={{...styles.inputField, height: '100px', width: '700px'}} />
+            <p style={styles.label}>Name</p>
+            <input type="text" placeholder="e.g., PARK MIN GYUN" required style={styles.inputField} name="name" />
+            <p style={styles.label}>Department</p>
+            <input type="text" placeholder="e.g., Computer Science" required style={styles.inputField} name="department" />
+            <p style={styles.label}>Student ID</p>
+            <input type="text" placeholder="e.g., 2018112032" required style={styles.inputField} name="studentId" />
+            <p style={styles.label}>Container's SSH Port Number</p>
+            <input type="text" placeholder="e.g., 9010" required style={styles.inputField} name="sshPort" />
+            <p style={styles.label}>Reason for Relocation</p>
+            <textarea required style={{...styles.inputField, height: '100px', width: '700px'}} name="reason" />
+          </div>
 
-                       </div>
 
                   <p style={styles.cautionText}>
                       <h3>** !Must read! **</h3>
@@ -116,34 +176,30 @@ function ReportErrors() {
                                                    </div></div>
 
           </div>;
-        case 'image3':
+        case 'Extend Expiration Date':
           return <div>
-                        <div style={styles.inputGroup}>
-                                     <p style={styles.label}>Name</p>
-                                   <input type="text" placeholder="e.g., PARK MIN GYUN" required style={styles.inputField} />
-                                    <p style={styles.label}>Department</p>
-                                   <input type="text" placeholder="e.g., Computer Science" required style={styles.inputField} />
-                                    <p style={styles.label}>Student ID</p>
-                                   <input type="text" placeholder="e.g., 2018112032" required style={styles.inputField} />
-                                     <p style={styles.label}>Container's SSH Port Number</p>
-                                    <input type="text" placeholder="e.g., 9010" required style={styles.inputField} />
-                                  <p style={styles.label}>Did you get permission from your professor?</p>
-                                       <div style={styles.radioGroup}>
-                                         <label style={styles.radioLabel}>
-                                           <input type="radio" name="d" value="image3" required style={styles.radioButton}/>
-                                           Yes
-                                         </label>
-                                       </div>
 
-                                   <p style={styles.label}>Why should we extend your Container? Please write your reasons in as much detail as possible.</p>
-                                   <textarea required style={{...styles.inputField, height: '100px', width: '700px'}} />
+          <div style={styles.inputGroup}>
+            <p style={styles.label}>Name</p>
+            <input type="text" placeholder="e.g., PARK MIN GYUN" required style={styles.inputField} name="name" />
+            <p style={styles.label}>Department</p>
+            <input type="text" placeholder="e.g., Computer Science" required style={styles.inputField} name="department" />
+            <p style={styles.label}>Student ID</p>
+            <input type="text" placeholder="e.g., 2018112032" required style={styles.inputField} name="studentId" />
+            <p style={styles.label}>Container's SSH Port Number</p>
+            <input type="text" placeholder="e.g., 9010" required style={styles.inputField} name="sshPort" />
+            <p style={styles.label}>Did you get permission from your professor?</p>
+            <input type="checkbox" name="permission" /> Yes
+            <p style={styles.label}>New Expiration Date</p>
+            <input type="date" required style={styles.inputField} name="expirationDate" />
 
-                        </div>
+            <p style={styles.label}>Why should we extend your Container? Please write your reasons in as much detail as possible.</p>
+            <textarea required style={{...styles.inputField, height: '100px', width: '700px'}} name="reason" />
 
-                        <div style={styles.formGroup}>
-                                        <p style={styles.label}>Extend Expiration Date</p>
-                                        <input type="date" required style={styles.inputField} />
-                                    </div>
+
+          </div>
+
+
 
                      <p style={styles.cautionText}>
                          <h3>** !Must read! **</h3>
@@ -163,19 +219,19 @@ function ReportErrors() {
                         </div>
 
            </div>;
-        case 'image4':
+        case 'Just Inquiry':
           return <div>
                     <div style={styles.inputGroup}>
-                           <p style={styles.label}>Name</p>
-                         <input type="text" placeholder="e.g., PARK MIN GYUN" required style={styles.inputField} />
-                          <p style={styles.label}>Department</p>
-                         <input type="text" placeholder="e.g., Computer Science" required style={styles.inputField} />
-                          <p style={styles.label}>Student ID</p>
-                         <input type="text" placeholder="e.g., 2018112032" required style={styles.inputField} />
-                           <p style={styles.label}>Inquiry Details</p>
-                          <textarea required style={{...styles.inputField, height: '100px', width: '700px'}} />
+                      <p style={styles.label}>Name</p>
+                      <input type="text" placeholder="e.g., PARK MIN GYUN" required style={styles.inputField} name="name" />
+                      <p style={styles.label}>Department</p>
+                      <input type="text" placeholder="e.g., Computer Science" required style={styles.inputField} name="department" />
+                      <p style={styles.label}>Student ID</p>
+                      <input type="text" placeholder="e.g., 2018112032" required style={styles.inputField} name="studentId" />
+                      <p style={styles.label}>Details of Inquiry</p>
+                      <textarea required style={{...styles.inputField, height: '100px', width: '700px'}} name="inquiryDetails" />
+                    </div>
 
-                      </div>
            <p style={styles.cautionText}>
               <h3>** !Must read! **</h3>
               Please submit an error that matches the required items.
@@ -201,24 +257,24 @@ function ReportErrors() {
         <div style={{ height: '10vh' }}></div>
         <main style={styles.container}>
       <h1 style={styles.heading}>Report Errors or Contact Us Anything</h1>
-            <form style={styles.form}>
+            <form onSubmit={handleSubmit} style={styles.form}>
               <div style={styles.formGroup}>
                       <p style={styles.label}>Contact Details</p>
                       <div style={styles.radioGroup}>
                         <label style={styles.radioLabel}>
-                          <input type="radio" name="issue" value="image1" required style={styles.radioButton} onChange={handleIssueChange} />
+                          <input type="radio" name="category" value="Container Connection Error" required style={styles.radioButton} onChange={handleIssueChange} />
                           Container Connection Error
                         </label>
                         <label style={styles.radioLabel}>
-                          <input type="radio" name="issue" value="image2" required style={styles.radioButton} onChange={handleIssueChange} />
+                          <input type="radio" name="category" value="Container Relocation Request" required style={styles.radioButton} onChange={handleIssueChange} />
                           Container Relocation Request
                         </label>
                         <label style={styles.radioLabel}>
-                          <input type="radio" name="issue" value="image3" required style={styles.radioButton} onChange={handleIssueChange} />
+                          <input type="radio" name="category" value="Extend Expiration Date" required style={styles.radioButton} onChange={handleIssueChange} />
                           Extend Expiration Date
                         </label>
                         <label style={styles.radioLabel}>
-                          <input type="radio" name="issue" value="image4" required style={styles.radioButton} onChange={handleIssueChange} />
+                          <input type="radio" name="category" value="Just Inquiry" required style={styles.radioButton} onChange={handleIssueChange} />
                           Just Inquiry
                         </label>
                       </div>

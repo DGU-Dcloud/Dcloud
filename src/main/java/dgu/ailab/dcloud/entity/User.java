@@ -54,6 +54,10 @@ public class User {
     @OneToMany(mappedBy = "user", orphanRemoval = true, cascade = CascadeType.ALL)
     private List<UserRole> userRole = new ArrayList<>();
 
+    // User 클래스 내부
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<UserReport> userReports = new ArrayList<>();
+
     // 사용자의 역할 가져오기
     public List<Role> getRoles() {
         return userRole.stream()
