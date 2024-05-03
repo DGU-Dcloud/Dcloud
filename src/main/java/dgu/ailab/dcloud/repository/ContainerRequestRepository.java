@@ -20,4 +20,6 @@ public interface ContainerRequestRepository extends JpaRepository<ContainerReque
     @Transactional
     @Query("UPDATE ContainerRequest cr SET cr.status = :status WHERE cr.requestId IN :ids")
     void updateStatusByIds(List<Integer> ids, String status);
+
+    ContainerRequest findByRequestId(Integer i);
 }

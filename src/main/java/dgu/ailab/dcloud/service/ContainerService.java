@@ -107,11 +107,20 @@ public class ContainerService {
 
     public void applyRequests(List<Integer> ids) { // admin이 컨테이너 요청을 apply한 경우
         containerRequestRepository.updateStatusByIds(ids, "Approved");
-        String host="210.94.179.18";
-        int port=8081;
-        String username="mingyun"; // 추후 svmanager로 수정 바람. 모든서버에 svmanager 계정 패스워드가 조금씩 다른 것 같아서 일단 mingyun account 사용.
-        String password="alsrbs1212";
-        sshCommand.executeCommand(host,port,username,password,"nvidia-smi");
+        for(Integer i : ids){
+            ContainerRequest request = containerRequestRepository.findByRequestId(i);
+            String host="210.94.179.18";
+            if ("LAB".equals(request.getEnvironment())) {
+                host = "210.94.179.19";
+            } else if ("FARM".equals(request.getEnvironment())) {
+                host = "210.94.179.19";
+            }
+            int port = 8081; // Typically SSH port, adjust if necessary
+            String username = "mingyun"; // Use 'svmanager' in production
+            String password = "alsrbs1212"; // Use environment-specific secure storage for passwords in production
+            sshCommand.executeCommand(host, port, username, password, "sudo docker ps -a");
+        }
+
     }
 
     public void denyRequests(List<Integer> ids) {  // admin이 컨테이너 요청을 deny한 경우
