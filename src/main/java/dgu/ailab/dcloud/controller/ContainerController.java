@@ -2,6 +2,7 @@ package dgu.ailab.dcloud.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import dgu.ailab.dcloud.dto.ActionRequestDto;
 import dgu.ailab.dcloud.dto.ContainerDto;
 import dgu.ailab.dcloud.dto.ContainerRequestDto;
 import dgu.ailab.dcloud.service.ContainerService;
@@ -40,6 +41,36 @@ public class ContainerController {
         return ResponseEntity.ok(containers);
     }
 
+    @GetMapping("/allcontainerrequest") // admin page에서 컨테이너 요청정보 다 확인하기 위함임.
+    public ResponseEntity<List<ContainerRequestDto>> getAllContainerRequests() {
+        logger.info("Fetching all container requests");
+        List<ContainerRequestDto> containerRequests = containerService.findAllContainerRequests();
+        if (containerRequests.isEmpty()) {
+            logger.info("No container requests found");
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(containerRequests);
+    }
+
+    @PostMapping("/admin-action") // admin이 apply or deny를 한 경우
+    public ResponseEntity<?> handleRequestAction(@RequestBody ActionRequestDto requestDto) {
+        try {
+            if ("Apply".equals(requestDto.getAction())) {
+                containerService.applyRequests(requestDto.getIds());
+            } else if ("Deny".equals(requestDto.getAction())) {
+                containerService.denyRequests(requestDto.getIds());
+            } else if ("Pending".equals(requestDto.getAction())) {
+                containerService.pendingRequests(requestDto.getIds());
+            }
+            else {
+                return ResponseEntity.badRequest().body("Invalid action specified");
+            }
+            return ResponseEntity.ok("Action processed successfully");
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("Error processing request: " + e.getMessage());
+        }
+    }
+
     @PostMapping("/containerrequest") // insert to request form
     public ResponseEntity<ContainerRequestDto> createContainer(@RequestBody ContainerRequestDto containerRequestDto, HttpServletRequest request) {
         HttpSession session = request.getSession(false);
@@ -50,17 +81,17 @@ public class ContainerController {
         }
 
         // Send message to Slack
-        sendMessageToSlack("Processing container request for user: " + containerRequestDto.toString());
+//        sendMessageToSlack("Processing container request for user: " + containerRequestDto.toString());
 
         ContainerRequestDto savedContainerRequest = containerService.insertContainerRequest(containerRequestDto);
-        logger.info("Retrieved roleId: {}", containerRequestDto.getDepartment());
-        logger.info("Retrieved roleId: {}", containerRequestDto.getImageTag());
-        logger.info("Retrieved roleId: {}", containerRequestDto.getImageName());
-        logger.info("Retrieved roleId: {}", containerRequestDto.getGpuModel());
-        logger.info("Retrieved roleId: {}", containerRequestDto.getUsageDescription());
-        logger.info("Retrieved roleId: {}", containerRequestDto.getExpectedExpirationDate());
-        logger.info("Retrieved roleId: {}", containerRequestDto.getEnvironment());
-        logger.info("Retrieved roleId: {}", containerRequestDto.getStudentId());
+//        logger.info("Retrieved roleId: {}", containerRequestDto.getDepartment());
+//        logger.info("Retrieved roleId: {}", containerRequestDto.getImageTag());
+//        logger.info("Retrieved roleId: {}", containerRequestDto.getImageName());
+//        logger.info("Retrieved roleId: {}", containerRequestDto.getGpuModel());
+//        logger.info("Retrieved roleId: {}", containerRequestDto.getUsageDescription());
+//        logger.info("Retrieved roleId: {}", containerRequestDto.getExpectedExpirationDate());
+//        logger.info("Retrieved roleId: {}", containerRequestDto.getEnvironment());
+//        logger.info("Retrieved roleId: {}", containerRequestDto.getStudentId());
 
         if (savedContainerRequest != null) {
             return ResponseEntity.ok(savedContainerRequest);

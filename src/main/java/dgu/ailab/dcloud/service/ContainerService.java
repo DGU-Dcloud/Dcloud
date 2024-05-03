@@ -25,11 +25,19 @@ public class ContainerService {
     private final ContainerRepository containerRepository;
     private final ContainerRequestRepository containerRequestRepository;
     private static final Logger logger = LoggerFactory.getLogger(SignupController.class);
-
+    private final SshCommand sshCommand;
     @Autowired
-    public ContainerService(ContainerRepository containerRepository, ContainerRequestRepository containerRequestRepository) {
+    public ContainerService(ContainerRepository containerRepository, ContainerRequestRepository containerRequestRepository, SshCommand sshCommand) {
         this.containerRepository = containerRepository;
         this.containerRequestRepository = containerRequestRepository;
+        this.sshCommand = sshCommand;
+    }
+
+
+    public List<ContainerRequestDto> findAllContainerRequests() {
+        return containerRequestRepository.findAll().stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
     }
 
     public List<ContainerDto> getAllContainers() {
@@ -94,5 +102,22 @@ public class ContainerService {
                 containerRequest.getStatus(),
                 containerRequest.getCreatedAt()
         );
+    }
+
+
+    public void applyRequests(List<Integer> ids) { // admin이 컨테이너 요청을 apply한 경우
+        containerRequestRepository.updateStatusByIds(ids, "Approved");
+        String host="210.94.179.18";
+        int port=8081;
+        String username="mingyun"; // 추후 svmanager로 수정 바람. 모든서버에 svmanager 계정 패스워드가 조금씩 다른 것 같아서 일단 mingyun account 사용.
+        String password="alsrbs1212";
+        sshCommand.executeCommand(host,port,username,password,"nvidia-smi");
+    }
+
+    public void denyRequests(List<Integer> ids) {  // admin이 컨테이너 요청을 deny한 경우
+        containerRequestRepository.updateStatusByIds(ids, "Rejected");
+    }
+    public void pendingRequests(List<Integer> ids) {  // admin이 컨테이너 요청을 pending으로 돌려놓고자 할 경우
+        containerRequestRepository.updateStatusByIds(ids, "Pending");
     }
 }
