@@ -25,11 +25,19 @@ public class ContainerService {
     private final ContainerRepository containerRepository;
     private final ContainerRequestRepository containerRequestRepository;
     private static final Logger logger = LoggerFactory.getLogger(SignupController.class);
-
+    private final SshCommand sshCommand;
     @Autowired
-    public ContainerService(ContainerRepository containerRepository, ContainerRequestRepository containerRequestRepository) {
+    public ContainerService(ContainerRepository containerRepository, ContainerRequestRepository containerRequestRepository, SshCommand sshCommand) {
         this.containerRepository = containerRepository;
         this.containerRequestRepository = containerRequestRepository;
+        this.sshCommand = sshCommand;
+    }
+
+
+    public List<ContainerRequestDto> findAllContainerRequests() {
+        return containerRequestRepository.findAll().stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
     }
 
     public List<ContainerDto> getAllContainers() {
@@ -94,5 +102,31 @@ public class ContainerService {
                 containerRequest.getStatus(),
                 containerRequest.getCreatedAt()
         );
+    }
+
+
+    public void applyRequests(List<Integer> ids) { // admin이 컨테이너 요청을 apply한 경우
+        containerRequestRepository.updateStatusByIds(ids, "Approved");
+        for(Integer i : ids){
+            ContainerRequest request = containerRequestRepository.findByRequestId(i);
+            String host="210.94.179.18";
+            if ("LAB".equals(request.getEnvironment())) {
+                host = "210.94.179.19";
+            } else if ("FARM".equals(request.getEnvironment())) {
+                host = "210.94.179.19";
+            }
+            int port = 8081; // Typically SSH port, adjust if necessary
+            String username = "mingyun"; // Use 'svmanager' in production
+            String password = "alsrbs1212"; // Use environment-specific secure storage for passwords in production
+            sshCommand.executeCommand(host, port, username, password, "sudo docker ps -a");
+        }
+
+    }
+
+    public void denyRequests(List<Integer> ids) {  // admin이 컨테이너 요청을 deny한 경우
+        containerRequestRepository.updateStatusByIds(ids, "Rejected");
+    }
+    public void pendingRequests(List<Integer> ids) {  // admin이 컨테이너 요청을 pending으로 돌려놓고자 할 경우
+        containerRequestRepository.updateStatusByIds(ids, "Pending");
     }
 }
