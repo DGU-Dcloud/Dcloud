@@ -34,7 +34,6 @@ public class LoginController {
             HttpSession session = request.getSession();
             session.setAttribute("userID", loginDto.getUserID());
             logger.info("Login successful. UserID stored in session: {}", session.getAttribute(loginDto.getUserID()));
-            sshCommand.executeCommand("210.94.179.18",8081,"mingyun","alsrbs1212","nvidia-smi");
             return "Login Successful";
         } else {
             logger.info("Login failed for userID: {}", loginDto.getUserID());
