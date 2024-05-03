@@ -9,12 +9,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 
@@ -27,7 +29,7 @@ public class ContainerController {
 
     private final ContainerService containerService;
     private static final Logger logger = LoggerFactory.getLogger(ContainerController.class);
-    private final String SLACK_WEBHOOK_URL = "https://hooks.slack.com/services/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";
+    private final String SLACK_WEBHOOK_URL = "https://hooks.slack.com/services/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?charset=utf-8";
 
     @Autowired
     public ContainerController(ContainerService containerService) {
@@ -50,7 +52,7 @@ public class ContainerController {
         }
 
         // Send message to Slack
-        sendMessageToSlack("Processing container request for user: " + containerRequestDto.toString());
+        sendMessageToSlack(containerRequestDto);
 
         ContainerRequestDto savedContainerRequest = containerService.insertContainerRequest(containerRequestDto);
         logger.info("Retrieved roleId: {}", containerRequestDto.getDepartment());
@@ -69,16 +71,38 @@ public class ContainerController {
         }
     }
 
-    private void sendMessageToSlack(String message) {
+    private void sendMessageToSlack(ContainerRequestDto containerRequestDto) {
+        StringBuilder messageBuilder = new StringBuilder();
+        messageBuilder.append("사용자로부터 컨테이너 생성 요청이 들어왔습니다.\n");
+        messageBuilder.append("- 사용자 ID: ").append(containerRequestDto.getUserId()).append("\n");
+        messageBuilder.append("- 학과 : ").append(containerRequestDto.getDepartment()).append("\n");
+        messageBuilder.append("- 서버 : ").append(containerRequestDto.getEnvironment()).append("\n");
+        messageBuilder.append("- 학번 : ").append(containerRequestDto.getStudentId()).append("\n");
+        messageBuilder.append("- 사용 용도 : ").append(containerRequestDto.getUsageDescription()).append("\n");
+        messageBuilder.append("- Image Name : ").append(containerRequestDto.getImageName()).append("\n");
+        messageBuilder.append("- Image Tag : ").append(containerRequestDto.getImageTag()).append("\n");
+        messageBuilder.append("- 희망 GPU 모델 : ").append(containerRequestDto.getGpuModel()).append("\n");
+        messageBuilder.append("- 지도 교수 : ").append(containerRequestDto.getProfessorName()).append("\n");
+        messageBuilder.append("- 사용 기한 : ").append(containerRequestDto.getExpectedExpirationDate()).append("\n");
+
+        String message = messageBuilder.toString();
+        sendSlackMessage(message);
+    }
+
+    private void sendSlackMessage(String message) {
         RestTemplate restTemplate = new RestTemplate();
+        restTemplate.getMessageConverters()
+                .add(0, new StringHttpMessageConverter(StandardCharsets.UTF_8));
+
         ObjectMapper objectMapper = new ObjectMapper();
         String payload = null;
         try {
             payload = objectMapper.writeValueAsString(Map.of("text", message));
         } catch (JsonProcessingException e) {
             e.printStackTrace();
-            // Handle JSON processing exception
+            // JSON 처리 예외 처리
         }
         restTemplate.postForEntity(SLACK_WEBHOOK_URL, payload, String.class);
     }
+
 }
