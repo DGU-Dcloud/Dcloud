@@ -29,7 +29,7 @@ public class ContainerController {
 
     private final ContainerService containerService;
     private static final Logger logger = LoggerFactory.getLogger(ContainerController.class);
-    private final String SLACK_WEBHOOK_URL = "https://hooks.slack.com/services/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?charset=utf-8";
+    private final String SLACK_WEBHOOK_URL = "https://hooks.slack.com/services/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?charset=utf-8";
 
     @Autowired
     public ContainerController(ContainerService containerService) {
