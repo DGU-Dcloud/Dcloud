@@ -37,6 +37,7 @@ function ReportErrors() {
             studentId: event.target.studentId.value,
             sshPort: event.target.sshPort.value,
             permission: event.target.permission.value,
+            expirationDate: event.target.expirationDate.value,
             reason: event.target.reason.value,
             category: event.target.category.value,
           };

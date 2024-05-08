@@ -18,10 +18,10 @@ public class ReportDto {
     private String serverName;
     private String userId;
     private String department;
-    private String requirement;
+    private String requirement; // Extend Expiration Date 시, 사용자 요구 사항 받음
     private int sshPort;
     private String studentId;
-    private String why;
+    private String why; // container relocation, Extend Expiration Date, Just Inquiry
 
 
     public ReportDto(Boolean isAnswered, Integer reportID, Date createdAt, String category, String userId, String department, String requirement, Integer sshPort, String studentID, String why) {
