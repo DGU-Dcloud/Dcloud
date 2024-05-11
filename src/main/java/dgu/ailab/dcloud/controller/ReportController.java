@@ -12,6 +12,7 @@ import dgu.ailab.dcloud.service.ReportService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.web.bind.annotation.*;
@@ -22,6 +23,7 @@ import jakarta.servlet.http.HttpSession;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 @RestController
@@ -39,86 +41,175 @@ public class ReportController {
     }
 
     @PostMapping("/reports")
-    public ResponseEntity<?> createReport(@RequestBody Object reportDto, HttpServletRequest request) {
-        if (reportDto instanceof ContainerConnectionErrorDto) {
-            return processContainerConnectionErrorReport((ContainerConnectionErrorDto) reportDto, request);
-        } else if (reportDto instanceof ContainerRelocationRequestDto) {
-            return processContainerRelocationRequestReport((ContainerRelocationRequestDto) reportDto, request);
-        } else if (reportDto instanceof ExtendExpirationDateDto) {
-            return processExtendExpirationDateReport((ExtendExpirationDateDto) reportDto, request);
-        } else if (reportDto instanceof JustInquiryDto) {
-            return processJustInquiryReport((JustInquiryDto) reportDto, request);
-        } else {
-            return ResponseEntity.badRequest().build();
+    public ResponseEntity<?> createReport(@RequestBody Map<String, Object> requestBody, HttpServletRequest request) {
+        logger.info("Received a request to create a report.");
+        // requestBody를 로깅하여 확인
+        logger.info("Request Body: {}", requestBody);
+
+        try {
+            String category = (String) requestBody.get("category");
+            logger.info("category: {}", category);
+            // reportData 생성
+            Map<String, Object> reportData = new HashMap<>();
+            reportData.put("name", requestBody.get("name"));
+            reportData.put("department", requestBody.get("department"));
+            reportData.put("studentId", requestBody.get("studentId"));
+            reportData.put("sshPort", requestBody.get("sshPort"));
+            reportData.put("category", requestBody.get("category"));
+
+            if (category == null || reportData.containsValue(null)) {
+                logger.info("카테고리 또는 데이터 누락");
+                return ResponseEntity.badRequest().build();
+            }
+
+            switch (category) {
+                case "Container Connection Error":
+                    logger.info("카테고리 인식");
+                    return processReport("Container Connection Error", reportData, request);
+                case "Container Relocation Request":
+                    return processReport("Container Relocation Request", reportData, request);
+                case "Extend Expiration Date":
+                    return processReport("Extend Expiration Date", reportData, request);
+                case "Just Inquiry":
+                    return processReport("Just Inquiry", reportData, request);
+                default:
+                    return ResponseEntity.badRequest().build();
+            }
+        } catch (Exception e) {
+            logger.error("An error occurred while processing the report request: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 
-    private ResponseEntity<?> processContainerConnectionErrorReport(ContainerConnectionErrorDto reportDto, HttpServletRequest request) {
+    private ResponseEntity<?> processReport(String category, Map<String, Object> reportData, HttpServletRequest request) {
         HttpSession session = request.getSession(false);
         String userId = "";
         if (session != null) {
             userId = (String) session.getAttribute("userID");
-            reportDto.setUserId(userId);
         }
 
-        ContainerConnectionErrorDto savedReport = reportService.insertContainerConnectionErrorReport(reportDto);
-        if (savedReport != null) {
-            sendMessageToSlack(reportDto);
-            return ResponseEntity.ok(savedReport);
-        } else {
-            return ResponseEntity.badRequest().build();
+        // Add userId to reportData
+        reportData.put("userId", userId);
+
+        // Handle report based on category
+        switch (category) {
+            case "Container Connection Error":
+                logger.info("processReport Container Connection Error");
+                return processContainerConnectionErrorReport(reportData);
+            case "Container Relocation Request":
+                return processContainerRelocationRequestReport(reportData);
+            case "Extend Expiration Date":
+                return processExtendExpirationDateReport(reportData);
+            case "Just Inquiry":
+                return processJustInquiryReport(reportData);
+            default:
+                return ResponseEntity.badRequest().build();
         }
     }
 
-    private ResponseEntity<?> processContainerRelocationRequestReport(ContainerRelocationRequestDto reportDto, HttpServletRequest request) {
-        HttpSession session = request.getSession(false);
-        String userId = "";
-        if (session != null) {
-            userId = (String) session.getAttribute("userID");
-            reportDto.setUserId(userId);
-        }
-
-        ContainerRelocationRequestDto savedReport = reportService.insertContainerRelocationRequestReport(reportDto);
-        if (savedReport != null) {
-            sendMessageToSlack(reportDto);
-            return ResponseEntity.ok(savedReport);
-        } else {
-            return ResponseEntity.badRequest().build();
-        }
+    private ResponseEntity<?> processContainerConnectionErrorReport(Map<String, Object> reportData) {
+        logger.info("reportData(변환전): {}", reportData);
+        ContainerConnectionErrorDto reportDto = mapToContainerConnectionErrorDto(reportData);
+        logger.info("reportDto(변환후): {}", reportDto);
+        return ResponseEntity.ok(reportDto.save(reportService));
     }
 
-    private ResponseEntity<?> processExtendExpirationDateReport(ExtendExpirationDateDto reportDto, HttpServletRequest request) {
-        HttpSession session = request.getSession(false);
-        String userId = "";
-        if (session != null) {
-            userId = (String) session.getAttribute("userID");
-            reportDto.setUserId(userId);
-        }
-
-        ExtendExpirationDateDto savedReport = reportService.insertExtendExpirationDateReport(reportDto);
-        if (savedReport != null) {
-            sendMessageToSlack(reportDto);
-            return ResponseEntity.ok(savedReport);
-        } else {
-            return ResponseEntity.badRequest().build();
-        }
+    private ResponseEntity<?> processContainerRelocationRequestReport(Map<String, Object> reportData) {
+        ContainerRelocationRequestDto reportDto = mapToContainerRelocationRequestDto(reportData);
+        return ResponseEntity.ok(reportDto.save(reportService));
     }
 
-    private ResponseEntity<?> processJustInquiryReport(JustInquiryDto reportDto, HttpServletRequest request) {
-        HttpSession session = request.getSession(false);
-        String userId = "";
-        if (session != null) {
-            userId = (String) session.getAttribute("userID");
-            reportDto.setUserId(userId);
+    private ResponseEntity<?> processExtendExpirationDateReport(Map<String, Object> reportData) {
+        ExtendExpirationDateDto reportDto = mapToExtendExpirationDateDto(reportData);
+        return ResponseEntity.ok(reportDto.save(reportService));
+    }
+
+    private ResponseEntity<?> processJustInquiryReport(Map<String, Object> reportData) {
+        JustInquiryDto reportDto = mapToJustInquiryDto(reportData);
+        return ResponseEntity.ok(reportDto.save(reportService));
+    }
+
+
+    private ContainerConnectionErrorDto mapToContainerConnectionErrorDto(Map<String, Object> reportData) {
+        ContainerConnectionErrorDto dto = new ContainerConnectionErrorDto();
+        dto.setName((String) reportData.get("name"));
+        dto.setDepartment((String) reportData.get("department"));
+        dto.setUserId((String) reportData.get("userId"));
+        dto.setStudentId((String) reportData.get("studentId"));
+
+        // SSH 포트를 정수로 변환하여 저장, 예외 처리 추가
+        try {
+            String sshPortString = (String) reportData.get("sshPort");
+            int sshPort = Integer.parseInt(sshPortString);
+            dto.setSshPort(sshPort);
+        } catch (NumberFormatException e) {
+            // 예외 발생시 로그 출력 및 적절한 처리를 수행
+            logger.error("Failed to parse SSH port: {}", e.getMessage());
+            // 예외 처리 방법에 따라 기본값 설정 또는 예외 전파 등의 처리 가능
         }
 
-        JustInquiryDto savedReport = reportService.insertJustInquiryReport(reportDto);
-        if (savedReport != null) {
-            sendMessageToSlack(reportDto);
-            return ResponseEntity.ok(savedReport);
-        } else {
-            return ResponseEntity.badRequest().build();
+        return dto;
+    }
+
+    private ContainerRelocationRequestDto mapToContainerRelocationRequestDto(Map<String, Object> reportData) {
+        ContainerRelocationRequestDto dto = new ContainerRelocationRequestDto();
+        dto.setName((String) reportData.get("name"));
+        dto.setDepartment((String) reportData.get("department"));
+        dto.setUserId((String) reportData.get("userId"));
+        dto.setStudentId((String) reportData.get("studentId"));
+
+        // SSH 포트를 정수로 변환하여 저장, 예외 처리 추가
+        try {
+            String sshPortString = (String) reportData.get("sshPort");
+            int sshPort = Integer.parseInt(sshPortString);
+            dto.setSshPort(sshPort);
+        } catch (NumberFormatException e) {
+            // 예외 발생시 로그 출력 및 적절한 처리를 수행
+            logger.error("Failed to parse SSH port: {}", e.getMessage());
+            // 예외 처리 방법에 따라 기본값 설정 또는 예외 전파 등의 처리 가능
         }
+
+        dto.setWhy((String) reportData.get("why"));
+        dto.setCategory((String) reportData.get("category"));
+
+        return dto;
+    }
+
+    private ExtendExpirationDateDto mapToExtendExpirationDateDto(Map<String, Object> reportData) {
+        ExtendExpirationDateDto dto = new ExtendExpirationDateDto();
+        dto.setName((String) reportData.get("name"));
+        dto.setDepartment((String) reportData.get("department"));
+        dto.setUserId((String) reportData.get("userId"));
+        dto.setStudentId((String) reportData.get("studentId"));
+
+        // SSH 포트를 정수로 변환하여 저장, 예외 처리 추가
+        try {
+            String sshPortString = (String) reportData.get("sshPort");
+            int sshPort = Integer.parseInt(sshPortString);
+            dto.setSshPort(sshPort);
+        } catch (NumberFormatException e) {
+            // 예외 발생시 로그 출력 및 적절한 처리를 수행
+            logger.error("Failed to parse SSH port: {}", e.getMessage());
+            // 예외 처리 방법에 따라 기본값 설정 또는 예외 전파 등의 처리 가능
+        }
+
+        dto.setPermission((Boolean) reportData.get("permission"));
+        dto.setRequirement((String) reportData.get("requirement"));
+        dto.setWhy((String) reportData.get("why"));
+        dto.setCategory((String) reportData.get("category"));
+
+        return dto;
+    }
+
+    private JustInquiryDto mapToJustInquiryDto(Map<String, Object> reportData) {
+        JustInquiryDto dto = new JustInquiryDto();
+        dto.setName((String) reportData.get("name"));
+        dto.setDepartment((String) reportData.get("department"));
+        dto.setUserId((String) reportData.get("userId"));
+        dto.setStudentId((String) reportData.get("studentId"));
+        dto.setWhy((String) reportData.get("why"));
+        dto.setCategory((String) reportData.get("category"));
+        return dto;
     }
 
     private void sendMessageToSlack(ContainerConnectionErrorDto reportDto) {
