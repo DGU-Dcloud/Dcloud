@@ -13,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
+
 @Service
 public class ReportService {
 
@@ -61,38 +63,51 @@ public class ReportService {
 
     private Report mapToReportEntity(ContainerConnectionErrorDto reportDto) {
         Report report = new Report();
+        report.setIsAnswered(false);
+        report.setCreatedAt(new Date());
         report.setCategory(reportDto.getCategory());
-        report.setDepartment(reportDto.getDepartment());
         report.setUserId(reportDto.getUserId());
+        report.setDepartment(reportDto.getDepartment());
         report.setSshPort(reportDto.getSshPort());
+        report.setStudentID(reportDto.getStudentId());
         return report;
     }
 
     private Report mapToReportEntity(ContainerRelocationRequestDto reportDto) {
         Report report = new Report();
+        report.setIsAnswered(false);
+        report.setCreatedAt(new Date());
         report.setCategory(reportDto.getCategory());
-        report.setDepartment(reportDto.getDepartment());
         report.setUserId(reportDto.getUserId());
+        report.setDepartment(reportDto.getDepartment());
+        report.setSshPort(reportDto.getSshPort());
+        report.setStudentID(reportDto.getStudentId());
         report.setWhy(reportDto.getWhy());
         return report;
     }
 
     private Report mapToReportEntity(ExtendExpirationDateDto reportDto) {
         Report report = new Report();
+        report.setIsAnswered(false);
+        report.setCreatedAt(new Date());
         report.setCategory(reportDto.getCategory());
-        report.setDepartment(reportDto.getDepartment());
         report.setUserId(reportDto.getUserId());
+        report.setDepartment(reportDto.getDepartment());
         //report.setPermission(reportDto.getPermission());
         report.setRequirement(reportDto.getRequirement());
+        report.setStudentID(reportDto.getStudentId());
         report.setWhy(reportDto.getWhy());
         return report;
     }
 
     private Report mapToReportEntity(JustInquiryDto reportDto) {
         Report report = new Report();
+        report.setIsAnswered(false);
+        report.setCreatedAt(new Date());
         report.setCategory(reportDto.getCategory());
-        report.setDepartment(reportDto.getDepartment());
         report.setUserId(reportDto.getUserId());
+        report.setDepartment(reportDto.getDepartment());
+        report.setStudentID(reportDto.getStudentId());
         report.setWhy(reportDto.getWhy());
         return report;
     }
