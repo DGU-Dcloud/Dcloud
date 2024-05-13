@@ -18,8 +18,6 @@ public class ContainerConnectionErrorDto {
     private int sshPort;
     private String category;
 
-    public void setUserId(String userId) {
-    }
     public ContainerConnectionErrorDto save(ReportService reportService) {
         return reportService.insertContainerConnectionErrorReport(this);
     }

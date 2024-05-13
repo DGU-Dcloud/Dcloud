@@ -57,8 +57,8 @@ public class ReportController {
             reportData.put("sshPort", requestBody.get("sshPort"));
             reportData.put("category", requestBody.get("category"));
 
-            if (category == null || reportData.containsValue(null)) {
-                logger.info("카테고리 또는 데이터 누락");
+            if (category == null ) {
+                logger.info("카테고리 누락");
                 return ResponseEntity.badRequest().build();
             }
 
@@ -67,6 +67,7 @@ public class ReportController {
                     logger.info("카테고리 인식");
                     return processReport("Container Connection Error", reportData, request);
                 case "Container Relocation Request":
+                    reportData.put("reason", requestBody.get("reason"));
                     return processReport("Container Relocation Request", reportData, request);
                 case "Extend Expiration Date":
                     return processReport("Extend Expiration Date", reportData, request);
@@ -108,24 +109,30 @@ public class ReportController {
     }
 
     private ResponseEntity<?> processContainerConnectionErrorReport(Map<String, Object> reportData) {
-        logger.info("reportData(변환전): {}", reportData);
+        //logger.info("reportData(변환전): {}", reportData);
         ContainerConnectionErrorDto reportDto = mapToContainerConnectionErrorDto(reportData);
-        logger.info("reportDto(변환후): {}", reportDto);
+        //logger.info("reportDto(변환후): {}", reportDto);
         return ResponseEntity.ok(reportDto.save(reportService));
     }
 
     private ResponseEntity<?> processContainerRelocationRequestReport(Map<String, Object> reportData) {
+        //logger.info("reportData(변환전): {}", reportData);
         ContainerRelocationRequestDto reportDto = mapToContainerRelocationRequestDto(reportData);
+        //logger.info("reportDto(변환후): {}", reportDto);
         return ResponseEntity.ok(reportDto.save(reportService));
     }
 
     private ResponseEntity<?> processExtendExpirationDateReport(Map<String, Object> reportData) {
+        logger.info("reportData(변환전): {}", reportData);
         ExtendExpirationDateDto reportDto = mapToExtendExpirationDateDto(reportData);
+        logger.info("reportDto(변환후): {}", reportDto);
         return ResponseEntity.ok(reportDto.save(reportService));
     }
 
     private ResponseEntity<?> processJustInquiryReport(Map<String, Object> reportData) {
+        logger.info("reportData(변환전): {}", reportData);
         JustInquiryDto reportDto = mapToJustInquiryDto(reportData);
+        logger.info("reportDto(변환후): {}", reportDto);
         return ResponseEntity.ok(reportDto.save(reportService));
     }
 
@@ -136,6 +143,7 @@ public class ReportController {
         dto.setDepartment((String) reportData.get("department"));
         dto.setUserId((String) reportData.get("userId"));
         dto.setStudentId((String) reportData.get("studentId"));
+        dto.setCategory((String) reportData.get("category"));
 
         // SSH 포트를 정수로 변환하여 저장, 예외 처리 추가
         try {
@@ -156,6 +164,7 @@ public class ReportController {
         dto.setName((String) reportData.get("name"));
         dto.setDepartment((String) reportData.get("department"));
         dto.setUserId((String) reportData.get("userId"));
+        dto.setWhy((String) reportData.get("reason"));
         dto.setStudentId((String) reportData.get("studentId"));
 
         // SSH 포트를 정수로 변환하여 저장, 예외 처리 추가
@@ -169,7 +178,6 @@ public class ReportController {
             // 예외 처리 방법에 따라 기본값 설정 또는 예외 전파 등의 처리 가능
         }
 
-        dto.setWhy((String) reportData.get("why"));
         dto.setCategory((String) reportData.get("category"));
 
         return dto;
