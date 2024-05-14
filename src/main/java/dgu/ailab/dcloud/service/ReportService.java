@@ -93,6 +93,7 @@ public class ReportService {
         report.setCategory(reportDto.getCategory());
         report.setUserId(reportDto.getUserId());
         report.setDepartment(reportDto.getDepartment());
+        report.setSshPort(reportDto.getSshPort());
         //report.setPermission(reportDto.getPermission());
         report.setRequirement(reportDto.getRequirement());
         report.setStudentID(reportDto.getStudentId());
@@ -107,6 +108,7 @@ public class ReportService {
         report.setCategory(reportDto.getCategory());
         report.setUserId(reportDto.getUserId());
         report.setDepartment(reportDto.getDepartment());
+        //report.setSshPort(reportDto.getSshPort()); 현재는 없는데, 나중에 필요시 주석 해제
         report.setStudentID(reportDto.getStudentId());
         report.setWhy(reportDto.getWhy());
         return report;
