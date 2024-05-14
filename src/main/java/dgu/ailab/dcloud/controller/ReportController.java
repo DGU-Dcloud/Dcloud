@@ -33,7 +33,7 @@ public class ReportController {
 
     private final ReportService reportService;
     private static final Logger logger = LoggerFactory.getLogger(ReportController.class);
-    private final String SLACK_WEBHOOK_URL = "https://hooks.slack.com/services/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?charset=utf-8";
+    private final String SLACK_WEBHOOK_URL = "https://hooks.slack.com/services/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?charset=utf-8";
 
     @Autowired
     public ReportController(ReportService reportService) {
@@ -70,8 +70,11 @@ public class ReportController {
                     reportData.put("reason", requestBody.get("reason"));
                     return processReport("Container Relocation Request", reportData, request);
                 case "Extend Expiration Date":
+                    reportData.put("reason", requestBody.get("reason"));
+                    reportData.put("expirationDate", requestBody.get("expirationDate"));
                     return processReport("Extend Expiration Date", reportData, request);
                 case "Just Inquiry":
+                    reportData.put("inquiryDetails", requestBody.get("inquiryDetails"));
                     return processReport("Just Inquiry", reportData, request);
                 default:
                     return ResponseEntity.badRequest().build();
@@ -123,16 +126,16 @@ public class ReportController {
     }
 
     private ResponseEntity<?> processExtendExpirationDateReport(Map<String, Object> reportData) {
-        logger.info("reportData(변환전): {}", reportData);
+        //logger.info("reportData(변환전): {}", reportData);
         ExtendExpirationDateDto reportDto = mapToExtendExpirationDateDto(reportData);
-        logger.info("reportDto(변환후): {}", reportDto);
+        //logger.info("reportDto(변환후): {}", reportDto);
         return ResponseEntity.ok(reportDto.save(reportService));
     }
 
     private ResponseEntity<?> processJustInquiryReport(Map<String, Object> reportData) {
-        logger.info("reportData(변환전): {}", reportData);
+        //logger.info("reportData(변환전): {}", reportData);
         JustInquiryDto reportDto = mapToJustInquiryDto(reportData);
-        logger.info("reportDto(변환후): {}", reportDto);
+        //logger.info("reportDto(변환후): {}", reportDto);
         return ResponseEntity.ok(reportDto.save(reportService));
     }
 
@@ -155,6 +158,8 @@ public class ReportController {
             logger.error("Failed to parse SSH port: {}", e.getMessage());
             // 예외 처리 방법에 따라 기본값 설정 또는 예외 전파 등의 처리 가능
         }
+
+        sendMessageToSlack(dto);
 
         return dto;
     }
@@ -180,6 +185,8 @@ public class ReportController {
 
         dto.setCategory((String) reportData.get("category"));
 
+        sendMessageToSlack(dto);
+
         return dto;
     }
 
@@ -201,10 +208,12 @@ public class ReportController {
             // 예외 처리 방법에 따라 기본값 설정 또는 예외 전파 등의 처리 가능
         }
 
-        dto.setPermission((Boolean) reportData.get("permission"));
-        dto.setRequirement((String) reportData.get("requirement"));
-        dto.setWhy((String) reportData.get("why"));
+        //dto.setPermission((Boolean) reportData.get("permission"));
+        dto.setRequirement((String) reportData.get("expirationDate"));
+        dto.setWhy((String) reportData.get("reason"));
         dto.setCategory((String) reportData.get("category"));
+
+        sendMessageToSlack(dto);
 
         return dto;
     }
@@ -215,8 +224,11 @@ public class ReportController {
         dto.setDepartment((String) reportData.get("department"));
         dto.setUserId((String) reportData.get("userId"));
         dto.setStudentId((String) reportData.get("studentId"));
-        dto.setWhy((String) reportData.get("why"));
+        dto.setWhy((String) reportData.get("inquiryDetails"));
         dto.setCategory((String) reportData.get("category"));
+
+        sendMessageToSlack(dto);
+
         return dto;
     }
 
@@ -224,8 +236,10 @@ public class ReportController {
         StringBuilder messageBuilder = new StringBuilder();
         messageBuilder.append("사용자로부터 오류신고가 들어왔습니다.\n");
         messageBuilder.append("- 카테고리 : ").append(reportDto.getCategory()).append("\n");
-        messageBuilder.append("- 사용자 ID: ").append(reportDto.getUserId()).append("\n");
+        messageBuilder.append("- 이름 : ").append(reportDto.getName()).append("\n");
+        messageBuilder.append("- userID: ").append(reportDto.getUserId()).append("\n");
         messageBuilder.append("- 학과 : ").append(reportDto.getDepartment()).append("\n");
+        messageBuilder.append("- 학번 : ").append(reportDto.getStudentId()).append("\n");
         messageBuilder.append("- SSH 포트 : ").append(reportDto.getSshPort()).append("\n");
 
         String message = messageBuilder.toString();
@@ -236,9 +250,12 @@ public class ReportController {
         StringBuilder messageBuilder = new StringBuilder();
         messageBuilder.append("사용자로부터 오류신고가 들어왔습니다.\n");
         messageBuilder.append("- 카테고리 : ").append(reportDto.getCategory()).append("\n");
-        messageBuilder.append("- 사용자 ID: ").append(reportDto.getUserId()).append("\n");
+        messageBuilder.append("- 이름 : ").append(reportDto.getName()).append("\n");
+        messageBuilder.append("- userID: ").append(reportDto.getUserId()).append("\n");
         messageBuilder.append("- 학과 : ").append(reportDto.getDepartment()).append("\n");
-        messageBuilder.append("- 이유 : ").append(reportDto.getWhy()).append("\n");
+        messageBuilder.append("- 학번 : ").append(reportDto.getStudentId()).append("\n");
+        messageBuilder.append("- SSH 포트 : ").append(reportDto.getSshPort()).append("\n");
+        messageBuilder.append("- 연장 사유 : ").append(reportDto.getWhy()).append("\n");
 
         String message = messageBuilder.toString();
         sendSlackMessage(message);
@@ -248,10 +265,13 @@ public class ReportController {
         StringBuilder messageBuilder = new StringBuilder();
         messageBuilder.append("사용자로부터 오류신고가 들어왔습니다.\n");
         messageBuilder.append("- 카테고리 : ").append(reportDto.getCategory()).append("\n");
-        messageBuilder.append("- 사용자 ID: ").append(reportDto.getUserId()).append("\n");
+        messageBuilder.append("- 이름 : ").append(reportDto.getName()).append("\n");
+        messageBuilder.append("- userID: ").append(reportDto.getUserId()).append("\n");
         messageBuilder.append("- 학과 : ").append(reportDto.getDepartment()).append("\n");
-        messageBuilder.append("- 허가 : ").append(reportDto.getPermission()).append("\n");
-        messageBuilder.append("- 만료일 : ").append(reportDto.getRequirement()).append("\n");
+        messageBuilder.append("- 학번 : ").append(reportDto.getStudentId()).append("\n");
+        //messageBuilder.append("- 허가 : ").append(reportDto.getPermission()).append("\n");
+        messageBuilder.append("- SSH 포트 : ").append(reportDto.getSshPort()).append("\n");
+        messageBuilder.append("- 희망 연장 기한 : ").append(reportDto.getRequirement()).append("\n");
         messageBuilder.append("- 이유 : ").append(reportDto.getWhy()).append("\n");
 
         String message = messageBuilder.toString();
@@ -262,8 +282,10 @@ public class ReportController {
         StringBuilder messageBuilder = new StringBuilder();
         messageBuilder.append("사용자로부터 오류신고가 들어왔습니다.\n");
         messageBuilder.append("- 카테고리 : ").append(reportDto.getCategory()).append("\n");
-        messageBuilder.append("- 사용자 ID: ").append(reportDto.getUserId()).append("\n");
+        messageBuilder.append("- 이름 : ").append(reportDto.getName()).append("\n");
+        messageBuilder.append("- userID: ").append(reportDto.getUserId()).append("\n");
         messageBuilder.append("- 학과 : ").append(reportDto.getDepartment()).append("\n");
+        messageBuilder.append("- 학번 : ").append(reportDto.getStudentId()).append("\n");
         messageBuilder.append("- 문의 내용 : ").append(reportDto.getWhy()).append("\n");
 
         String message = messageBuilder.toString();
