@@ -42,7 +42,7 @@ public class PostController {
     }
 
     // 새 포스트 작성하기
-    @PostMapping("/posts")
+    @PostMapping("/create-post")
     public Post createPost(@RequestBody PostDto post) {
         return postService.createPost(post);
     }
