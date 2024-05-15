@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import NavigationBar from './NavigationBar';
 import Footer from './Footer';
 import axios from 'axios';
+import CreatePost from './CreatePost';
 
 function Forum() {
   const navigate = useNavigate();
@@ -115,6 +116,7 @@ function Forum() {
 
       </main>
       <Footer />
+      <CreatePost />
     </div>
   );
 }
@@ -154,9 +156,11 @@ const styles = {
     color: '#616161',
   },
   searchBar: {
+    display: 'flex',
     padding: '10px',
     marginBottom: '20px',
-    width: '300px',
+    width: '100%',
+    maxWidth: '500px',
     borderRadius: '5px',
     border: '1px solid #ccc'
   },
@@ -171,12 +175,6 @@ const styles = {
     background: '#f0f0f0',
     border: 'none'
   },
-   searchBar: {
-      display: 'flex',
-      marginBottom: '20px',
-      width: '100%',
-      maxWidth: '500px'
-   },
     searchButton: {
       padding: '10px 20px',
       background: '#555',

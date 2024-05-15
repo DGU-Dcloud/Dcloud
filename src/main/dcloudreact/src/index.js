@@ -12,6 +12,7 @@ import ReportErrors from './screen/ReportErrors';
 import MyPage from './screen/MyPage';
 import Forum from './screen/Forum';
 import AdminPage from './screen/AdminPage';
+import CreatePost from './screen/CreatePost';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -26,7 +27,7 @@ root.render(
         <Route path="/reporterrors" element={<ReportErrors />} />
         <Route path="/forum" element={<Forum />} />
         <Route path="/admin" element={<AdminPage />} />
-
+        <Route path="/create-post" element={<CreatePost />} />
       </Routes>
     </BrowserRouter>
   </React.StrictMode>
