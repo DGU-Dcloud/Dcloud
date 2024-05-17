@@ -1,6 +1,7 @@
 package dgu.ailab.dcloud.service;
 
 import dgu.ailab.dcloud.dto.ServerDto;
+import dgu.ailab.dcloud.entity.Server;
 import dgu.ailab.dcloud.repository.ServerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -39,4 +40,8 @@ public class ServerService {
                     return dto;
                 }).collect(Collectors.toList());
     }
+    public List<String> findByPublicIPAndGpuNameContaining(String publicIP, String gpuName) {
+        return serverRepository.findByPublicIPAndGpuNameContaining(publicIP, gpuName);
+    }
+
 }

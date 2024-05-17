@@ -7,6 +7,7 @@ import dgu.ailab.dcloud.entity.Container;
 import dgu.ailab.dcloud.entity.ContainerRequest;
 import dgu.ailab.dcloud.repository.ContainerRepository;
 import dgu.ailab.dcloud.repository.ContainerRequestRepository;
+import dgu.ailab.dcloud.repository.ServerRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.slf4j.Logger;
@@ -17,19 +18,23 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 @Service
 public class ContainerService {
-
+    private final ServerService serverService;
     private final ContainerRepository containerRepository;
     private final ContainerRequestRepository containerRequestRepository;
+    private final ServerRepository serverRepository;
     private static final Logger logger = LoggerFactory.getLogger(SignupController.class);
     private final SshCommand sshCommand;
     @Autowired
-    public ContainerService(ContainerRepository containerRepository, ContainerRequestRepository containerRequestRepository, SshCommand sshCommand) {
+    public ContainerService(ServerService serverService, ContainerRepository containerRepository, ContainerRequestRepository containerRequestRepository, ServerRepository serverRepository, SshCommand sshCommand) {
+        this.serverService = serverService;
         this.containerRepository = containerRepository;
         this.containerRequestRepository = containerRequestRepository;
+        this.serverRepository = serverRepository;
         this.sshCommand = sshCommand;
     }
 
@@ -104,24 +109,57 @@ public class ContainerService {
         );
     }
 
-
+    @Transactional
     public void applyRequests(List<Integer> ids) { // admin이 컨테이너 요청을 apply한 경우
+
+        String username = "mingyun"; // Use 'svmanager' in production
+        String password = "alsrbs1212"; // Use environment-specific secure storage for passwords in production
+
         containerRequestRepository.updateStatusByIds(ids, "Approved");
         for(Integer i : ids){
             ContainerRequest request = containerRequestRepository.findByRequestId(i);
-            String host="210.94.179.18";
+            String host="";
             if ("LAB".equals(request.getEnvironment())) {
-                host = "210.94.179.19";
+                host = "210.94.179.18";
             } else if ("FARM".equals(request.getEnvironment())) {
                 host = "210.94.179.19";
             }
-            int port = 8081; // Typically SSH port, adjust if necessary
-            String username = "mingyun"; // Use 'svmanager' in production
-            String password = "alsrbs1212"; // Use environment-specific secure storage for passwords in production
-            sshCommand.executeCommand(host, port, username, password, "sudo docker ps -a");
-        }
 
+
+            int port = findPortByGpuModel(request.getGpuModel(),host);
+            Random random = new Random();
+            int emptyPort1=findAvailablePort(host, port);; //
+            int emptyPort2=findAvailablePort(host, port) +1;;
+            // port에 따라 emptyport를 정해야 함.
+            String command="sudo docker run -dit --gpus '\"device=all\"' --memory=128g --memory-swap=128g -p ";
+            command+=emptyPort1+":22 -p "+emptyPort2+":8888"
+                    +" -it --runtime=nvidia --cap-add=SYS_ADMIN --ipc=host --mount type=bind,source=\"/home/tako"
+                    + port % 10 +"/share/user-share/\",target=/home/ --name "
+                    +request.getUser().getUserID()+"_dcloud"+"  -e USER_ID="
+                    +request.getUser().getUserID()+" -e USER_PW=ailab2260 -e USER_GROUP=default -e UID="
+                    +(random.nextInt(65000 - 2000 + 1) + 2000) +" dguailab/"
+                    +request.getDockerImages().getId().getImageName()+":"
+                    +request.getDockerImages().getId().getImageTag();
+
+            logger.info("{}",command);
+
+//            sshCommand.executeCommand(host,port,username,password,"sudo docker ps -a");
+//            sshCommand.executeCommand(host, port, username, password, command);
+
+            // 여기서 컨테이너 정보 저장해줘야 함.
+
+            // 1. 포트번호가 9700에서 안늘어남.
+            // 2. container정보가 제대로 저장되지 않음.
+        }
     }
+
+    /*
+    *
+    * sudo docker run -dit --gpus '"device=all"' --memory=128g --memory-swap=128g -p 9349:22 -p 9350:8888 -it --runtime=nvidia --cap-add=SYS_ADMIN --ipc=host --mount type=bind,source="/home/tako4/share/user-share/",target=/home/ --name zio_jy_from7  -e USER_ID=zio -e USER_PW=ailab2260 -e USER_GROUP=default -e UID=$UID_VALUE dguailab/decs:1.4.18
+    *
+    *
+    * */
+
 
     public void denyRequests(List<Integer> ids) {  // admin이 컨테이너 요청을 deny한 경우
         containerRequestRepository.updateStatusByIds(ids, "Rejected");
@@ -129,4 +167,50 @@ public class ContainerService {
     public void pendingRequests(List<Integer> ids) {  // admin이 컨테이너 요청을 pending으로 돌려놓고자 할 경우
         containerRequestRepository.updateStatusByIds(ids, "Pending");
     }
+
+    public int findPortByGpuModel(String gpuModel,String host) { // 어디 서버에 생성할지 정의하는 부분.
+        int defaultPort = 8080; // 기본 SSH 포트
+        List<String> servers = serverService.findByPublicIPAndGpuNameContaining(host, gpuModel);
+        logger.info("{}", servers.toString());
+
+        int containerCount=987654321;
+        String minContainerServer="";
+        for (String serverName : servers) { // 유저가 희망하는 GPU Model가 장착된 서버 가운데, 컨테이너가 가장 적은 서버를 찾는다.
+            if( containerCount >= containerRepository.countByServer_ServerName(serverName) ){
+                containerCount = containerRepository.countByServer_ServerName(serverName);
+                minContainerServer=serverName;
+            }
+        }
+
+//        logger.info("{}", minContainerServer);
+//        logger.info("{}", containerCount);
+//        logger.info("{}", defaultPort);
+
+        defaultPort+=minContainerServer.charAt(minContainerServer.length() - 1) - '0'; // LAB8이 가장 작은 서버라면, 8을 defaultPort에 더해준다.
+
+        return defaultPort;
+    }
+
+    private int findAvailablePort(String host, int port) {
+        int basePort = 9000 + (port - 8081) * 100; // 랩1이면 9000부터.. 이런식임. 랩2면 9100부터..
+        List<Integer> usedPorts;
+
+        if (host.equals("210.94.179.18")) {
+            usedPorts = containerRepository.findUsedPortsByServerNameContaining("LAB");
+        } else if (host.equals("210.94.179.19")) {
+            usedPorts = containerRepository.findUsedPortsByServerNameContaining("FARM");
+        } else {
+            throw new IllegalArgumentException("Invalid host: " + host);
+        }
+
+        for (int i = basePort; i < basePort + 100; i++) {
+            if (!usedPorts.contains(i)) {
+                return i;
+            }
+        }
+
+        // 사용 가능한 포트를 찾지 못한 경우 예외 처리
+        throw new RuntimeException("Available port not found for host: " + host);
+    }
+
 }
