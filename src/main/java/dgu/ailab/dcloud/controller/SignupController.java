@@ -32,7 +32,7 @@ public class SignupController {
         }
 
         Integer roleId = userService.getRoleId(signupDto.getRole());
-        logger.info("Retrieved roleId: {}", roleId);
+//        logger.info("Retrieved roleId: {}", roleId);
 
         if (roleId == null) {
             return "Invalid role.";

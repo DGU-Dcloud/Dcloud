@@ -28,6 +28,11 @@ public class SshCommand {
 
             // 명령어 실행을 위한 채널 생성 (ChannelExec)
             ChannelExec channel = (ChannelExec) session.openChannel("exec");
+
+            // sudo 명령을 실행하기 위해 사용자의 권한을 확인하는 명령 추가
+            command = "echo '" + password + "' | sudo -S -p '' " + command;
+
+
             channel.setCommand(command);
 
             // 명령어 실행 결과를 읽기 위한 스트림 생성

@@ -83,7 +83,7 @@ public class ContainerController {
         }
 
         // Send message to Slack
-        sendMessageToSlack(containerRequestDto);
+//        sendMessageToSlack(containerRequestDto);
 
         ContainerRequestDto savedContainerRequest = containerService.insertContainerRequest(containerRequestDto);
         logger.info("Retrieved roleId: {}", containerRequestDto.getDepartment());

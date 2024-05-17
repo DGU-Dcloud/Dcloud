@@ -29,14 +29,14 @@ public class AuthController {
         if (session != null) {
             String userId = (String) session.getAttribute("userID");
             if (userId != null) {
-                logger.info("Session ID: {}, User ID: {}", session.getId(), userId);
+//                logger.info("Session ID: {}, User ID: {}", session.getId(), userId);
                 return ResponseEntity.ok("User is authenticated");
             } else {
-                logger.info("No user ID found in session");
+//                logger.info("No user ID found in session");
                 return ResponseEntity.status(401).body("User is not authenticated");
             }
         } else {
-            logger.info("No session found");
+//            logger.info("No session found");
             return ResponseEntity.status(401).body("Session not found");
         }
     }
