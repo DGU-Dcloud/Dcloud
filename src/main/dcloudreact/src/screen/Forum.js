@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import NavigationBar from './NavigationBar';
 import Footer from './Footer';
 import axios from 'axios';
-import CreatePost from './CreatePost';
 
 function Forum() {
   const navigate = useNavigate();
@@ -116,7 +115,6 @@ function Forum() {
 
       </main>
       <Footer />
-      <CreatePost />
     </div>
   );
 }
