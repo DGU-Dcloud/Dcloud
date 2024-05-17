@@ -38,7 +38,7 @@ public class RoleController {
         if (userId != null) {
             UserRoleDto userRole = userRoleService.getUserRoleDto(userId);
             userRole.toString();
-            logger.info("roleId: {}", userRole.toString());
+//            logger.info("roleId: {}", userRole.toString());
             return ResponseEntity.ok(userRole);
         } else {
             return ResponseEntity.badRequest().body(new UserRoleDto(userId, null));

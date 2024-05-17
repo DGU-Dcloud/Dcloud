@@ -23,4 +23,7 @@ public class ReportDto {
     private String studentId;
     private String why; // container relocation, Extend Expiration Date, Just Inquiry
 
+
+    public ReportDto(Boolean isAnswered, Integer reportID, Date createdAt, String category, String userId, String department, String requirement, Integer sshPort, String studentID, String why) {
+    }
 }

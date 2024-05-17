@@ -166,19 +166,19 @@ function ContainerRequestForm() {
                         <p style={styles.label}>Choose a GPU Model</p>
                         <div style={styles.radioGroup}>
                           <label style={styles.radioLabel}>
-                              <input type="radio" name="gpu" value="RTX2080ti" required style={styles.radioButton} />
+                              <input type="radio" name="gpu" value="2080" required style={styles.radioButton} />
                               RTX 2080ti (only LAB)
                             </label>
                           <label style={styles.radioLabel}>
-                            <input type="radio" name="gpu" value="RTX3090" required style={styles.radioButton} />
+                            <input type="radio" name="gpu" value="3090" required style={styles.radioButton} />
                             RTX 3090
                           </label>
                           <label style={styles.radioLabel}>
-                            <input type="radio" name="gpu" value="RTX5000" required style={styles.radioButton} />
+                            <input type="radio" name="gpu" value="5000" required style={styles.radioButton} />
                             RTX 5000 (only FARM)
                           </label>
                           <label style={styles.radioLabel}>
-                            <input type="radio" name="gpu" value="RTX6000" required style={styles.radioButton} />
+                            <input type="radio" name="gpu" value="6000" required style={styles.radioButton} />
                             RTX 6000 (only LAB)
                           </label>
                           {/* Repeat for other GPU models */}
