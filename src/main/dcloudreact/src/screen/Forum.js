@@ -33,7 +33,7 @@ function Forum() {
     }
   };
   const createPostHandler = () => {
-      navigate('/create-post'); // 예를 들어, 새 글 작성 페이지로 이동
+      navigate('/create-post');
     };
 
   const handleSearchChange = (event) => {
@@ -98,15 +98,19 @@ function Forum() {
             </tr>
           </thead>
           <tbody>
-            {currentPosts.map((post, index) => (
+          {currentPosts.map((post, index) => (
               <tr key={index}>
-                <td style={styles.td}>{post.id}</td>
+                <td style={styles.td}>{post.postID}</td>
                 <td style={styles.td}>{post.category}</td>
                 <td style={styles.td}>{post.title}</td>
-                <td style={styles.td}>{post.author}</td>
-                <td style={styles.td}>{new Date(post.date).toLocaleDateString()}</td>
+                <td style={styles.td}>
+                  {post && post.user ? post.user.userName : "Unknown"}
+                </td>
+                <td style={styles.td}>
+                  {post.createdAt ? new Date(post.createdAt).toLocaleDateString() : "Invalid Date"}
+                </td>
               </tr>
-            ))}
+          ))}
           </tbody>
         </table>
         <div style={styles.pagination}>
