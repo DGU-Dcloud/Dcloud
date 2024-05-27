@@ -10,6 +10,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 import jakarta.servlet.http.HttpServletRequest;
 
+import java.util.HashMap;
+import java.util.Map;
+
 
 // AuthController는 로그아웃과 세션 검증을 위한 컨트롤러 입니다.
 
@@ -24,20 +27,23 @@ public class AuthController {
     }
 
     @GetMapping("/api/check-auth")
-    public ResponseEntity<String> checkAuth(HttpServletRequest request) {
+    public ResponseEntity<Map<String, String>> checkAuth(HttpServletRequest request) {
         HttpSession session = request.getSession(false); // 세션이 없다면 null을 반환
+        Map<String, String> response = new HashMap<>();
+
         if (session != null) {
             String userId = (String) session.getAttribute("userID");
             if (userId != null) {
-//                logger.info("Session ID: {}, User ID: {}", session.getId(), userId);
-                return ResponseEntity.ok("User is authenticated");
+                response.put("userID", userId);
+                response.put("message", "User is authenticated");
+                return ResponseEntity.ok(response);
             } else {
-//                logger.info("No user ID found in session");
-                return ResponseEntity.status(401).body("User is not authenticated");
+                response.put("message", "User is not authenticated");
+                return ResponseEntity.status(401).body(response);
             }
         } else {
-//            logger.info("No session found");
-            return ResponseEntity.status(401).body("Session not found");
+            response.put("message", "Session not found");
+            return ResponseEntity.status(401).body(response);
         }
     }
 

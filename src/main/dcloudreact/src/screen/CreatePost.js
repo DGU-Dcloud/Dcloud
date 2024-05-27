@@ -47,6 +47,9 @@ function CreatePost() {
     const handleCategoryChange = (event) => {
         setCategory(event.target.value);
     };
+    const handleGoBack = () => {
+            navigate('/forum');
+        };
 
     const handleSubmit = async (event) => {
         event.preventDefault(); // Prevent the default form submission behavior
@@ -115,6 +118,9 @@ function CreatePost() {
                         </select>
                     </div>
                     <button type="submit" style={styles.submitButton}>Submit</button>
+                    <button style={styles.backButton} onClick={handleGoBack}>
+                                                &lt; Back
+                                            </button>
                 </form>
             </main>
             <Footer />
@@ -172,6 +178,21 @@ const styles = {
     submitButton: {
         padding: '15px 0',
         backgroundColor: '#4CAF50',
+        color: 'white',
+        border: 'none',
+        borderRadius: '5px',
+        fontSize: '18px',
+        fontWeight: 'bold',
+        textTransform: 'uppercase',
+        letterSpacing: '1px',
+        width: '100%',
+        cursor: 'pointer',
+        transition: 'background-color 0.3s',
+    },
+  backButton: {
+        padding: '15px 0',
+        marginTop: '15px',
+        backgroundColor: '#f44336',
         color: 'white',
         border: 'none',
         borderRadius: '5px',

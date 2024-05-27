@@ -8,6 +8,8 @@ function Forum() {
   const navigate = useNavigate();
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [postsPerPage] = useState(10);
 
   useEffect(() => {
     // 세션 검증
@@ -43,6 +45,31 @@ function Forum() {
     navigate(`/post/${postId}`);
   };
 
+  // 페이지네이션 관련 함수
+  const indexOfLastPost = currentPage * postsPerPage;
+  const indexOfFirstPost = indexOfLastPost - postsPerPage;
+  const currentPosts = posts.slice(indexOfFirstPost, indexOfLastPost);
+
+  const paginate = pageNumber => setCurrentPage(pageNumber);
+
+  const renderPagination = () => {
+    const pageNumbers = [];
+    for (let i = 1; i <= Math.ceil(posts.length / postsPerPage); i++) {
+      pageNumbers.push(i);
+    }
+    return (
+      <ul style={styles.pagination}>
+        {pageNumbers.map(number => (
+          <li key={number} style={styles.pageItem}>
+            <button onClick={() => paginate(number)} style={styles.pageLink}>
+              {number}
+            </button>
+          </li>
+        ))}
+      </ul>
+    );
+  };
+
   if (loading) {
     return <div>Loading...</div>; // 로딩 중 화면 표시
   }
@@ -69,13 +96,13 @@ function Forum() {
             </tr>
           </thead>
           <tbody>
-            {posts.map((post, index) => (
+            {currentPosts.map((post, index) => (
               <tr key={index} onClick={() => handlePostClick(post.postID)} style={styles.tableRow}>
                 <td style={styles.td}>{post.postID}</td>
                 <td style={styles.td}>{post.category}</td>
                 <td style={styles.td}>{post.title}</td>
                 <td style={styles.td}>
-                    {post.userId}
+                  {post.userId}
                 </td>
                 <td style={styles.td}>
                   {post.createdAt ? new Date(post.createdAt).toLocaleDateString() : "Invalid Date"}
@@ -84,6 +111,7 @@ function Forum() {
             ))}
           </tbody>
         </table>
+        {renderPagination()}
       </main>
       <Footer />
     </div>
@@ -140,6 +168,22 @@ const styles = {
     '&:hover': {
       backgroundColor: '#f5f5f5',
     },
+  },
+  pagination: {
+    display: 'flex',
+    justifyContent: 'center',
+    listStyle: 'none',
+    marginTop: '20px',
+    padding: 0,
+  },
+  pageItem: {
+    margin: '0 5px',
+  },
+  pageLink: {
+    padding: '5px 10px',
+    border: '1px solid #ccc',
+    background: '#f1f1f1',
+    cursor: 'pointer',
   },
 };
 
