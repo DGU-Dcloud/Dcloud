@@ -1,5 +1,6 @@
 package dgu.ailab.dcloud.service;
 
+import dgu.ailab.dcloud.dto.CommentDto;
 import dgu.ailab.dcloud.dto.PostDto;
 import dgu.ailab.dcloud.entity.*;
 import dgu.ailab.dcloud.repository.PostRepository;
@@ -75,15 +76,52 @@ public class PostService {
     }
 
     // 특정 포스트에 대한 모든 댓글을 가져오는 메서드
-    public List<Comment> getAllCommentsForPost(Long postId) {
-        return commentRepository.findByPostPostID(postId);
+    public List<CommentDto> getAllCommentsForPost(Long postId) {
+        Post post = postRepository.findById(postId).orElse(null);
+        if (post == null) {
+            return null;
+        }
+        List<Comment> comments = commentRepository.findByPost(post);
+        return convertToDTO(comments);
+    }
+
+    // List<Comment>를 List<CommentDto>로 변환하는 메서드
+    public List<CommentDto> convertToDTO(List<Comment> comments) {
+        if (comments == null) {
+            return null;
+        }
+
+        return comments.stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
+    // 단일 Comment를 CommentDto로 변환하는 메서드
+    public CommentDto convertToDTO(Comment comment) {
+        if (comment == null) {
+            return null;
+        }
+
+        CommentDto dto = new CommentDto();
+        dto.setCommentId(comment.getCommentID());
+        dto.setPostId(comment.getPost().getPostID());
+        dto.setCreatedAt(comment.getCreatedAt());
+        dto.setContent(comment.getContent());
+        dto.setUserId(comment.getUser().getUserID());
+
+        return dto;
     }
 
     // 새로운 댓글을 추가하는 메서드
-    public Comment addCommentToPost(Long postId, Comment comment) {
+    public Comment addCommentToPost(Long postId, Comment comment, String userId) {
         Post post = postRepository.findById(postId).orElse(null);
+        User user = userRepository.findByUserID(userId);
+
+
         if (post != null) {
             comment.setPost(post);
+            comment.setCreatedAt(new Date());
+            comment.setUser(user);
             return commentRepository.save(comment);
         }
         return null;

@@ -10,12 +10,15 @@ function PostDetail() {
     const [post, setPost] = useState(null);
     const [comment, setComment] = useState('');
     const [comments, setComments] = useState([]);
+    const [error, setError] = useState('');
+    const [user, setUser] = useState(null);
 
     useEffect(() => {
         // 세션 검증
         axios.get('/api/check-auth', { withCredentials: true })
             .then(response => {
-                // 포스트 데이터 가져오기
+                const { userID } = response.data;
+                setUser({ userID }); // 로그인된 사용자 정보 설정
                 fetchPost();
                 fetchComments();
             })
@@ -45,20 +48,23 @@ function PostDetail() {
         }
     };
 
-    if (!post) {
-        return <div>Loading...</div>;
-    }
-
     const handleGoBack = () => {
         navigate('/forum');
     };
 
     const handleCommentChange = (event) => {
         setComment(event.target.value);
+        if (event.target.value.length >= 10) {
+            setError('');
+        }
     };
 
     const handleSubmitComment = async (event) => {
         event.preventDefault();
+        if (comment.length < 10) {
+            setError('Comment must be at least 10 characters long.');
+            return;
+        }
 
         try {
             const response = await axios.post(`/api/posts/${postId}/comments`, { content: comment }, { withCredentials: true });
@@ -75,6 +81,26 @@ function PostDetail() {
             alert('An error occurred while adding the comment.');
         }
     };
+
+    const handleDeleteComment = async (commentId) => {
+        try {
+            const response = await axios.delete(`/api/posts/${postId}/comments/${commentId}`, { withCredentials: true });
+            if (response.status === 204) {
+                alert('Comment deleted successfully!');
+                fetchComments();
+            } else {
+                console.error('Failed to delete comment');
+                alert('Failed to delete comment');
+            }
+        } catch (error) {
+            console.error('There was an error deleting the comment:', error);
+            alert('An error occurred while deleting the comment.');
+        }
+    };
+
+    if (!post) {
+        return <div>Loading...</div>;
+    }
 
     return (
         <div>
@@ -99,9 +125,12 @@ function PostDetail() {
                     <div key={index} style={styles.comment}>
                         <p style={styles.commentContent}>{comment.content}</p>
                         <p style={styles.commentAuthor}>
-                            {comment.user} |{' '}
-                            {new Date(comment.createdAt).toLocaleDateString()}
+                            {comment.userId} |{' '}
+                            {new Date(comment.createdAt).toLocaleString()}
                         </p>
+                        {user && user.userID === comment.userId && (
+                            <button style={styles.deleteButton} onClick={() => handleDeleteComment(comment.commentID)}>x</button>
+                        )}
                     </div>
                 ))}
                 <form onSubmit={handleSubmitComment} style={styles.commentForm}>
@@ -111,6 +140,7 @@ function PostDetail() {
                         onChange={handleCommentChange}
                         style={styles.commentInput}
                     />
+                    {error && <p style={styles.error}>{error}</p>}
                     <div style={styles.buttonContainer}>
                         <button type="submit" style={styles.submitButton}>
                             Submit Comment
@@ -121,6 +151,7 @@ function PostDetail() {
                     </div>
                 </form>
             </div>
+            <div style={{ height: '10vh' }}></div>
             <Footer />
         </div>
     );
@@ -180,16 +211,7 @@ const styles = {
         borderTop: '1px solid #ccc',
         margin: '20px 0',
     },
-    backButton: {
-        position: 'absolute',
-        top: '12vh',
-        left: '20px',
-        padding: '10px',
-        backgroundColor: '#f0f0f0',
-        border: 'none',
-        borderRadius: '5px',
-        cursor: 'pointer',
-    },
+
     commentForm: {
         display: 'flex',
         flexDirection: 'column',
@@ -214,6 +236,10 @@ const styles = {
         border: 'none',
         borderRadius: '5px',
         cursor: 'pointer',
+        fontSize: '18px',
+        fontWeight: 'bold',
+        textTransform: 'uppercase',
+        letterSpacing: '1px',
     },
     backButton: {
         width: '48%',
@@ -223,6 +249,10 @@ const styles = {
         border: 'none',
         borderRadius: '5px',
         cursor: 'pointer',
+        fontSize: '18px',
+        fontWeight: 'bold',
+        textTransform: 'uppercase',
+        letterSpacing: '1px',
     },
     commentSection: {
         width: '70%',
@@ -238,6 +268,7 @@ const styles = {
         padding: '10px',
         backgroundColor: '#f0f0f0',
         borderRadius: '5px',
+        position: 'relative',
     },
     commentContent: {
         marginBottom: '5px',
@@ -245,6 +276,20 @@ const styles = {
     commentAuthor: {
         fontSize: '12px',
         color: '#888',
+    },
+    error: {
+        color: 'red',
+        marginBottom: '10px',
+    },
+    deleteButton: {
+        position: 'absolute',
+        top: '10px',
+        right: '10px',
+        backgroundColor: 'transparent',
+        border: 'none',
+        color: 'red',
+        cursor: 'pointer',
+        fontSize: '16px',
     },
 };
 

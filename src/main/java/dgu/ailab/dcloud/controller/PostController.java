@@ -1,5 +1,6 @@
 package dgu.ailab.dcloud.controller;
 
+import dgu.ailab.dcloud.dto.CommentDto;
 import dgu.ailab.dcloud.dto.PostDto;
 import dgu.ailab.dcloud.entity.Comment;
 import dgu.ailab.dcloud.entity.Post;
@@ -11,6 +12,8 @@ import jakarta.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -41,7 +44,7 @@ public class PostController {
 
     // 특정 포스트의 모든 댓글 가져오기
     @GetMapping("/posts/{postId}/comments")
-    public List<Comment> getAllCommentsForPost(@PathVariable Long postId) {
+    public List<CommentDto> getAllCommentsForPost(@PathVariable Long postId) {
         return postService.getAllCommentsForPost(postId);
     }
 
@@ -66,6 +69,19 @@ public class PostController {
         if (session != null) {
             userId = (String) session.getAttribute("userID");
         }
-        return postService.addCommentToPost(postId, comment);
+
+        return postService.addCommentToPost(postId, comment, userId);
     }
+
+    // 댓글 삭제 구현해야 함.
+    // 게시글 삭제 구현해야 함.
+//    @DeleteMapping("/{postId}/comments/{commentId}")
+//    public ResponseEntity<Void> deleteComment(@PathVariable Long postId, @PathVariable Long commentId, @AuthenticationPrincipal UserDetails userDetails) {
+//        Comment comment = commentRepository.findById(commentId).orElse(null);
+//        if (comment != null && comment.getPost().getPostID().equals(postId) && comment.getUser().getUserID().equals(userDetails.getUsername())) {
+//            commentRepository.delete(comment);
+//            return ResponseEntity.noContent().build();
+//        }
+//        return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+//    }
 }
