@@ -29,13 +29,13 @@ public class PostController {
 
     // 모든 포스트 가져오기
     @GetMapping("/posts")
-    public List<Post> getAllPosts() {
+    public List<PostDto> getAllPosts() {
         return postService.getAllPostss();
     }
 
     // 특정 포스트 가져오기
     @GetMapping("/posts/{postId}")
-    public Post getPostById(@PathVariable Long postId) {
+    public PostDto getPostById(@PathVariable Long postId) {
         return postService.getPostById(postId);
     }
 
