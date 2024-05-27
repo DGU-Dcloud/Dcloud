@@ -5,8 +5,11 @@ import dgu.ailab.dcloud.dto.ContainerDto;
 import dgu.ailab.dcloud.dto.ContainerRequestDto;
 import dgu.ailab.dcloud.entity.Container;
 import dgu.ailab.dcloud.entity.ContainerRequest;
+import dgu.ailab.dcloud.entity.DockerImageId;
+import dgu.ailab.dcloud.entity.DockerImages;
 import dgu.ailab.dcloud.repository.ContainerRepository;
 import dgu.ailab.dcloud.repository.ContainerRequestRepository;
+import dgu.ailab.dcloud.repository.DockerImagesRepository;
 import dgu.ailab.dcloud.repository.ServerRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -29,13 +32,16 @@ public class ContainerService {
     private final ServerRepository serverRepository;
     private static final Logger logger = LoggerFactory.getLogger(SignupController.class);
     private final SshCommand sshCommand;
+    private final DockerImagesRepository dockerImagesRepository;
+
     @Autowired
-    public ContainerService(ServerService serverService, ContainerRepository containerRepository, ContainerRequestRepository containerRequestRepository, ServerRepository serverRepository, SshCommand sshCommand) {
+    public ContainerService(ServerService serverService, ContainerRepository containerRepository, ContainerRequestRepository containerRequestRepository, ServerRepository serverRepository, SshCommand sshCommand, DockerImagesRepository dockerImagesRepository) {
         this.serverService = serverService;
         this.containerRepository = containerRepository;
         this.containerRequestRepository = containerRequestRepository;
         this.serverRepository = serverRepository;
         this.sshCommand = sshCommand;
+        this.dockerImagesRepository = dockerImagesRepository;
     }
 
 
@@ -111,7 +117,7 @@ public class ContainerService {
 
     @Transactional
     public void applyRequests(List<Integer> ids) { // admin이 컨테이너 요청을 apply한 경우
-
+        logger.info("im applyRequests");
         String username = "mingyun"; // Use 'svmanager' in production
         String password = "alsrbs1212"; // Use environment-specific secure storage for passwords in production
 
@@ -119,18 +125,26 @@ public class ContainerService {
         for(Integer i : ids){
             ContainerRequest request = containerRequestRepository.findByRequestId(i);
             String host="";
+            String serverName="";
             if ("LAB".equals(request.getEnvironment())) {
                 host = "210.94.179.18";
+                serverName="LAB";
             } else if ("FARM".equals(request.getEnvironment())) {
                 host = "210.94.179.19";
+                serverName="FARM";
             }
 
-
+            // 어떤 서버에 배정할 것인지, port에 담는다. 8081~8089
             int port = findPortByGpuModel(request.getGpuModel(),host);
             Random random = new Random();
-            int emptyPort1=findAvailablePort(host, port);; //
-            int emptyPort2=findAvailablePort(host, port) +1;;
-            // port에 따라 emptyport를 정해야 함.
+
+            serverName+=port%10;
+            logger.info("{}",serverName);
+
+            // 여분의 포트 2개를 가져온다.
+            int emptyPort1=findAvailablePort(host, port); //
+            int emptyPort2=findAvailablePort(host, port) +1;
+
             String command="sudo docker run -dit --gpus '\"device=all\"' --memory=128g --memory-swap=128g -p ";
             command+=emptyPort1+":22 -p "+emptyPort2+":8888"
                     +" -it --runtime=nvidia --cap-add=SYS_ADMIN --ipc=host --mount type=bind,source=\"/home/tako"
@@ -143,13 +157,34 @@ public class ContainerService {
 
             logger.info("{}",command);
 
-//            sshCommand.executeCommand(host,port,username,password,"sudo docker ps -a");
-//            sshCommand.executeCommand(host, port, username, password, command);
+            // sshCommand 실행 결과를 boolean 변수에 저장
+            boolean commandExecutionResult = sshCommand.executeCommand(host, port, username, password, command);
 
-            // 여기서 컨테이너 정보 저장해줘야 함.
+            if (commandExecutionResult) {
+                // 컨테이너 정보 저장
+                Container container = new Container();
 
-            // 1. 포트번호가 9700에서 안늘어남.
-            // 2. container정보가 제대로 저장되지 않음.
+                String imageName = request.getDockerImages().getId().getImageName();
+                String imageTag = request.getDockerImages().getId().getImageTag();
+                DockerImageId dockerImageId = new DockerImageId(imageName, imageTag);
+                DockerImages dockerImages = dockerImagesRepository.findById(dockerImageId)
+                        .orElseThrow(() -> new IllegalArgumentException("Docker image not found with id: " + dockerImageId));
+                container.setDockerImages(dockerImages);
+                container.setServer(serverRepository.findByServerName(serverName)); // 서버 정보 설정
+                container.setUser(request.getUser());
+                container.setCreatedAt(new Date());
+                container.setContainerName(request.getUser().getUserID() + "_dcloud");
+                container.setSshPort(emptyPort1);
+                container.setJupyterPort(emptyPort2);
+                container.setNote("Created by applyRequests");
+                container.setStatus("active");
+                container.setContainerRequest(request);
+                container.setDeletedAt(request.getExpectedExpirationDate());
+
+                containerRepository.save(container);
+            } else {
+                logger.error("Container creation failed for request: {}", request.getRequestId());
+            }
         }
     }
 

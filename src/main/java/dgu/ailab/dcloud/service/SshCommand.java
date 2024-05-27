@@ -15,7 +15,7 @@ import java.io.InputStreamReader;
 @Service
 public class SshCommand {
     private static final Logger logger = LoggerFactory.getLogger(LoginController.class);
-    public static void executeCommand(String host, int port, String username, String password, String command) {
+    public static boolean executeCommand(String host, int port, String username, String password, String command) {
         try {
             // JSch 객체 생성
             JSch jsch = new JSch();
@@ -32,7 +32,6 @@ public class SshCommand {
             // sudo 명령을 실행하기 위해 사용자의 권한을 확인하는 명령 추가
             command = "echo '" + password + "' | sudo -S -p '' " + command;
 
-
             channel.setCommand(command);
 
             // 명령어 실행 결과를 읽기 위한 스트림 생성
@@ -48,16 +47,19 @@ public class SshCommand {
                 logger.info("line : {}", line);
             }
 
+            // 명령어 실행 성공 여부 확인
+            int exitCode = channel.getExitStatus();
+
             // 채널 연결 해제
             channel.disconnect();
 
             // 세션 종료
             session.disconnect();
 
+            return exitCode == 0; // 명령어 실행이 성공하면 true, 실패하면 false 반환
         } catch (Exception e) {
             e.printStackTrace();
+            return false; // 예외 발생 시 false 반환
         }
-
     }
-
 }

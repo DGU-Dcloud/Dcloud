@@ -7,65 +7,45 @@ import axios from 'axios';
 function Forum() {
   const navigate = useNavigate();
   const [posts, setPosts] = useState([]);
-  const [filteredPosts, setFilteredPosts] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [postsPerPage] = useState(10);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // 세션 검증
     axios.get('/api/check-auth', { withCredentials: true })
       .then(response => {
+        // 세션이 유효한 경우에만 서버 데이터 로딩
+        console.log('Response:', response);
         fetchPosts();
       })
       .catch(error => {
+        // 세션이 유효하지 않은 경우 로그인 페이지로 리디렉션
+        console.error('Session not valid:', error);
         navigate('/');
       });
   }, [navigate]);
 
   const fetchPosts = async () => {
     try {
-      const response = await axios.get('http://localhost:8080/api/posts');
-      setPosts(response.data);
-      setFilteredPosts(response.data);
-
+      const response = await fetch('http://localhost:8080/api/posts');
+      const data = await response.json();
+      setPosts(data);
+      setLoading(false);
     } catch (error) {
-
+      console.error('Error fetching posts:', error);
     }
   };
+
   const createPostHandler = () => {
-      navigate('/create-post');
-    };
+    navigate('/create-post');
+  };
 
-  const handleSearchChange = (event) => {
-      setSearchTerm(event.target.value);
-    };
+  const handlePostClick = (postId) => {
+    navigate(`/post/${postId}`);
+  };
 
-  const handleSearch = () => {
-      const filtered = posts.filter(post => post.title.toLowerCase().includes(searchTerm.toLowerCase()));
-      setFilteredPosts(filtered);
-      setCurrentPage(1); // Reset to first page with new results
-    };
-
-  const indexOfLastPost = currentPage * postsPerPage;
-  const indexOfFirstPost = indexOfLastPost - postsPerPage;
-  const currentPosts = filteredPosts.slice(indexOfFirstPost, indexOfLastPost);
-
-  const paginate = pageNumber => setCurrentPage(pageNumber);
-
-
-    const renderPagination = () => {
-      const pageCount = Math.ceil(filteredPosts.length / postsPerPage);
-      if (pageCount === 0) {
-        return <button style={styles.pageButton} disabled>1</button>;
-      } else {
-        return [...Array(pageCount).keys()].map(number => (
-          <button key={number} onClick={() => paginate(number + 1)} style={styles.pageButton}>
-            {number + 1}
-          </button>
-        ));
-      }
-    };
-
+  if (loading) {
+    return <div>Loading...</div>; // 로딩 중 화면 표시
+  }
 
   return (
     <div>
@@ -76,17 +56,8 @@ function Forum() {
         <p>You can check the announcements on this page. Please check frequently. You can also check the error history so far.</p>
         <p>If you have a problem with your container, please take advantage of the forum.</p>
 
-        <div style={styles.searchBar}>
-                  <input
-                    type="text"
-                    placeholder="Search"
-                    value={searchTerm}
-                    onChange={handleSearchChange}
-                    style={{ flex: 1, marginRight: '10px' }}
-                  />
-                  <button onClick={handleSearch} style={styles.searchButton}>Search</button>
-                  <button onClick={createPostHandler} style={styles.createButton}>Create Post</button> {/* 새 글 작성 버튼 추가 */}
-                </div>
+        <button onClick={createPostHandler} style={styles.createButton}>Create Post</button>
+
         <table style={styles.table}>
           <thead>
             <tr>
@@ -98,25 +69,21 @@ function Forum() {
             </tr>
           </thead>
           <tbody>
-          {currentPosts.map((post, index) => (
-              <tr key={index}>
+            {posts.map((post, index) => (
+              <tr key={index} onClick={() => handlePostClick(post.postID)} style={styles.tableRow}>
                 <td style={styles.td}>{post.postID}</td>
                 <td style={styles.td}>{post.category}</td>
                 <td style={styles.td}>{post.title}</td>
                 <td style={styles.td}>
-                  {post && post.user ? post.user.userName : "Unknown"}
+                    {post.userId}
                 </td>
                 <td style={styles.td}>
                   {post.createdAt ? new Date(post.createdAt).toLocaleDateString() : "Invalid Date"}
                 </td>
               </tr>
-          ))}
+            ))}
           </tbody>
         </table>
-        <div style={styles.pagination}>
-            {renderPagination()}
-          </div>
-
       </main>
       <Footer />
     </div>
@@ -157,46 +124,23 @@ const styles = {
     borderBottom: '1px solid #e0e0e0',
     color: '#616161',
   },
-  searchBar: {
-    display: 'flex',
-    padding: '10px',
+  createButton: {
+    padding: '10px 20px',
     marginBottom: '20px',
-    width: '100%',
-    maxWidth: '500px',
-    borderRadius: '5px',
-    border: '1px solid #ccc'
-  },
-  pagination: {
-    marginTop: '20px'
-  },
-  pageButton: {
-    padding: '8px 16px',
-    margin: '0 5px',
+    background: '#4CAF50',
+    color: 'white',
+    border: 'none',
     borderRadius: '5px',
     cursor: 'pointer',
-    background: '#f0f0f0',
-    border: 'none'
+    fontWeight: 'bold'
   },
-    searchButton: {
-      padding: '10px 20px',
-      background: '#555',
-      color: 'white',
-      border: 'none',
-      borderRadius: '5px',
-      cursor: 'pointer',
-      fontWeight: 'bold'
+  tableRow: {
+    cursor: 'pointer',
+    transition: 'background-color 0.3s',
+    '&:hover': {
+      backgroundColor: '#f5f5f5',
     },
-    createButton: {
-        padding: '10px 20px',
-        marginLeft: '10px', // 버튼 간 간격 조정
-        background: '#4CAF50', // 버튼 색상 변경
-        color: 'white',
-        border: 'none',
-        borderRadius: '5px',
-        cursor: 'pointer',
-        fontWeight: 'bold'
-      },
-
+  },
 };
 
 export default Forum;

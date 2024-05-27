@@ -13,6 +13,7 @@ import MyPage from './screen/MyPage';
 import Forum from './screen/Forum';
 import AdminPage from './screen/AdminPage';
 import CreatePost from './screen/CreatePost';
+import PostDetail from './screen/PostDetail';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -28,6 +29,7 @@ root.render(
         <Route path="/forum" element={<Forum />} />
         <Route path="/admin" element={<AdminPage />} />
         <Route path="/create-post" element={<CreatePost />} />
+        <Route path="/post/:postId" element={<PostDetail />} />
       </Routes>
     </BrowserRouter>
   </React.StrictMode>

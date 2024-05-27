@@ -8,7 +8,7 @@ function CreatePost() {
     const navigate = useNavigate();
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
-    const [category, setCategory] = useState('');
+    const [category, setCategory] = useState('General');
     const [userRole, setUserRole] = useState('');
 
     useEffect(() => {
