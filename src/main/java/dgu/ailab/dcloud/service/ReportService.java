@@ -70,6 +70,7 @@ public class ReportService {
         report.setDepartment(reportDto.getDepartment());
         report.setSshPort(reportDto.getSshPort());
         report.setStudentID(reportDto.getStudentId());
+        report.setUser_name(reportDto.getName());
         return report;
     }
 
@@ -83,6 +84,7 @@ public class ReportService {
         report.setSshPort(reportDto.getSshPort());
         report.setStudentID(reportDto.getStudentId());
         report.setWhy(reportDto.getWhy());
+        report.setUser_name(reportDto.getName());
         return report;
     }
 
@@ -98,6 +100,7 @@ public class ReportService {
         report.setRequirement(reportDto.getRequirement());
         report.setStudentID(reportDto.getStudentId());
         report.setWhy(reportDto.getWhy());
+        report.setUser_name(reportDto.getName());
         return report;
     }
 
@@ -111,6 +114,7 @@ public class ReportService {
         //report.setSshPort(reportDto.getSshPort()); 현재는 없는데, 나중에 필요시 주석 해제
         report.setStudentID(reportDto.getStudentId());
         report.setWhy(reportDto.getWhy());
+        report.setUser_name(reportDto.getName());
         return report;
     }
 
@@ -121,6 +125,7 @@ public class ReportService {
         dto.setDepartment(report.getDepartment());
         dto.setUserId(report.getUserId());
         dto.setSshPort(report.getSshPort());
+        dto.setName(report.getUser_name());
         return dto;
     }
 
@@ -131,6 +136,7 @@ public class ReportService {
         dto.setDepartment(report.getDepartment());
         dto.setUserId(report.getUserId());
         dto.setWhy(report.getWhy());
+        dto.setName(report.getUser_name());
         return dto;
     }
 
@@ -143,6 +149,7 @@ public class ReportService {
         dto.setPermission(Boolean.TRUE);
         dto.setRequirement(report.getRequirement());
         dto.setWhy(report.getWhy());
+        dto.setName(report.getUser_name());
         return dto;
     }
 
@@ -153,6 +160,9 @@ public class ReportService {
         dto.setDepartment(report.getDepartment());
         dto.setUserId(report.getUserId());
         dto.setWhy(report.getWhy());
+        dto.setName(report.getUser_name());
+
+        logger.info("Mapping Report to JustInquiryDto - Report: [category=" + report.getCategory() + ", department=" + report.getDepartment() + ", userId=" + report.getUserId() + ", why=" + report.getWhy() + ", user_name=" + report.getUser_name() + "], JustInquiryDto: " + dto.toString());
         return dto;
     }
 }
