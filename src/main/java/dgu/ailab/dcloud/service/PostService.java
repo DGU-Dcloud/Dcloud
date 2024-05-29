@@ -8,6 +8,7 @@ import dgu.ailab.dcloud.repository.CommentRepository;
 import dgu.ailab.dcloud.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -169,5 +170,16 @@ public class PostService {
         post.setCreatedAt(postDto.getCreatedAt());
         post.setUser(user);
         return post;
+    }
+
+    @Transactional
+    public void deletePost(Long postId, String userId) throws IllegalAccessException {
+        Post post = postRepository.findById(postId).orElseThrow(() -> new IllegalArgumentException("Post not found"));
+        if (!post.getUser().getUserID().equals(userId)) {
+            throw new IllegalAccessException("You are not authorized to delete this post");
+        }
+
+        commentRepository.deleteByPost_PostID(postId);
+        postRepository.delete(post);
     }
 }

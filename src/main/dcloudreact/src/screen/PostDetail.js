@@ -98,6 +98,26 @@ function PostDetail() {
         }
     };
 
+    const handleDeletePost = async () => {
+        const confirmDelete = window.confirm("Are you sure you want to delete this post?");
+            if (!confirmDelete) {
+                return; // 사용자가 취소한 경우 함수 종료
+            }
+        try {
+            const response = await axios.delete(`/api/postdelete/${postId}`, { withCredentials: true });
+            if (response.status === 204) {
+                alert('Post deleted successfully!');
+                navigate('/forum');
+            } else {
+                console.error('Failed to delete post');
+                alert('Failed to delete post');
+            }
+        } catch (error) {
+            console.error('There was an error deleting the post:', error);
+            alert('An error occurred while deleting the post.');
+        }
+    };
+
     if (!post) {
         return <div>Loading...</div>;
     }
@@ -107,14 +127,19 @@ function PostDetail() {
             <NavigationBar />
             <div style={{ height: '10vh' }}></div>
             <main style={styles.container}>
+            {user && user.userID === post.userId && (
+                <button style={styles.postDeleteButton} onClick={handleDeletePost}>x</button>
+            )}
                 <h1 style={styles.heading}>{post.title}</h1>
                 <div style={styles.metaInfo}>
                     <span style={styles.author}>
                         {post.userId} |{' '}
                         {new Date(post.createdAt).toLocaleDateString()}
                     </span>
+
                 </div>
                 <hr style={styles.separator} />
+
                 <p style={styles.content}>{post.content}</p>
                 <p style={styles.category}>Category: {post.category}</p>
             </main>
@@ -129,7 +154,7 @@ function PostDetail() {
                             {new Date(comment.createdAt).toLocaleString()}
                         </p>
                         {user && user.userID === comment.userId && (
-                            <button style={styles.deleteButton} onClick={() => handleDeleteComment(comment.commentID)}>x</button>
+                            <button style={styles.deleteButton} onClick={() => handleDeleteComment(comment.commentId)}>x</button>
                         )}
                     </div>
                 ))}
@@ -198,10 +223,12 @@ const styles = {
     },
     metaInfo: {
         display: 'flex',
-        justifyContent: 'flex-start',
-        marginBottom: '10px',
-        fontSize: '14px',
-        color: '#777',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                marginBottom: '10px',
+                fontSize: '14px',
+                color: '#777',
+                position: 'relative',
     },
     author: {
         fontWeight: 'bold',
@@ -291,6 +318,13 @@ const styles = {
         cursor: 'pointer',
         fontSize: '16px',
     },
+     postDeleteButton: {
+        backgroundColor: 'transparent',
+        border: 'none',
+        color: 'red',
+        cursor: 'pointer',
+        fontSize: '16px',
+        },
 };
 
 export default PostDetail;
