@@ -12,6 +12,8 @@ import dgu.ailab.dcloud.service.ReportService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.StringHttpMessageConverter;
@@ -33,12 +35,16 @@ public class ReportController {
 
     private final ReportService reportService;
     private static final Logger logger = LoggerFactory.getLogger(ReportController.class);
-    private final String SLACK_WEBHOOK_URL = "https://hooks.slack.com/services/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?charset=utf-8";
+    private String slackWebhookUrl;
 
     @Autowired
-    public ReportController(ReportService reportService) {
+    public ReportController(ReportService reportService, @Value("${slack.webhook-url}") String slackWebhookUrl) {
         this.reportService = reportService;
+        this.slackWebhookUrl = slackWebhookUrl;
+        logger.info("Slack Webhook URL from @Value: {}", this.slackWebhookUrl);
+        System.out.println("Slack Webhook URL from @Value: " + this.slackWebhookUrl);
     }
+
 
     @PostMapping("/reports")
     public ResponseEntity<?> createReport(@RequestBody Map<String, Object> requestBody, HttpServletRequest request) {
@@ -297,6 +303,6 @@ public class ReportController {
                 .add(0, new StringHttpMessageConverter(StandardCharsets.UTF_8));
 
         String payload = "{\"text\": \"" + message + "\"}";
-        restTemplate.postForEntity(SLACK_WEBHOOK_URL, payload, String.class);
+        restTemplate.postForEntity(slackWebhookUrl, payload, String.class);
     }
 }
