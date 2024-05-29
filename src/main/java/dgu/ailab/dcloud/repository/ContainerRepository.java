@@ -14,4 +14,6 @@ public interface ContainerRepository extends JpaRepository<Container, Long> {
     int countByServer_ServerName(String serverName);
     @Query("SELECT c.sshPort FROM Container c WHERE c.server.serverName LIKE %:serverName%")
     List<Integer> findUsedPortsByServerNameContaining(@Param("serverName") String serverName);
+    List<Container> findByUser_UserIDAndStatus(String userId, String status);
+
 }

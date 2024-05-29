@@ -28,7 +28,7 @@ function MyPage() {
       }, [navigate]);
         const fetchData = async () => {
             try {
-              const response = await fetch('http://localhost:8080/api/yourinfo', {
+              const response = await fetch('/api/yourinfo', {
                 credentials: 'include'
               });
               const data = await response.json();
@@ -40,7 +40,7 @@ function MyPage() {
                 console.log('No containerRequests found:', data);
               }
 
-              if (data.activeContainers) { // containerRequests가 있는지 확인
+              if (data.activeContainers) { // activeContainer가 있는지 확인
                   setActiveContainers(data.activeContainers);
                 } else {
                   console.log('No activeContainers found:', data);
@@ -96,117 +96,6 @@ function MyPage() {
              return baseStyle;
          }
        };
-
-//
-//  return (
-//    <div>
-//      <NavigationBar />
-//      <div style={{ height: '10vh' }}></div>
-//      <main style={styles.container}>
-//        <h1>Your Info</h1>
-//                <table style={styles.table}>
-//                  <tbody>
-//                    <tr>
-//                      <th style={styles.thRow}>Name</th>
-//                      <td style={styles.tdRow}>{userInfo.userName}</td>
-//                    </tr>
-//                    <tr>
-//                      <th style={styles.thRow}>ID</th>
-//                      <td style={styles.tdRow}>{userInfo.userID}</td>
-//                    </tr>
-//                    <tr>
-//                      <th style={styles.thRow}>Birth Date</th>
-//                      <td style={styles.tdRow}>{userInfo.birthDate}</td>
-//                    </tr>
-//                    <tr>
-//                      <th style={styles.thRow}>Email</th>
-//                      <td style={styles.tdRow}>{userInfo.email}</td>
-//                    </tr>
-//                  </tbody>
-//                </table>
-//        <div style={{ height: '3vh' }}></div>
-//        <h1>Container Request Status</h1>
-//        <table style={styles.table}>
-//          <thead>
-//            <tr>
-//
-//              <th style={styles.th}>Request Date</th>
-//              <th style={styles.th}>Student ID</th>
-//              <th style={styles.th}>Environment</th>
-//              <th style={styles.th}>GPU Model</th>
-//              <th style={styles.th}>Status</th>
-//            </tr>
-//          </thead>
-//          <tbody>
-//            {containerRequests.map((request, index) => {
-//              const date = new Date(request.createdAt);
-//              const formattedDate = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')} ${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
-//                return (
-//                <tr key={index}>
-//                  <td style={styles.td}>{formattedDate}</td>
-//                  <td style={styles.td}>{request.studentId}</td>
-//                  <td style={styles.td}>{request.environment}</td>
-//                  <td style={styles.td}>{request.gpuModel}</td>
-//                  <td style={getStatusStyle(request.status)}>{request.status}</td>
-//                </tr>
-//              );
-//            })}
-//          </tbody>
-//
-//        </table>
-// <div style={{ height: '3vh' }}></div>
-//        <h1>Your Active Container</h1>
-//                <table style={styles.table}>
-//                  <thead>
-//                    <tr>
-//                      <th style={styles.th}>No</th>
-//                      <th style={styles.th}>Server Name</th>
-//                      <th style={styles.th}>SSH Command</th>
-//                      <th style={styles.th}>Jupyter URL</th>
-//                      <th style={styles.th}>Due Date</th>
-//                    </tr>
-//                  </thead>
-//                  <tbody>
-//                    {containerRequests.map((request, index) => (
-//                      <tr key={index}>
-//                        <td style={styles.td}>1</td>
-//                        <td style={styles.td}>LAB2</td>
-//                        <td style={styles.td}>ssh mingyun@210.94.179.18 -p 9100</td>
-//                        <td style={styles.td}>http://210.94.179.18:9101</td>
-//                        <td style={styles.td}>24.05.31</td>
-//                      </tr>
-//                    ))}
-//                  </tbody>
-//                </table>
-//
-//
-//        <h1>Your Report</h1>
-//                        <table style={styles.table}>
-//                          <thead>
-//                            <tr>
-//                              <th style={styles.th}>Category</th>
-//                              <th style={styles.th}>SSH Port</th>
-//                              <th style={styles.th}>Chatting</th>
-//                            </tr>
-//                          </thead>
-//                          <tbody>
-//                            {containerRequests.map((request, index) => (
-//                              <tr key={index}>
-//
-//                              </tr>
-//                            ))}
-//                          </tbody>
-//                        </table>
-//      </main>
-//      <div style={containerStyle}>
-//      <button onClick={handleLogout} style={{...buttonStyle, background: '#444'}} onMouseEnter={hoverEffect} onMouseLeave={resetEffect}>Log out</button>
-//      </div>
-//      <div style={{ height: '10vh' }}></div>
-//      <Footer />
-//    </div>
-//  );
-//}
-
 
 return (
     <div>
@@ -278,9 +167,9 @@ return (
               <tr key={index}>
                 <td style={styles.td}>{index + 1}</td>
                 <td style={styles.td}>{container.serverName}</td>
-                <td style={styles.td}>{container.sshCommand}</td>
-                <td style={styles.td}>{container.jupyterUrl}</td>
-                <td style={styles.td}>{container.dueDate}</td>
+                <td style={styles.td}>{container.sshPort}</td>
+                <td style={styles.td}>{container.jupyterPort}</td>
+                <td style={styles.td}>{container.deletedAt}</td>
               </tr>
             ))}
           </tbody>

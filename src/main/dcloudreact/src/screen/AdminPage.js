@@ -70,54 +70,135 @@ function AdminPage() {
       <NavigationBar />
       <div style={{ height: '10vh' }}></div>
       <main style={styles.container}>
-        <h1>Allow or Deny</h1>
+        <h1>Admin Page</h1>
         <p>You can check the announcements on this page. Please check frequently. You can also check the error history so far.</p>
 
+        <div style={styles.tableHeader}>
+                <div style={styles.tableHeaderItem}>
+                  <input
+                    type="radio"
+                    name="tableType"
+                    value="allowOrDeny"
+                    checked={selectedRequests.tableType === 'allowOrDeny'}
+                    onChange={() => setSelectedRequests(prev => ({ ...prev, tableType: 'allowOrDeny' }))}
+                  />
+                   ContainerRequest
+                </div>
+                <div style={styles.tableHeaderItem}>
+                  <input
+                    type="radio"
+                    name="tableType"
+                    value="report"
+                    checked={selectedRequests.tableType === 'report'}
+                    onChange={() => setSelectedRequests(prev => ({ ...prev, tableType: 'report' }))}
+                  />
+                    Report
+                </div>
+              </div>
+
+        {selectedRequests.tableType === 'allowOrDeny' && (
+                <>
+                  <table style={styles.table}>
+                            <thead>
+                              <tr>
+                                <th style={styles.th}>Select</th>
+                                <th style={styles.th}>No</th>
+                                <th style={styles.th}>Request Date</th>
+                                <th style={styles.th}>User ID</th>
+                                <th style={styles.th}>Department</th>
+                                <th style={styles.th}>Environment</th>
+                                <th style={styles.th}>GPU Model</th>
+                                <th style={styles.th}>Expected Expire Date</th>
+                                <th style={styles.th}>Status</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {containerRequests.map((request, index) => {
+                                const date = new Date(request.createdAt);
+                                const formattedDate = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')} ${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
+                                return (
+                                  <tr key={index}>
+                                    <td style={styles.td}>
+                                      <input
+                                        type="checkbox"
+                                        checked={selectedRequests[request.requestId] || false}
+                                        onChange={() => handleCheckChange(request.requestId)}
+                                      />
+                                    </td>
+                                    <td style={styles.td}>{request.requestId}</td>
+                                    <td style={styles.td}>{formattedDate}</td>
+                                    <td style={styles.td}>{request.userId}</td>
+                                    <td style={styles.td}>{request.department}</td>
+                                    <td style={styles.td}>{request.environment}</td>
+                                    <td style={styles.td}>{request.gpuModel}</td>
+                                    <td style={styles.td}>{request.expectedExpirationDate}</td>
+                                    <td style={getStatusStyle(request.status)}>{request.status}</td>
+                                  </tr>
+                                );
+                              })}
+                            </tbody>
+                          </table>
+                          <div style={styles.buttonContainer}>
+                            <button style={styles.applyButton} onClick={() => sendRequestDecision('Apply')}>Approved</button>
+                            <button style={styles.denyButton} onClick={() => sendRequestDecision('Deny')}>Rejected</button>
+                            <button style={styles.pendingButton} onClick={() => sendRequestDecision('Pending')}>Pending</button>
+                          </div>
+                </>
+              )}
+
+
+
+    {selectedRequests.tableType === 'report' && (
+      <>
         <table style={styles.table}>
-          <thead>
-            <tr>
-              <th style={styles.th}>Select</th>
-              <th style={styles.th}>No</th>
-              <th style={styles.th}>Request Date</th>
-              <th style={styles.th}>User ID</th>
-              <th style={styles.th}>Department</th>
-              <th style={styles.th}>Environment</th>
-              <th style={styles.th}>GPU Model</th>
-              <th style={styles.th}>Expected Expire Date</th>
-              <th style={styles.th}>Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            {containerRequests.map((request, index) => {
-              const date = new Date(request.createdAt);
-              const formattedDate = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')} ${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
-              return (
-                <tr key={index}>
-                  <td style={styles.td}>
-                    <input
-                      type="checkbox"
-                      checked={selectedRequests[request.requestId] || false}
-                      onChange={() => handleCheckChange(request.requestId)}
-                    />
-                  </td>
-                  <td style={styles.td}>{request.requestId}</td>
-                  <td style={styles.td}>{formattedDate}</td>
-                  <td style={styles.td}>{request.userId}</td>
-                  <td style={styles.td}>{request.department}</td>
-                  <td style={styles.td}>{request.environment}</td>
-                  <td style={styles.td}>{request.gpuModel}</td>
-                  <td style={styles.td}>{request.expectedExpirationDate}</td>
-                  <td style={getStatusStyle(request.status)}>{request.status}</td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-        <div style={styles.buttonContainer}>
-          <button style={styles.applyButton} onClick={() => sendRequestDecision('Apply')}>Approved</button>
-          <button style={styles.denyButton} onClick={() => sendRequestDecision('Deny')}>Rejected</button>
-          <button style={styles.pendingButton} onClick={() => sendRequestDecision('Pending')}>Pending</button>
-        </div>
+                  <thead>
+                    <tr>
+                      <th style={styles.th}>Select</th>
+                      <th style={styles.th}>No</th>
+                      <th style={styles.th}>Request Date</th>
+                      <th style={styles.th}>User ID</th>
+                      <th style={styles.th}>Department</th>
+                      <th style={styles.th}>Environment</th>
+                      <th style={styles.th}>GPU Model</th>
+                      <th style={styles.th}>Expected Expire Date</th>
+                      <th style={styles.th}>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {containerRequests.map((request, index) => {
+                      const date = new Date(request.createdAt);
+                      const formattedDate = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')} ${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
+                      return (
+                        <tr key={index}>
+                          <td style={styles.td}>
+                            <input
+                              type="checkbox"
+                              checked={selectedRequests[request.requestId] || false}
+                              onChange={() => handleCheckChange(request.requestId)}
+                            />
+                          </td>
+                          <td style={styles.td}>{request.requestId}</td>
+                          <td style={styles.td}>{formattedDate}</td>
+                          <td style={styles.td}>{request.userId}</td>
+                          <td style={styles.td}>{request.department}</td>
+                          <td style={styles.td}>{request.environment}</td>
+                          <td style={styles.td}>{request.gpuModel}</td>
+                          <td style={styles.td}>{request.expectedExpirationDate}</td>
+                          <td style={getStatusStyle(request.status)}>{request.status}</td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+                <div style={styles.buttonContainer}>
+                  <button style={styles.applyButton} onClick={() => sendRequestDecision('Apply')}>Approved</button>
+                  <button style={styles.denyButton} onClick={() => sendRequestDecision('Deny')}>Rejected</button>
+                  <button style={styles.pendingButton} onClick={() => sendRequestDecision('Pending')}>Pending</button>
+                </div>
+      </>
+    )}
+
+
       </main>
       <Footer />
     </div>
@@ -191,6 +272,14 @@ denyButton: {
       cursor: 'pointer',
       fontWeight: 'bold',
     },
+  tableHeader: {
+    display: 'flex',
+    justifyContent: 'center',
+    marginBottom: '20px',
+  },
+  tableHeaderItem: {
+    marginRight: '20px',
+  },
 };
 
 export default AdminPage;
