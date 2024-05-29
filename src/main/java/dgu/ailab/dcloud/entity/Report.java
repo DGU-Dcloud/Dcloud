@@ -28,6 +28,8 @@ public class Report {
     private String department;
     @Column(name = "studentID")
     private String studentID;
+    @Column(name = "user_name")
+    private String user_name;
     @Column(name = "sshPort")
     private Integer sshPort;
 
