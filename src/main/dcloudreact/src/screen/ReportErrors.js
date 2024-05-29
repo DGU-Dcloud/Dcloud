@@ -8,250 +8,249 @@ function ReportErrors() {
   const [selectedIssue, setSelectedIssue] = useState('');
   const navigate = useNavigate();
 
-    const handleSubmit = async (event) => {
-      event.preventDefault(); // 폼의 기본 제출 동작 방지
+  const handleSubmit = async (event) => {
+    event.preventDefault(); // 폼의 기본 제출 동작 방지
 
-      // 폼 데이터 객체 생성
-        let formData = {};
-        if (selectedIssue === 'Container Connection Error') {
-          formData = {
-            name: event.target.name.value,
-            department: event.target.department.value,
-            studentId: event.target.studentId.value,
-            sshPort: event.target.sshPort.value,
-            category: event.target.category.value,
-          };
-        } else if (selectedIssue === 'Container Relocation Request') {
-          formData = {
-            name: event.target.name.value,
-            department: event.target.department.value,
-            studentId: event.target.studentId.value,
-            sshPort: event.target.sshPort.value,
-            reason: event.target.reason.value,
-            category: event.target.category.value,
-          };
-        } else if (selectedIssue === 'Extend Expiration Date') {
-          formData = {
-            name: event.target.name.value,
-            department: event.target.department.value,
-            studentId: event.target.studentId.value,
-            sshPort: event.target.sshPort.value,
-            permission: event.target.permission.value,
-            expirationDate: event.target.expirationDate.value,
-            reason: event.target.reason.value,
-            category: event.target.category.value,
-          };
-        } else if (selectedIssue === 'Just Inquiry') {
-          formData = {
-            name: event.target.name.value,
-            department: event.target.department.value,
-            studentId: event.target.studentId.value,
-            inquiryDetails: event.target.inquiryDetails.value,
-            category: event.target.category.value,
-          };
-        }
-        console.log('Submitting form data:', formData);
-      try {
-        const response = await axios.post('/api/reports', formData, {
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          withCredentials: true // 쿠키 전송 설정 추가
-        });
-        console.log('Form submitted successfully:', response.data);
-//        navigate('/success'); // 제출 후 사용자를 성공 페이지로 리다이렉트
-      } catch (error) {
-        console.error('Failed to submit form:', error);
-//        navigate('/error'); // 에러 발생시 에러 페이지로 리다이렉트
-      }
-    };
-
-
+    // 폼 데이터 객체 생성
+    let formData = {};
+    if (selectedIssue === 'Container Connection Error') {
+      formData = {
+        name: event.target.name.value,
+        department: event.target.department.value,
+        studentId: event.target.studentId.value,
+        sshPort: event.target.sshPort.value,
+        category: event.target.category.value,
+      };
+    } else if (selectedIssue === 'Container Relocation Request') {
+      formData = {
+        name: event.target.name.value,
+        department: event.target.department.value,
+        studentId: event.target.studentId.value,
+        sshPort: event.target.sshPort.value,
+        reason: event.target.reason.value,
+        category: event.target.category.value,
+      };
+    } else if (selectedIssue === 'Extend Expiration Date') {
+      formData = {
+        name: event.target.name.value,
+        department: event.target.department.value,
+        studentId: event.target.studentId.value,
+        sshPort: event.target.sshPort.value,
+        permission: event.target.permission.value,
+        expirationDate: event.target.expirationDate.value,
+        reason: event.target.reason.value,
+        category: event.target.category.value,
+      };
+    } else if (selectedIssue === 'Just Inquiry') {
+      formData = {
+        name: event.target.name.value,
+        department: event.target.department.value,
+        studentId: event.target.studentId.value,
+        inquiryDetails: event.target.inquiryDetails.value,
+        category: event.target.category.value,
+      };
+    }
+    console.log('Submitting form data:', formData);
+    try {
+      const response = await axios.post('/api/reports', formData, {
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        withCredentials: true // 쿠키 전송 설정 추가
+      });
+      console.log('Form submitted successfully:', response.data);
+      //        navigate('/success'); // 제출 후 사용자를 성공 페이지로 리다이렉트
+    } catch (error) {
+      console.error('Failed to submit form:', error);
+      //        navigate('/error'); // 에러 발생시 에러 페이지로 리다이렉트
+    }
+  };
 
   useEffect(() => {
-          // 세션 검증
-          axios.get('/api/check-auth', { withCredentials: true })
-            .then(response => {
-              // 세션이 유효한 경우에만 서버 데이터 로딩
-              console.log('Response:', response);
+    // 세션 검증
+    axios.get('/api/check-auth', { withCredentials: true })
+      .then(response => {
+        // 세션이 유효한 경우에만 서버 데이터 로딩
+        console.log('Response:', response);
+      })
+      .catch(error => {
+        // 세션이 유효하지 않은 경우 로그인 페이지로 리디렉션
+        console.error('Session not valid:', error);
+        navigate('/');
+      });
+  }, [navigate]);
 
-            })
-            .catch(error => {
-              // 세션이 유효하지 않은 경우 로그인 페이지로 리디렉션
-              console.error('Session not valid:', error);
-              navigate('/');
-            });
-        }, [navigate]);
+  // 라디오 버튼의 값이 변경될 때 실행될 핸들러 함수
+  const handleIssueChange = (e) => {
+    setSelectedIssue(e.target.value);
+  };
 
-    // 라디오 버튼의 값이 변경될 때 실행될 핸들러 함수
-    const handleIssueChange = (e) => {
-      setSelectedIssue(e.target.value);
-    };
-    const hoverEffect = (e) => {
-        e.target.style.background = '#777';
-      };
-      const resetEffect = (e) => {
-        e.target.style.background = '#555';
-      };
+  const hoverEffect = (e) => {
+    e.target.style.background = '#777';
+  };
 
+  const resetEffect = (e) => {
+    e.target.style.background = '#555';
+  };
 
-    // 선택된 이슈에 따라 표시될 폼을 반환하는 함수
-    const renderFormForIssue = () => {
-      switch (selectedIssue) {
-        case 'Container Connection Error':
-          return <div>
-
-              <div style={styles.inputGroup}>
-                <p style={styles.label}>Name</p>
-                <input type="text" placeholder="e.g., PARK MIN GYUN" required style={styles.inputField} name="name" />
-                <p style={styles.label}>Department</p>
-                <input type="text" placeholder="e.g., Computer Science" required style={styles.inputField} name="department" />
-                <p style={styles.label}>Student ID</p>
-                <input type="text" placeholder="e.g., 2018112032" required style={styles.inputField} name="studentId" />
-                <p style={styles.label}>Container's SSH Port Number</p>
-                <input type="text" placeholder="e.g., 9010" required style={styles.inputField} name="sshPort" />
-              </div>
-
-
+  // 선택된 이슈에 따라 표시될 폼을 반환하는 함수
+  const renderFormForIssue = () => {
+    switch (selectedIssue) {
+      case 'Container Connection Error':
+        return (
+          <div>
+            <div style={styles.inputGroup}>
+              <p style={styles.label}>Name</p>
+              <input type="text" placeholder="e.g., PARK MIN GYUN" required style={styles.inputField} name="name" />
+              <p style={styles.label}>Department</p>
+              <input type="text" placeholder="e.g., Computer Science" required style={styles.inputField} name="department" />
+              <p style={styles.label}>Student ID</p>
+              <input type="text" placeholder="e.g., 2018112032" required style={styles.inputField} name="studentId" />
+              <p style={styles.label}>Container's SSH Port Number</p>
+              <input type="text" placeholder="e.g., 9010" required style={styles.inputField} name="sshPort" />
+            </div>
 
             <p style={styles.cautionText}>
-                <h3>** !Must read! **</h3>
-                *Container access is not available overseas due to firewall policy*
-                <br/>*Ssh access command to cmd or terminal window (ssh username@210.94.179.1x -p portNumber) Please apply for errors other than Connection Refused in other items after performing this.*
-                <br/>⚠ If you apply without trying the above, the report will be automatically ignored and the thread may be deleted without any notice. ⚠
-                <br/>The most common error is the host key related error.
-                <br/>The connection is inaccessible because it conflicts with the previous host information.
-                <br/>This can be resolved by deleting the part of the known_hosts file that fails the ssh connection.
-                <br/>The known_hosts file is C:\Users\your_computer_userName\. It is located in ssh.
-                <br/>Please try the above method and try to access it again from VSCode, etc.
-                <br/><br/>You have to answer the administrator's request or question through the thread of the Slack channel within 12 hours. After 12 hours, the error is automatically cleared.
-                <br/>Without a detailed situation description of the error, the administrator cannot understand the situation. The error report must include a copy or capture of the printed error message, the time when the error occurred, and the situation in which the error occurred. Please submit the error screen capture to Google Form and attach a screenshot as a thread comment to the "lab-error report and inquiry" channel. Error reports without detailed explanation are automatically deleted.
-                <br/>If you apply without knowing and reflecting the contents of the error Q&A, the report will be ignored and the thread may be automatically deleted without any notice.
+              <h3>** !Please make sure to read the following! **</h3>
+              Please submit the error report category accurately.
+              <br />⚠ If you apply for other "Contact Details," the report will be automatically ignored, and the error report may be deleted without separate notice. ⚠
+              <br /><br />Due to firewall policies, container access is not possible from overseas.
+              <br /><br />If you enter the ssh command and receive a "Connection Refused" result, please select this option.
+              <br /><br />Please report errors only after performing all self-debugging for your error type in the Forum and if the problem persists. If you report an error without completing all steps, the report will be ignored and deleted.
+              <br /><br />When reporting an error, you can check the progress of error handling on My Page, and you must respond to the administrator's requests or questions within 12 hours. If there is no response for more than 12 hours, the error report will be deleted without separate notice. (You can check the administrator's requests or questions by clicking on the error you reported in the Your Report section of My Page.)
+              <br /><br />Without a detailed description of the error situation, the administrator cannot understand the situation. Error reports must include a copy or capture of the printed error message, the time the error occurred, and the situation in which the error occurred.
             </p>
 
-            <div><div><div>
-
-                                     <p style={styles.label}>Do you agree with this statement? </p>
-                                                             <div style={styles.radioGroup}>
-                                                               <label style={styles.radioLabel}>
-                                                                 <input type="radio" name="agree1" value="image1" required style={styles.radioButton} />
-                                                                 Yes. I have completed self-debugging and is applying after understanding all the error reporting methods.
-                                                               </label>
-                                                             </div>
-                                    </div></div></div>
-
-          </div>;
-        case 'Container Relocation Request':
-          return <div>
-
-          <div style={styles.inputGroup}>
-            <p style={styles.label}>Name</p>
-            <input type="text" placeholder="e.g., PARK MIN GYUN" required style={styles.inputField} name="name" />
-            <p style={styles.label}>Department</p>
-            <input type="text" placeholder="e.g., Computer Science" required style={styles.inputField} name="department" />
-            <p style={styles.label}>Student ID</p>
-            <input type="text" placeholder="e.g., 2018112032" required style={styles.inputField} name="studentId" />
-            <p style={styles.label}>Container's SSH Port Number</p>
-            <input type="text" placeholder="e.g., 9010" required style={styles.inputField} name="sshPort" />
-            <p style={styles.label}>Reason for Relocation</p>
-            <textarea required style={{...styles.inputField, height: '100px', width: '700px'}} name="reason" />
+            <div>
+              <div>
+                <div>
+                  <p style={styles.label}>Do you agree with this statement? </p>
+                  <div style={styles.radioGroup}>
+                    <label style={styles.radioLabel}>
+                      <input type="radio" name="agree1" value="image1" required style={styles.radioButton} />
+                      Yes. I have completed self-debugging and is applying after understanding all the error reporting methods.
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
+        );
+      case 'Container Relocation Request':
+        return (
+          <div>
+            <div style={styles.inputGroup}>
+              <p style={styles.label}>Name</p>
+              <input type="text" placeholder="e.g., PARK MIN GYUN" required style={styles.inputField} name="name" />
+              <p style={styles.label}>Department</p>
+              <input type="text" placeholder="e.g., Computer Science" required style={styles.inputField} name="department" />
+              <p style={styles.label}>Student ID</p>
+              <input type="text" placeholder="e.g., 2018112032" required style={styles.inputField} name="studentId" />
+              <p style={styles.label}>Container's SSH Port Number</p>
+              <input type="text" placeholder="e.g., 9010" required style={styles.inputField} name="sshPort" />
+              <p style={styles.label}>Reason for Relocation</p>
+              <textarea required style={{ ...styles.inputField, height: '100px', width: '700px' }} name="reason" />
+            </div>
 
+            <p style={styles.cautionText}>
+              <h3>** !Please make sure to read the following! **</h3>
+              Please submit the error report category accurately.
+              <br /><br />⚠ If you apply for other "Contact Details," the report will be automatically ignored, and the error report may be deleted without separate notice. ⚠
+              <br /><br />If you need to relocate the container due to issues such as GPU and memory usage, mismatched CUDA versions, etc., please submit a request.
+              <br /><br />Please report errors only after performing all self-debugging for your error type in the Forum and if the problem persists. If you report an error without completing all steps, the report will be ignored and deleted.
+              <br /><br />When reporting an error, you can check the progress of error handling on My Page, and you must respond to the administrator's requests or questions within 12 hours. If there is no response for more than 12 hours, the error report will be ignored and deleted. (You can check the administrator's requests or questions by clicking on the error you reported in the Your Report section of My Page.)
+              <br /><br />Without a detailed description of the situation in the report, the administrator cannot understand the situation. Please provide as much detailed information as possible.
+            </p>
 
-                  <p style={styles.cautionText}>
-                      <h3>** !Must read! **</h3>
-                      Please apply when you need to transfer the container to another server due to GPU and memory usage, cuda-version mismatch, etc.<br/><br/>You have to answer the administrator's request or question through the thread of the Slack channel within 12 hours. After 12 hours, the error is automatically cleared.
-                      <br/>Without a detailed situation description of the error, the administrator cannot understand the situation. The error report must include a copy or capture of the printed error message, the time when the error occurred, and the situation in which the error occurred. Please submit the error screen capture to Google Form and attach a screenshot as a thread comment to the "lab-error report and inquiry" channel. Error reports without detailed explanation are automatically deleted.
-                      <br/>If you apply without knowing and reflecting the contents of the error Q&A, the report will be ignored and the thread may be automatically deleted without any notice.
-                  </p>
-
-                           <div><div>
-
-                                                    <p style={styles.label}>Do you agree with this statement? </p>
-                                                                            <div style={styles.radioGroup}>
-                                                                              <label style={styles.radioLabel}>
-                                                                                <input type="radio" name="agree2" value="image2" required style={styles.radioButton} />
-                                                                                Yes. I have completed self-debugging and is applying after understanding all the error reporting methods.
-                                                                              </label>
-                                                                            </div>
-                                                   </div></div>
-
-          </div>;
-        case 'Extend Expiration Date':
-          return <div>
-
-          <div style={styles.inputGroup}>
-            <p style={styles.label}>Name</p>
-            <input type="text" placeholder="e.g., PARK MIN GYUN" required style={styles.inputField} name="name" />
-            <p style={styles.label}>Department</p>
-            <input type="text" placeholder="e.g., Computer Science" required style={styles.inputField} name="department" />
-            <p style={styles.label}>Student ID</p>
-            <input type="text" placeholder="e.g., 2018112032" required style={styles.inputField} name="studentId" />
-            <p style={styles.label}>Container's SSH Port Number</p>
-            <input type="text" placeholder="e.g., 9010" required style={styles.inputField} name="sshPort" />
-            <p style={styles.label}>Did you get permission from your professor?</p>
-            <input type="checkbox" name="permission" /> Yes
-            <p style={styles.label}>New Expiration Date</p>
-            <input type="date" required style={styles.inputField} name="expirationDate" />
-
-            <p style={styles.label}>Why should we extend your Container? Please write your reasons in as much detail as possible.</p>
-            <textarea required style={{...styles.inputField, height: '100px', width: '700px'}} name="reason" />
-
-
+            <div>
+              <div>
+                <p style={styles.label}>Do you agree with this statement? </p>
+                <div style={styles.radioGroup}>
+                  <label style={styles.radioLabel}>
+                    <input type="radio" name="agree2" value="image2" required style={styles.radioButton} />
+                    Yes. I have completed self-debugging and is applying after understanding all the error reporting methods.
+                  </label>
+                </div>
+              </div>
+            </div>
           </div>
+        );
+      case 'Extend Expiration Date':
+        return (
+          <div>
+            <div style={styles.inputGroup}>
+              <p style={styles.label}>Name</p>
+              <input type="text" placeholder="e.g., PARK MIN GYUN" required style={styles.inputField} name="name" />
+              <p style={styles.label}>Department</p>
+              <input type="text" placeholder="e.g., Computer Science" required style={styles.inputField} name="department" />
+              <p style={styles.label}>Student ID</p>
+              <input type="text" placeholder="e.g., 2018112032" required style={styles.inputField} name="studentId" />
+              <p style={styles.label}>Container's SSH Port Number</p>
+              <input type="text" placeholder="e.g., 9010" required style={styles.inputField} name="sshPort" />
+              <p style={styles.label}>Did you get permission from your professor?</p>
+              <input type="checkbox" name="permission" /> Yes
+              <p style={styles.label}>New Expiration Date</p>
+              <input type="date" required style={styles.inputField} name="expirationDate" />
+              <p style={styles.label}>Why should we extend your Container? Please write your reasons in as much detail as possible.</p>
+              <textarea required style={{ ...styles.inputField, height: '100px', width: '700px' }} name="reason" />
+            </div>
 
+            <p style={styles.cautionText}>
+              <h3>** !Please make sure to read the following! **</h3>
+              Please submit the error report category accurately.
+              <br /><br />⚠ If you apply for other "Contact Details," the report will be automatically ignored, and the error report may be deleted without separate notice. ⚠
+              <br /><br />This category is exclusively for requesting an extension of the usage period for an existing container (i.e., before the container is deleted due to expiration). If the container has already expired, it is not possible to recover the storage and the server itself. If the expiration date has already passed, please apply for a new container through the "Container Request" tab.
+              <br /><br />Without the approval of your supervising professor, it is not possible to extend the container's expiration date. You must obtain their approval.
+              <br /><br />When reporting, you can check the progress of your report handling on My Page, and if there are any requests or questions from the administrator, you must respond within 12 hours. If there is no response for more than 12 hours, the report will be ignored and deleted. (You can check the administrator's requests or questions by clicking on the error you reported in the Your Report section of My Page.)
+              <br /><br />Without a detailed description of the situation in the report, the administrator cannot understand the situation. Please provide as much detailed information as possible.
+            </p>
 
+            <div>
+              <p style={styles.label}>Do you agree with this statement? </p>
+              <div style={styles.radioGroup}>
+                <label style={styles.radioLabel}>
+                  <input type="radio" name="agree3" value="image3" required style={styles.radioButton} />
+                  Yes. I have completed self-debugging and is applying after understanding all the error reporting methods.
+                </label>
+              </div>
+            </div>
+          </div>
+        );
+      case 'Just Inquiry':
+        return (
+          <div>
+            <div style={styles.inputGroup}>
+              <p style={styles.label}>Name</p>
+              <input type="text" placeholder="e.g., PARK MIN GYUN" required style={styles.inputField} name="name" />
+              <p style={styles.label}>Department</p>
+              <input type="text" placeholder="e.g., Computer Science" required style={styles.inputField} name="department" />
+              <p style={styles.label}>Student ID</p>
+              <input type="text" placeholder="e.g., 2018112032" required style={styles.inputField} name="studentId" />
+              <p style={styles.label}>Details of Inquiry</p>
+              <textarea required style={{ ...styles.inputField, height: '100px', width: '700px' }} name="inquiryDetails" />
+            </div>
 
-                     <p style={styles.cautionText}>
-                         <h3>** !Must read! **</h3>
-                         Please apply when you need to transfer the container to another server due to GPU and memory usage, cuda-version mismatch, etc.<br/><br/>You have to answer the administrator's request or question through the thread of the Slack channel within 12 hours. After 12 hours, the error is automatically cleared.
-                         <br/>Without a detailed situation description of the error, the administrator cannot understand the situation. The error report must include a copy or capture of the printed error message, the time when the error occurred, and the situation in which the error occurred. Please submit the error screen capture to Google Form and attach a screenshot as a thread comment to the "lab-error report and inquiry" channel. Error reports without detailed explanation are automatically deleted.
-                         <br/>If you apply without knowing and reflecting the contents of the error Q&A, the report will be ignored and the thread may be automatically deleted without any notice.
-                     </p>
-                        <div>
+            <p style={styles.cautionText}>
+              <h3>** !Please make sure to read the following! **</h3>
+              Please submit the error report category accurately.
+              <br /><br />⚠ If you apply for other "Contact Details," the report will be automatically ignored, and the error report may be deleted without separate notice. ⚠
+              <br /><br />When reporting an error, you can check the progress of error handling on My Page, and you must respond to the administrator's requests or questions within 12 hours. If there is no response for more than 12 hours, the error report will be deleted without separate notice. (You can check the administrator's requests or questions by clicking on the error you reported in the Your Report section of My Page.)
+              <br /><br />Without a detailed description of the error situation, the administrator cannot understand the situation. Error reports must include a copy or capture of the printed error message, the time the error occurred, and the situation in which the error occurred.
+            </p>
 
-                         <p style={styles.label}>Do you agree with this statement? </p>
-                                                 <div style={styles.radioGroup}>
-                                                   <label style={styles.radioLabel}>
-                                                     <input type="radio" name="agree3" value="image3" required style={styles.radioButton} />
-                                                     Yes. I have completed self-debugging and is applying after understanding all the error reporting methods.
-                                                   </label>
-                                                 </div>
-                        </div>
-
-           </div>;
-        case 'Just Inquiry':
-          return <div>
-                    <div style={styles.inputGroup}>
-                      <p style={styles.label}>Name</p>
-                      <input type="text" placeholder="e.g., PARK MIN GYUN" required style={styles.inputField} name="name" />
-                      <p style={styles.label}>Department</p>
-                      <input type="text" placeholder="e.g., Computer Science" required style={styles.inputField} name="department" />
-                      <p style={styles.label}>Student ID</p>
-                      <input type="text" placeholder="e.g., 2018112032" required style={styles.inputField} name="studentId" />
-                      <p style={styles.label}>Details of Inquiry</p>
-                      <textarea required style={{...styles.inputField, height: '100px', width: '700px'}} name="inquiryDetails" />
-                    </div>
-
-           <p style={styles.cautionText}>
-              <h3>** !Must read! **</h3>
-              Please submit an error that matches the required items.
-              <br/>⚠ If you apply for a different category, your report will be automatically ignored and the thread may be deleted without further notice. ⚠
-          </p>
-
-          <p style={styles.label}>Do you agree with this statement? </p>
-                                                           <div style={styles.radioGroup}>
-                                                             <label style={styles.radioLabel}>
-                                                               <input type="radio" name="agree3" value="image3" required style={styles.radioButton} />
-                                                               Yes. I have completed self-debugging and is applying after understanding all the error reporting methods.
-                                                             </label>
-                                                           </div>
-           </div>;
-        default:
-          return <div></div>;
-      }
-    };
-
+            <p style={styles.label}>Do you agree with this statement? </p>
+            <div style={styles.radioGroup}>
+              <label style={styles.radioLabel}>
+                <input type="radio" name="agree3" value="image3" required style={styles.radioButton} />
+                Yes. I have completed self-debugging and is applying after understanding all the error reporting methods.
+              </label>
+            </div>
+          </div>
+        );
+      default:
+        return <div></div>;
+    }
+  };
   return (
     <div>
         <NavigationBar/>
