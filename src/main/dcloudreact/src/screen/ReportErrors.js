@@ -59,10 +59,10 @@ function ReportErrors() {
         withCredentials: true // 쿠키 전송 설정 추가
       });
       console.log('Form submitted successfully:', response.data);
-      //        navigate('/success'); // 제출 후 사용자를 성공 페이지로 리다이렉트
+      alert('Form submitted successfully!');
     } catch (error) {
       console.error('Failed to submit form:', error);
-      //        navigate('/error'); // 에러 발생시 에러 페이지로 리다이렉트
+      alert('Failed to submit form. Please try again later.');
     }
   };
 
