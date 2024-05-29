@@ -1,5 +1,6 @@
 package dgu.ailab.dcloud.controller;
 
+import dgu.ailab.dcloud.dto.ContainerDto;
 import dgu.ailab.dcloud.dto.ContainerRequestDto;
 import dgu.ailab.dcloud.dto.UserDashboardDto;
 import dgu.ailab.dcloud.dto.UserInfoDto;
@@ -41,7 +42,8 @@ public class MyPageController {
         if (userId != null) {
             UserInfoDto userInfo = userService.getUserInfo(userId);
             List<ContainerRequestDto> containerRequests = containerService.getContainerRequestStatus(userId);
-            return new UserDashboardDto(userInfo, containerRequests);
+            List<ContainerDto> activeContainers = containerService.getActiveContainer(userId);
+            return new UserDashboardDto(userInfo, containerRequests, activeContainers);
         } else {
             throw new IllegalStateException("No user is logged in or session does not exist");
         }

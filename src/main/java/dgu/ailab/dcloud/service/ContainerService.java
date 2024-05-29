@@ -248,4 +248,11 @@ public class ContainerService {
         throw new RuntimeException("Available port not found for host: " + host);
     }
 
+    public List<ContainerDto> getActiveContainer(String userId) {
+        List<Container> activeContainers = containerRepository.findByUser_UserIDAndStatus(userId, "active");
+        return activeContainers.stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
 }

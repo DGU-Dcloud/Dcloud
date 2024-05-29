@@ -10,6 +10,7 @@ function Forum() {
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [postsPerPage] = useState(10);
+  const [userRole, setUserRole] = useState('');
 
   useEffect(() => {
     // 세션 검증
@@ -24,6 +25,15 @@ function Forum() {
         console.error('Session not valid:', error);
         navigate('/');
       });
+
+    axios.get('/api/user-role', { withCredentials: true })
+      .then(response => {
+        setUserRole(response.data.roleId === 1 ? 'manager' : '');
+      })
+      .catch(error => {
+        console.log('Error fetching user role:', error);
+      });
+
   }, [navigate]);
 
   const fetchPosts = async () => {
@@ -83,7 +93,7 @@ function Forum() {
         <p>You can check the announcements on this page. Please check frequently. You can also check the error history so far.</p>
         <p>If you have a problem with your container, please take advantage of the forum.</p>
 
-        <button onClick={createPostHandler} style={styles.createButton}>Create Post</button>
+        {userRole === 'manager' &&  <button onClick={createPostHandler} style={styles.createButton}>Create Post</button> }
 
         <table style={styles.table}>
           <thead>
