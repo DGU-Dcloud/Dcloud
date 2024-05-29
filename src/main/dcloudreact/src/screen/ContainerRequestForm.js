@@ -186,21 +186,15 @@ function ContainerRequestForm() {
                       </div>
 
                         <p style={styles.cautionText}>
-                        <h3>** !Must read! **</h3>
-                        While using the server, you are responsible for any problems that arise due to your carelessness, lack of familiarity with the manual, or failure to respond to administrator requests, and future usage restrictions or disadvantages may apply.
-                        As data may be deleted while using the server, you should frequently back it up on your personal computer.
-                        After the server's scheduled expiration date, containers and storage will be deleted immediately, and the administrator is not responsible for any problems caused by users not backing up their data.
-                        If there is a reason to use it after the scheduled expiration date, you must apply for an extension at least 3 days before the scheduled expiration date.
-                        If the administrator does not separately notify you of the approval via slack DM, the approval will be rejected and you will not be notified of the reason for the rejection.
-                        <br/><br/>Are you signed up for Slack? You must sign up. If you have not signed up, please sign up using the link below.
-                        The name displayed must be your real name (in Korean). <br/>
-                        <a href="https://dguai-lab.slack.com/join/shared_invite/zt-2fthv9brr-ICV0xL7LyahdVARuazI8bA#/shared-invite/email" target="_blank">
-                        Join Slack
-                        </a>
-                        <br/><br/>
-                        Additionally, we will provide a manual for using the server. You can check it at the link below.
-                        <br/>
-                        <a href="https://docs.google.com/document/d/1PtMqJ25kKMZLJnOQY8vgWyTY3HBWUvP86vFaZ2ldMdg/edit" target="_blank">
+                        <h3>** !Please make sure to read the following! **</h3>
+                        <br/>- During server usage, any issues arising from your own negligence, lack of manual understanding, or failure to respond to administrator requests are your sole responsibility, and future usage restrictions or penalties may be applied.
+                        <br/><br/>- Data may be deleted during server usage, so please frequently back up your data on your personal computer.
+                        <br/><br/>- After the server's scheduled expiration date, the container and storage will be immediately deleted, and the administrator is not responsible for any problems caused by the user's failure to back up data.
+                        <br/><br/>- If you need to use the server after the expiration date, you must apply for an extension at least 3 days before the expiration date. Extension requests can be made through the "Report Errors or Contact Us" tab.
+                        <br/><br/>- The results of container applications can be checked on "My Page," and you can check the results within a maximum of 24 hours. No separate notifications will be sent, so please check frequently.
+                        <br/><br/>- If your application is rejected, no specific reason for rejection will be provided.
+                        <br/><br/>- Additionally, we are providing a link to the manual for server usage. Please read the contents of the manual in detail.<br/>
+                        <br/><a href="https://docs.google.com/document/d/1PtMqJ25kKMZLJnOQY8vgWyTY3HBWUvP86vFaZ2ldMdg/edit" target="_blank">
                         User Manual
                         </a>
                         </p>
