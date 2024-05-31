@@ -64,6 +64,9 @@ function ReportErrors() {
       console.error('Failed to submit form:', error);
       //        navigate('/error'); // 에러 발생시 에러 페이지로 리다이렉트
     }
+
+    navigate('/mainpage');
+
   };
 
   useEffect(() => {

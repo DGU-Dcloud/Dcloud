@@ -4,26 +4,37 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
 import java.util.Date;
 
 @Data
 @AllArgsConstructor
-@NoArgsConstructor // Lombok 어노테이션을 사용하여 기본 생성자 생성
+@NoArgsConstructor
 public class ReportDto {
     private boolean isAnswered;
     private int reportId;
     private Date createdAt;
     private String category;
-    //private String serverName;
     private String userId;
     private String department;
-    private String requirement; // Extend Expiration Date 시, 사용자 요구 사항 받음
+    private String requirement;
     private int sshPort;
     private String studentId;
-    private String why; // container relocation, Extend Expiration Date, Just Inquiry
+    private String why;
+    private Integer postId; // postId 필드 추가
 
-
-    public ReportDto(Boolean isAnswered, Integer reportID, Date createdAt, String category, String userId, String department, String requirement, Integer sshPort, String studentID, String why) {
+    @Override
+    public String toString() {
+        return "리포트 정보\n" +
+                " - 답변 여부: " + (isAnswered ? "답변됨" : "답변되지 않음") + "\n" +
+                " - 리포트 ID: " + reportId + "\n" +
+                " - 작성일: " + createdAt + "\n" +
+                " - 카테고리: '" + category + "'\n" +
+                " - 사용자 ID: '" + userId + "'\n" +
+                " - 부서: '" + department + "'\n" +
+                " - 요구사항: '" + requirement + "'\n" +
+                " - SSH 포트: " + sshPort + "\n" +
+                " - 학생 ID: '" + studentId + "'\n" +
+                " - 이유: '" + why + "'\n" +
+                " - 포스트 ID: " + postId;
     }
 }

@@ -22,7 +22,7 @@ function AdminPage() {
   }, [navigate]);
 
   const fetchData = async () => {
-    const response = await fetch('http://localhost:8080/api/allcontainerrequest');
+    const response = await fetch('/api/allcontainerrequest');
     const data = await response.json();
     setContainerRequests(data);
   };
@@ -39,7 +39,7 @@ function AdminPage() {
                      .filter(([key, value]) => value)
                      .map(([key]) => key);
     console.log(`${action} Selected Requests:`, ids);
-    axios.post('http://localhost:8080/api/admin-action', { action, ids })
+    axios.post('/api/admin-action', { action, ids })
          .then(response => {
            console.log(`${action} action successful:`, response.data);
            window.location.reload();

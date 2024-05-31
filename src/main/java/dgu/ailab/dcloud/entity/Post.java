@@ -37,6 +37,9 @@ public class Post {
     @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private Set<Comment> comments;
 
+    // Report와의 관계 추가
+    @OneToMany(mappedBy = "post")
+    private Set<Report> reports;
+
     public Post() {}
 }
-

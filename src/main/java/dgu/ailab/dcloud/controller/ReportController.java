@@ -33,7 +33,7 @@ public class ReportController {
 
     private final ReportService reportService;
     private static final Logger logger = LoggerFactory.getLogger(ReportController.class);
-    private final String SLACK_WEBHOOK_URL = "https://hooks.slack.com/services/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?charset=utf-8";
+    private final String SLACK_WEBHOOK_URL = "https://hooks.slack.com/services/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?charset=utf-8";
 
     @Autowired
     public ReportController(ReportService reportService) {

@@ -33,7 +33,7 @@ function MyPage() {
               });
               const data = await response.json();
               setUserInfo(data.userInfo);
-
+              console.log('Response:',data);
               if (data.containerRequests) { // containerRequests가 있는지 확인
                 setContainerRequests(data.containerRequests);
               } else {
@@ -46,7 +46,7 @@ function MyPage() {
                   console.log('No activeContainers found:', data);
                 }
 
-              if (data.reports) { // containerRequests가 있는지 확인
+              if (data.reports) { // report있는지 확인
                   setReports(data.reports);
                 } else {
                   console.log('No reports found:', data);
@@ -180,19 +180,19 @@ return (
         <table style={styles.table}>
           <thead>
             <tr>
-              <th style={styles.th}>Category</th>
+              <th style={styles.th}>Requirement</th>
               <th style={styles.th}>SSH Port</th>
-              <th style={styles.th}>Description</th>
+              <th style={styles.th}>Report Date</th>
             </tr>
           </thead>
           <tbody>
             {reports.map((report, index) => (
-              <tr key={index}>
-                <td style={styles.td}>{report.category}</td>
-                <td style={styles.td}>{report.sshPort}</td>
-                <td style={styles.td}>{report.description}</td>
-              </tr>
-            ))}
+                          <tr key={index}>
+                            <td style={styles.td}>{report.category}</td>
+                            <td style={styles.td}>{report.sshPort}</td>
+                            <td style={styles.td}>{new Date(report.createdAt).toLocaleDateString()}</td>
+                          </tr>
+                        ))}
           </tbody>
         </table>
 
