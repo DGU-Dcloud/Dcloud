@@ -23,13 +23,13 @@ public class JustInquiryDto {
 
     @Override
     public String toString() {
-        return "단순 문의 보고서 정보" +
+        return "단순 문의 보고서 정보\n" +
                 " - 이름: '" + name + '\'' +
-                ", 부서: '" + department + '\'' +
-                ", 사용자 ID: '" + userId + '\'' +
-                ", 학생 ID: '" + studentId + '\'' +
-                ", 문의 내용: '" + why + '\'' +
-                ", 카테고리: '" + category + '\'';
+                "\n - 학과: '" + department + '\'' +
+                "\n - 사용자 ID: '" + userId + '\'' +
+                "\n - 학번: '" + studentId + '\'' +
+                "\n - 문의 내용: '" + why + '\'' +
+                "\n - 카테고리: '" + category + '\'';
     }
 
 

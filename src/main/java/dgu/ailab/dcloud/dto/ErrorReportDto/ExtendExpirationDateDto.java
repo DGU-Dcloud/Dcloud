@@ -28,16 +28,16 @@ public class ExtendExpirationDateDto {
 
     @Override
     public String toString() {
-        return "만료일 연장 요청 보고서 정보" +
+        return "만료일 연장 요청 보고서 정보\n" +
                 " - 이름: '" + name + '\'' +
-                ", 부서: '" + department + '\'' +
-                ", 사용자 ID: '" + userId + '\'' +
-                ", 학생 ID: '" + studentId + '\'' +
-                ", SSH 포트: " + sshPort +
-                ", 허가 여부: " + permission +
-                ", 만료일 연장 요구 사항: '" + requirement + '\'' +
-                ", 이유: '" + why + '\'' +
-                ", 카테고리: '" + category + '\'';
+                "\n - 학과: '" + department + '\'' +
+                "\n - 사용자 ID: '" + userId + '\'' +
+                "\n - 학번: '" + studentId + '\'' +
+                "\n - SSH 포트: " + sshPort +
+                "\n - 허가 여부: " + permission +
+                "\n - 만료일 연장 요구 사항: '" + requirement + '\'' +
+                "\n - 이유: '" + why + '\'' +
+                "\n - 카테고리: '" + category + '\'';
     }
 
 

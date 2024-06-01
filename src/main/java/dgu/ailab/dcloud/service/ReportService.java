@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -126,7 +127,7 @@ public class ReportService {
             throw new IllegalStateException("User not found with ID: " + reportDto.getUserId());
         }
 
-        post.setCategory("General");
+        post.setCategory("UserReport");
         post.setCreatedAt(new Date());
         post.setTitle("Report by "+reportDto.getUserId());
         post.setContent(reportDto.toString());
@@ -261,5 +262,30 @@ public class ReportService {
                 report.getWhy(),
                 report.getPost().getPostID()
         )).collect(Collectors.toList());
+    }
+
+    public List<ReportDto> findByIsAnsweredFalse() {
+        List<Report> unansweredReports = reportRepository.findByIsAnsweredFalse();
+        List<ReportDto> reportDtos = new ArrayList<>();
+
+        for (Report report : unansweredReports) {
+            ReportDto reportDto = new ReportDto();
+            reportDto.setAnswered(report.getIsAnswered());
+
+            reportDto.setReportId(report.getReportID());
+            reportDto.setCreatedAt(report.getCreatedAt());
+            reportDto.setCategory(report.getCategory());
+            reportDto.setUserId(report.getUserId());
+            reportDto.setDepartment(report.getDepartment());
+            reportDto.setRequirement(report.getRequirement());
+            reportDto.setSshPort(report.getSshPort());
+            reportDto.setStudentId(report.getStudentID());
+            reportDto.setWhy(report.getWhy());
+            reportDto.setPostId(report.getPost().getPostID());
+
+            reportDtos.add(reportDto);
+        }
+
+        return reportDtos;
     }
 }

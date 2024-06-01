@@ -192,8 +192,10 @@ function ContainerRequestForm() {
                         <br/><br/>- After the server's scheduled expiration date, the container and storage will be immediately deleted, and the administrator is not responsible for any problems caused by the user's failure to back up data.
                         <br/><br/>- If you need to use the server after the expiration date, you must apply for an extension at least 3 days before the expiration date. Extension requests can be made through the "Report Errors or Contact Us" tab.
                         <br/><br/>- The results of container applications can be checked on "My Page," and you can check the results within a maximum of 24 hours. No separate notifications will be sent, so please check frequently.
+                        <br/><br/>- Also We will provide a command to access the activated container.
                         <br/><br/>- If your application is rejected, no specific reason for rejection will be provided.
                         <br/><br/>- Additionally, we are providing a link to the manual for server usage. Please read the contents of the manual in detail.<br/>
+
                         <br/><a href="https://docs.google.com/document/d/1PtMqJ25kKMZLJnOQY8vgWyTY3HBWUvP86vFaZ2ldMdg/edit" target="_blank">
                         User Manual
                         </a>

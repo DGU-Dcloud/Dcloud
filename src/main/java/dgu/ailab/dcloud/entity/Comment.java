@@ -1,5 +1,6 @@
 package dgu.ailab.dcloud.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.Getter;
 import lombok.Setter;
 import java.util.Date;
@@ -17,6 +18,7 @@ public class Comment {
 
     @ManyToOne
     @JoinColumn(name = "postID")
+    @JsonBackReference
     private Post post;
 
     @Column(name = "content", length = 1000)

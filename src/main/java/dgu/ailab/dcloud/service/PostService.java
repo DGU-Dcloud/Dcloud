@@ -5,6 +5,7 @@ import dgu.ailab.dcloud.dto.PostDto;
 import dgu.ailab.dcloud.entity.*;
 import dgu.ailab.dcloud.repository.PostRepository;
 import dgu.ailab.dcloud.repository.CommentRepository;
+import dgu.ailab.dcloud.repository.ReportRepository;
 import dgu.ailab.dcloud.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,12 +20,14 @@ public class PostService {
     private final PostRepository postRepository;
     private final CommentRepository commentRepository;
     private final UserRepository userRepository;
+    private final ReportRepository reportRepository;
 
     @Autowired
-    public PostService(CommentRepository commentRepository, PostRepository postRepository, UserRepository userRepository) {
+    public PostService(CommentRepository commentRepository, PostRepository postRepository, UserRepository userRepository, ReportRepository reportRepository) {
         this.commentRepository = commentRepository;
         this.postRepository = postRepository;
         this.userRepository = userRepository;
+        this.reportRepository = reportRepository;
     }
     // 모든 게시물을 불러오는 메서드
     public List<PostDto> getAllPostss() {
@@ -119,12 +122,23 @@ public class PostService {
         User user = userRepository.findByUserID(userId);
 
 
-        if (post != null) {
+
+        if (post != null && user != null) {
             comment.setPost(post);
             comment.setCreatedAt(new Date());
             comment.setUser(user);
+            // 댓글을 추가했다면, 해당 포스트를 외래키로 갖는 오류신고의 isAnswered를 true로 변경함. 즉, 답변 했다는 뜻.
+            Report report = reportRepository.findByPost_PostID(post.getPostID());
+            if (report != null) {
+                report.setIsAnswered(true);
+                reportRepository.save(report);
+            }
             return commentRepository.save(comment);
         }
+
+        // postId를 외래키로 갖는 Report의 isAnswered 값을 true로 변경
+
+
         return null;
     }
     public class PostCreationFailedException extends RuntimeException {

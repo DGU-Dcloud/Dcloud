@@ -1,5 +1,6 @@
 package dgu.ailab.dcloud.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -36,7 +37,7 @@ public class Report {
     private String user_name;
 
     @Column(name = "sshPort")
-    private Integer sshPort;
+    private Integer sshPort=-1;
 
     @Column(name = "why", length = 1000)
     private String why;
@@ -50,5 +51,6 @@ public class Report {
     // Post와의 관계 추가
     @ManyToOne
     @JoinColumn(name = "postid")
+    @JsonBackReference // 참조 당하는 쪽을 나타내는 어노테이션. 순환 참조 문제를 해결하기 위해 추가함.
     private Post post;
 }

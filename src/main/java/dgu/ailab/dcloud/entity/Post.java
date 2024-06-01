@@ -1,5 +1,6 @@
 package dgu.ailab.dcloud.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Getter;
 import lombok.Setter;
 import java.util.Date;
@@ -39,6 +40,7 @@ public class Post {
 
     // Report와의 관계 추가
     @OneToMany(mappedBy = "post")
+    @JsonManagedReference // 순환 참조 해결을 위한 어노테이션. 관리측 참조를 나타냄. post쪽에서도 어노테이션을 추가함.
     private Set<Report> reports;
 
     public Post() {}

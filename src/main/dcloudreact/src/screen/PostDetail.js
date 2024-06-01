@@ -127,21 +127,25 @@ function PostDetail() {
             <NavigationBar />
             <div style={{ height: '10vh' }}></div>
             <main style={styles.container}>
-            {user && user.userID === post.userId && (
+              {user && user.userID === post.userId && (
                 <button style={styles.postDeleteButton} onClick={handleDeletePost}>x</button>
-            )}
-                <h1 style={styles.heading}>{post.title}</h1>
-                <div style={styles.metaInfo}>
-                    <span style={styles.author}>
-                        {post.userId} |{' '}
-                        {new Date(post.createdAt).toLocaleDateString()}
-                    </span>
+              )}
+              <h1 style={styles.heading}>{post.title}</h1>
+              <div style={styles.metaInfo}>
+                <span style={styles.author}>
+                  {post.userId} |{' '}
+                  {new Date(post.createdAt).toLocaleDateString()}
+                </span>
+              </div>
+              <hr style={styles.separator} />
 
-                </div>
-                <hr style={styles.separator} />
+              <div style={styles.content}>
+                {post.content.split('\n').map((line, index) => (
+                  <p key={index}>{line}</p>
+                ))}
+              </div>
 
-                <p style={styles.content}>{post.content}</p>
-                <p style={styles.category}>Category: {post.category}</p>
+              <p style={styles.category}>Category: {post.category}</p>
             </main>
             <div style={styles.commentSection}>
                 <hr style={styles.separator} />
