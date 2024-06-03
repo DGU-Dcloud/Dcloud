@@ -35,7 +35,9 @@ public class ReportController {
 
     private final ReportService reportService;
     private static final Logger logger = LoggerFactory.getLogger(ReportController.class);
+
     private String slackWebhookUrl;
+
 
     @Autowired
     public ReportController(ReportService reportService, @Value("${slack.webhook-url}") String slackWebhookUrl) {
@@ -165,7 +167,7 @@ public class ReportController {
             // 예외 처리 방법에 따라 기본값 설정 또는 예외 전파 등의 처리 가능
         }
 
-        sendMessageToSlack(dto);
+//        sendMessageToSlack(dto);
 
         return dto;
     }
@@ -191,7 +193,7 @@ public class ReportController {
 
         dto.setCategory((String) reportData.get("category"));
 
-        sendMessageToSlack(dto);
+//        sendMessageToSlack(dto);
 
         return dto;
     }
@@ -219,7 +221,7 @@ public class ReportController {
         dto.setWhy((String) reportData.get("reason"));
         dto.setCategory((String) reportData.get("category"));
 
-        sendMessageToSlack(dto);
+//        sendMessageToSlack(dto);
 
         return dto;
     }
@@ -233,7 +235,7 @@ public class ReportController {
         dto.setWhy((String) reportData.get("inquiryDetails"));
         dto.setCategory((String) reportData.get("category"));
 
-        sendMessageToSlack(dto);
+//        sendMessageToSlack(dto);
 
         return dto;
     }

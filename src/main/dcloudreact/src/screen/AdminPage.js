@@ -7,8 +7,9 @@ import axios from 'axios';
 function AdminPage() {
   const navigate = useNavigate();
   const [containerRequests, setContainerRequests] = useState([]);
-  const [selectedRequests, setSelectedRequests] = useState({});
-
+  const [selectedRequests, setSelectedRequests] = useState({ tableType: 'allowOrDeny' });
+  const [answeredReports, setAnsweredReports] = useState([]);
+  const [selectedRequestIds, setSelectedRequestIds] = useState({});
   useEffect(() => {
     axios.get('/api/check-auth', { withCredentials: true })
       .then(response => {
@@ -21,25 +22,32 @@ function AdminPage() {
       });
   }, [navigate]);
 
-  const fetchData = async () => {
-    const response = await fetch('http://localhost:8080/api/allcontainerrequest');
-    const data = await response.json();
-    setContainerRequests(data);
+
+const fetchData = async () => {
+    try {
+      const response = await fetch('/api/allcontainerrequest');
+      const data = await response.json();
+      setContainerRequests(data.containerRequests || []);
+      setAnsweredReports(data.answeredReports || []);
+    } catch (error) {
+      console.error('Failed to fetch data:', error);
+    }
   };
 
   const handleCheckChange = (requestId) => {
-    setSelectedRequests(prev => ({
+    setSelectedRequestIds(prev => ({
       ...prev,
       [requestId]: !prev[requestId]
     }));
   };
 
+
   const sendRequestDecision = (action) => {
-    const ids = Object.entries(selectedRequests)
+    const ids = Object.entries(selectedRequestIds)
                      .filter(([key, value]) => value)
                      .map(([key]) => key);
     console.log(`${action} Selected Requests:`, ids);
-    axios.post('http://localhost:8080/api/admin-action', { action, ids })
+    axios.post('/api/admin-action', { action, ids })
          .then(response => {
            console.log(`${action} action successful:`, response.data);
            window.location.reload();
@@ -74,27 +82,27 @@ function AdminPage() {
         <p>You can check the announcements on this page. Please check frequently. You can also check the error history so far.</p>
 
         <div style={styles.tableHeader}>
-                <div style={styles.tableHeaderItem}>
-                  <input
-                    type="radio"
-                    name="tableType"
-                    value="allowOrDeny"
-                    checked={selectedRequests.tableType === 'allowOrDeny'}
-                    onChange={() => setSelectedRequests(prev => ({ ...prev, tableType: 'allowOrDeny' }))}
-                  />
-                   ContainerRequest
-                </div>
-                <div style={styles.tableHeaderItem}>
-                  <input
-                    type="radio"
-                    name="tableType"
-                    value="report"
-                    checked={selectedRequests.tableType === 'report'}
-                    onChange={() => setSelectedRequests(prev => ({ ...prev, tableType: 'report' }))}
-                  />
-                    Report
-                </div>
-              </div>
+          <div style={styles.tableHeaderItem}>
+            <input
+              type="radio"
+
+              value="allowOrDeny"
+              checked={selectedRequests.tableType === 'allowOrDeny'}
+              onChange={() => setSelectedRequests(prev => ({ ...prev, tableType: 'allowOrDeny' }))}
+            />
+            ContainerRequest
+          </div>
+          <div style={styles.tableHeaderItem}>
+            <input
+              type="radio"
+
+              value="report"
+              checked={selectedRequests.tableType === 'report'}
+              onChange={() => setSelectedRequests(prev => ({ ...prev, tableType: 'report' }))}
+            />
+            Report
+          </div>
+        </div>
 
         {selectedRequests.tableType === 'allowOrDeny' && (
                 <>
@@ -121,7 +129,7 @@ function AdminPage() {
                                     <td style={styles.td}>
                                       <input
                                         type="checkbox"
-                                        checked={selectedRequests[request.requestId] || false}
+                                        checked={selectedRequestIds[request.requestId] || false}
                                         onChange={() => handleCheckChange(request.requestId)}
                                       />
                                     </td>
@@ -149,53 +157,45 @@ function AdminPage() {
 
 
     {selectedRequests.tableType === 'report' && (
-      <>
-        <table style={styles.table}>
-                  <thead>
-                    <tr>
-                      <th style={styles.th}>Select</th>
-                      <th style={styles.th}>No</th>
-                      <th style={styles.th}>Request Date</th>
-                      <th style={styles.th}>User ID</th>
-                      <th style={styles.th}>Department</th>
-                      <th style={styles.th}>Environment</th>
-                      <th style={styles.th}>GPU Model</th>
-                      <th style={styles.th}>Expected Expire Date</th>
-                      <th style={styles.th}>Status</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {containerRequests.map((request, index) => {
-                      const date = new Date(request.createdAt);
-                      const formattedDate = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')} ${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
-                      return (
-                        <tr key={index}>
-                          <td style={styles.td}>
-                            <input
-                              type="checkbox"
-                              checked={selectedRequests[request.requestId] || false}
-                              onChange={() => handleCheckChange(request.requestId)}
-                            />
-                          </td>
-                          <td style={styles.td}>{request.requestId}</td>
-                          <td style={styles.td}>{formattedDate}</td>
-                          <td style={styles.td}>{request.userId}</td>
-                          <td style={styles.td}>{request.department}</td>
-                          <td style={styles.td}>{request.environment}</td>
-                          <td style={styles.td}>{request.gpuModel}</td>
-                          <td style={styles.td}>{request.expectedExpirationDate}</td>
-                          <td style={getStatusStyle(request.status)}>{request.status}</td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-                <div style={styles.buttonContainer}>
-                  <button style={styles.applyButton} onClick={() => sendRequestDecision('Apply')}>Approved</button>
-                  <button style={styles.denyButton} onClick={() => sendRequestDecision('Deny')}>Rejected</button>
-                  <button style={styles.pendingButton} onClick={() => sendRequestDecision('Pending')}>Pending</button>
-                </div>
-      </>
+     <>
+
+       <table style={styles.table}>
+         <thead>
+           <tr>
+             <th style={styles.th}>reportId</th>
+             <th style={styles.th}>formattedDate</th>
+             <th style={styles.th}>User ID</th>
+             <th style={styles.th}>Department</th>
+             <th style={styles.th}>category</th>
+             <th style={styles.th}>requirement</th>
+             <th style={styles.th}>sshPort</th>
+             <th style={styles.th}>studentId</th>
+             <th style={styles.th}>why</th>
+             <th style={styles.th}>postId</th>
+           </tr>
+         </thead>
+         <tbody>
+           {answeredReports.map((report, index) => {
+                     const date = new Date(report.createdAt);
+                     const formattedDate = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')} ${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
+                     return (
+                       <tr key={index}>
+                         <td style={styles.td}>{report.reportId}</td>
+                         <td style={styles.td}>{formattedDate}</td>
+                         <td style={styles.td}>{report.userId}</td>
+                         <td style={styles.td}>{report.department}</td>
+                         <td style={styles.td}>{report.category}</td>
+                         <td style={styles.td}>{report.requirement}</td>
+                         <td style={styles.td}>{report.sshPort}</td>
+                         <td style={styles.td}>{report.studentId}</td>
+                         <td style={styles.td}>{report.why}</td>
+                         <td style={styles.td}>{report.postId}</td>
+                       </tr>
+                     );
+                   })}
+         </tbody>
+       </table>
+     </>
     )}
 
 

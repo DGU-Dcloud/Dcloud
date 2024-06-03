@@ -11,6 +11,7 @@ function Forum() {
   const [currentPage, setCurrentPage] = useState(1);
   const [postsPerPage] = useState(10);
   const [userRole, setUserRole] = useState('');
+  const [hoveredRowId, setHoveredRowId] = useState(null);
 
   useEffect(() => {
     // 세션 검증
@@ -107,7 +108,16 @@ function Forum() {
           </thead>
           <tbody>
             {currentPosts.map((post, index) => (
-              <tr key={index} onClick={() => handlePostClick(post.postID)} style={styles.tableRow}>
+                    <tr
+                      key={index}
+                      onClick={() => handlePostClick(post.postID)}
+                      style={{
+                        ...styles.tableRow,
+                        backgroundColor: post.postID === hoveredRowId ? '#f5f5f5' : 'white',
+                      }}
+                      onMouseEnter={() => setHoveredRowId(post.postID)}
+                      onMouseLeave={() => setHoveredRowId(null)}
+                    >
                 <td style={styles.td}>{post.postID}</td>
                 <td style={styles.td}>{post.category}</td>
                 <td style={styles.td}>{post.title}</td>
@@ -172,12 +182,9 @@ const styles = {
     cursor: 'pointer',
     fontWeight: 'bold'
   },
-  tableRow: {
+tableRow: {
     cursor: 'pointer',
     transition: 'background-color 0.3s',
-    '&:hover': {
-      backgroundColor: '#f5f5f5',
-    },
   },
   pagination: {
     display: 'flex',

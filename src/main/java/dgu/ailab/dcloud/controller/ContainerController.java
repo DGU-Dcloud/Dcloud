@@ -5,10 +5,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import dgu.ailab.dcloud.dto.ActionRequestDto;
 import dgu.ailab.dcloud.dto.ContainerDto;
 import dgu.ailab.dcloud.dto.ContainerRequestDto;
+import dgu.ailab.dcloud.dto.ReportDto;
 import dgu.ailab.dcloud.service.ContainerService;
+import dgu.ailab.dcloud.service.ReportService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.web.bind.annotation.*;
@@ -29,12 +32,14 @@ import java.util.Map;
 public class ContainerController {
 
     private final ContainerService containerService;
+    private final ReportService reportService;
     private static final Logger logger = LoggerFactory.getLogger(ContainerController.class);
     private final String SLACK_WEBHOOK_URL = "https://hooks.slack.com/services/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?charset=utf-8";
 
     @Autowired
-    public ContainerController(ContainerService containerService) {
+    public ContainerController(ContainerService containerService, ReportService reportService) {
         this.containerService = containerService;
+        this.reportService = reportService;
     }
 
     @GetMapping("/containers")
@@ -43,20 +48,28 @@ public class ContainerController {
         return ResponseEntity.ok(containers);
     }
 
-    @GetMapping("/allcontainerrequest") // admin page에서 컨테이너 요청정보 다 확인하기 위함임.
-    public ResponseEntity<List<ContainerRequestDto>> getAllContainerRequests() {
-        logger.info("Fetching all container requests");
-        List<ContainerRequestDto> containerRequests = containerService.findAllContainerRequests();
-        if (containerRequests.isEmpty()) {
-            logger.info("No container requests found");
-            return ResponseEntity.noContent().build();
+    @GetMapping("/allcontainerrequest")
+    public ResponseEntity<ResponseDto> getAllContainerRequests() {
+        try {
+            logger.info("Fetching all container requests");
+            List<ContainerRequestDto> containerRequests = containerService.findAllContainerRequests();
+            List<ReportDto> answeredReports = reportService.findByIsAnsweredFalse();
+
+            ResponseDto responseDto = new ResponseDto();
+            responseDto.setContainerRequests(containerRequests);
+            responseDto.setAnsweredReports(answeredReports);
+            logger.info("{}", responseDto.toString());
+            return ResponseEntity.ok(responseDto);
+        } catch (Exception e) {
+            logger.error("Error fetching container requests and reports", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
-        return ResponseEntity.ok(containerRequests);
     }
 
     @PostMapping("/admin-action") // admin이 apply or deny를 한 경우
     public ResponseEntity<?> handleRequestAction(@RequestBody ActionRequestDto requestDto) {
         try {
+
             if ("Apply".equals(requestDto.getAction())) {
                 containerService.applyRequests(requestDto.getIds());
             } else if ("Deny".equals(requestDto.getAction())) {
@@ -136,4 +149,44 @@ public class ContainerController {
         restTemplate.postForEntity(SLACK_WEBHOOK_URL, payload, String.class);
     }
 
+
+    public class ResponseDto {
+        private List<ContainerRequestDto> containerRequests;
+        private List<ReportDto> answeredReports;
+
+        // 기본 생성자
+        public ResponseDto() {
+        }
+
+        // 생성자
+        public ResponseDto(List<ContainerRequestDto> containerRequests, List<ReportDto> answeredReports) {
+            this.containerRequests = containerRequests;
+            this.answeredReports = answeredReports;
+        }
+
+        // Getters and Setters
+        public List<ContainerRequestDto> getContainerRequests() {
+            return containerRequests;
+        }
+
+        public void setContainerRequests(List<ContainerRequestDto> containerRequests) {
+            this.containerRequests = containerRequests;
+        }
+
+        public List<ReportDto> getAnsweredReports() {
+            return answeredReports;
+        }
+
+        public void setAnsweredReports(List<ReportDto> answeredReports) {
+            this.answeredReports = answeredReports;
+        }
+
+        @Override
+        public String toString() {
+            return "ResponseDto{" +
+                    "containerRequests=" + containerRequests +
+                    ", answeredReports=" + answeredReports +
+                    '}';
+        }
+    }
 }

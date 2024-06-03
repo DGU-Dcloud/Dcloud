@@ -10,4 +10,5 @@ public class UserDashboardDto {
     private UserInfoDto userInfo;
     private List<ContainerRequestDto> containerRequests;
     private List<ContainerDto> activeContainers;
+    private List<ReportDto> reports;
 }

@@ -1,10 +1,8 @@
 package dgu.ailab.dcloud.controller;
 
-import dgu.ailab.dcloud.dto.ContainerDto;
-import dgu.ailab.dcloud.dto.ContainerRequestDto;
-import dgu.ailab.dcloud.dto.UserDashboardDto;
-import dgu.ailab.dcloud.dto.UserInfoDto;
+import dgu.ailab.dcloud.dto.*;
 import dgu.ailab.dcloud.service.ContainerService;
+import dgu.ailab.dcloud.service.ReportService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,12 +25,14 @@ public class MyPageController {
 
     private final UserService userService;
     private final ContainerService containerService;
+    private final ReportService reportService;
 
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
     @Autowired
-    public MyPageController(UserService userService, ContainerService containerService) {
+    public MyPageController(UserService userService, ContainerService containerService, ReportService reportService) {
         this.userService = userService;
         this.containerService = containerService;
+        this.reportService = reportService;
     }
 
     @GetMapping("/api/yourinfo")
@@ -43,7 +43,8 @@ public class MyPageController {
             UserInfoDto userInfo = userService.getUserInfo(userId);
             List<ContainerRequestDto> containerRequests = containerService.getContainerRequestStatus(userId);
             List<ContainerDto> activeContainers = containerService.getActiveContainer(userId);
-            return new UserDashboardDto(userInfo, containerRequests, activeContainers);
+            List<ReportDto> reports = reportService.getReport(userId);
+            return new UserDashboardDto(userInfo, containerRequests, activeContainers, reports);
         } else {
             throw new IllegalStateException("No user is logged in or session does not exist");
         }

@@ -7,50 +7,87 @@ import axios from 'axios';
 function ReportErrors() {
   const [selectedIssue, setSelectedIssue] = useState('');
   const navigate = useNavigate();
+  const [file, setFile] = useState(null);
 
   const handleSubmit = async (event) => {
     event.preventDefault(); // 폼의 기본 제출 동작 방지
+  // FormData 객체 생성
+  const formData = new FormData();
 
-    // 폼 데이터 객체 생성
-    let formData = {};
-    if (selectedIssue === 'Container Connection Error') {
-      formData = {
-        name: event.target.name.value,
-        department: event.target.department.value,
-        studentId: event.target.studentId.value,
-        sshPort: event.target.sshPort.value,
-        category: event.target.category.value,
-      };
-    } else if (selectedIssue === 'Container Relocation Request') {
-      formData = {
-        name: event.target.name.value,
-        department: event.target.department.value,
-        studentId: event.target.studentId.value,
-        sshPort: event.target.sshPort.value,
-        reason: event.target.reason.value,
-        category: event.target.category.value,
-      };
-    } else if (selectedIssue === 'Extend Expiration Date') {
-      formData = {
-        name: event.target.name.value,
-        department: event.target.department.value,
-        studentId: event.target.studentId.value,
-        sshPort: event.target.sshPort.value,
-        permission: event.target.permission.value,
-        expirationDate: event.target.expirationDate.value,
-        reason: event.target.reason.value,
-        category: event.target.category.value,
-      };
-    } else if (selectedIssue === 'Just Inquiry') {
-      formData = {
-        name: event.target.name.value,
-        department: event.target.department.value,
-        studentId: event.target.studentId.value,
-        inquiryDetails: event.target.inquiryDetails.value,
-        category: event.target.category.value,
-      };
-    }
-    console.log('Submitting form data:', formData);
+  if (selectedIssue === 'Container Connection Error') {
+    formData.append('name', event.target.name.value);
+    formData.append('department', event.target.department.value);
+    formData.append('studentId', event.target.studentId.value);
+    formData.append('sshPort', event.target.sshPort.value);
+    formData.append('category', event.target.category.value);
+    formData.append('file', file);
+  } else if (selectedIssue === 'Container Relocation Request') {
+    formData.append('name', event.target.name.value);
+    formData.append('department', event.target.department.value);
+    formData.append('studentId', event.target.studentId.value);
+    formData.append('sshPort', event.target.sshPort.value);
+    formData.append('reason', event.target.reason.value);
+    formData.append('category', event.target.category.value);
+  } else if (selectedIssue === 'Extend Expiration Date') {
+    formData.append('name', event.target.name.value);
+    formData.append('department', event.target.department.value);
+    formData.append('studentId', event.target.studentId.value);
+    formData.append('sshPort', event.target.sshPort.value);
+    formData.append('permission', event.target.permission.value);
+    formData.append('expirationDate', event.target.expirationDate.value);
+    formData.append('reason', event.target.reason.value);
+    formData.append('category', event.target.category.value);
+  } else if (selectedIssue === 'Just Inquiry') {
+    formData.append('name', event.target.name.value);
+    formData.append('department', event.target.department.value);
+    formData.append('studentId', event.target.studentId.value);
+    formData.append('inquiryDetails', event.target.inquiryDetails.value);
+    formData.append('category', event.target.category.value);
+    formData.append('file', file);
+  }
+
+//    // 폼 데이터 객체 생성
+//    let formData = {};
+//    if (selectedIssue === 'Container Connection Error') {
+//      formData = {
+//        name: event.target.name.value,
+//        department: event.target.department.value,
+//        studentId: event.target.studentId.value,
+//        sshPort: event.target.sshPort.value,
+//        category: event.target.category.value,
+//      };
+//      formData.append('file', file);
+//    } else if (selectedIssue === 'Container Relocation Request') {
+//      formData = {
+//        name: event.target.name.value,
+//        department: event.target.department.value,
+//        studentId: event.target.studentId.value,
+//        sshPort: event.target.sshPort.value,
+//        reason: event.target.reason.value,
+//        category: event.target.category.value,
+//      };
+//    } else if (selectedIssue === 'Extend Expiration Date') {
+//      formData = {
+//        name: event.target.name.value,
+//        department: event.target.department.value,
+//        studentId: event.target.studentId.value,
+//        sshPort: event.target.sshPort.value,
+//        permission: event.target.permission.value,
+//        expirationDate: event.target.expirationDate.value,
+//        reason: event.target.reason.value,
+//        category: event.target.category.value,
+//      };
+//    } else if (selectedIssue === 'Just Inquiry') {
+//      formData = {
+//        name: event.target.name.value,
+//        department: event.target.department.value,
+//        studentId: event.target.studentId.value,
+//        inquiryDetails: event.target.inquiryDetails.value,
+//        category: event.target.category.value,
+//      };
+//      formData.append('file', file);
+//    }
+//    console.log('Submitting form data:', formData);
     try {
       const response = await axios.post('/api/reports', formData, {
         headers: {
@@ -59,11 +96,13 @@ function ReportErrors() {
         withCredentials: true // 쿠키 전송 설정 추가
       });
       console.log('Form submitted successfully:', response.data);
-      alert('Form submitted successfully!');
     } catch (error) {
       console.error('Failed to submit form:', error);
-      alert('Failed to submit form. Please try again later.');
+
     }
+
+    navigate('/mainpage');
+
   };
 
   useEffect(() => {
@@ -84,6 +123,10 @@ function ReportErrors() {
   const handleIssueChange = (e) => {
     setSelectedIssue(e.target.value);
   };
+
+  const handleFileChange = (e) => {
+      setFile(e.target.files[0]);
+    };
 
   const hoverEffect = (e) => {
     e.target.style.background = '#777';
@@ -108,6 +151,8 @@ function ReportErrors() {
               <input type="text" placeholder="e.g., 2018112032" required style={styles.inputField} name="studentId" />
               <p style={styles.label}>Container's SSH Port Number</p>
               <input type="text" placeholder="e.g., 9010" required style={styles.inputField} name="sshPort" />
+              <p style={styles.label}>Attach File</p>
+              <input type="file" style={styles.inputField} onChange={handleFileChange} accept=".png, .jpg, .jpeg" />
             </div>
 
             <p style={styles.cautionText}>
@@ -228,6 +273,8 @@ function ReportErrors() {
               <input type="text" placeholder="e.g., 2018112032" required style={styles.inputField} name="studentId" />
               <p style={styles.label}>Details of Inquiry</p>
               <textarea required style={{ ...styles.inputField, height: '100px', width: '700px' }} name="inquiryDetails" />
+              <p style={styles.label}>Attach File</p>
+              <input type="file" style={styles.inputField} onChange={handleFileChange} accept=".png, .jpg, .jpeg" />
             </div>
 
             <p style={styles.cautionText}>
