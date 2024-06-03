@@ -98,6 +98,7 @@ function ReportErrors() {
       console.log('Form submitted successfully:', response.data);
     } catch (error) {
       console.error('Failed to submit form:', error);
+
     }
 
     navigate('/mainpage');

@@ -36,5 +36,6 @@ public class ReportDto {
                 " - 학생 ID: '" + studentId + "'\n" +
                 " - 이유: '" + why + "'\n" +
                 " - 포스트 ID: " + postId;
+
     }
 }
