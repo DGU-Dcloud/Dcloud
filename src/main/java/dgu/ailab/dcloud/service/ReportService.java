@@ -209,6 +209,7 @@ public class ReportService {
         dto.setUserId(report.getUserId());
         dto.setSshPort(report.getSshPort());
         dto.setPostid(report.getPost().getPostID());
+
         return dto;
     }
 
@@ -220,6 +221,7 @@ public class ReportService {
         dto.setUserId(report.getUserId());
         dto.setWhy(report.getWhy());
         dto.setPostid(report.getPost().getPostID());
+
         return dto;
     }
 
@@ -233,6 +235,7 @@ public class ReportService {
         dto.setRequirement(report.getRequirement());
         dto.setWhy(report.getWhy());
         dto.setPostid(report.getPost().getPostID());
+
         return dto;
     }
 
@@ -244,6 +247,7 @@ public class ReportService {
         dto.setUserId(report.getUserId());
         dto.setWhy(report.getWhy());
         dto.setPostid(report.getPost().getPostID());
+
         return dto;
     }
 
