@@ -12,7 +12,9 @@ import dgu.ailab.dcloud.service.ReportService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.web.bind.annotation.*;
@@ -20,8 +22,14 @@ import org.springframework.web.client.RestTemplate;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -35,27 +43,34 @@ public class ReportController {
     private static final Logger logger = LoggerFactory.getLogger(ReportController.class);
     private final String SLACK_WEBHOOK_URL = "https://hooks.slack.com/services/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?charset=utf-8";
 
+    @Value("${upload.path}")
+    private String uploadDir;
+
     @Autowired
     public ReportController(ReportService reportService) {
         this.reportService = reportService;
     }
 
-    @PostMapping("/reports")
-    public ResponseEntity<?> createReport(@RequestBody Map<String, Object> requestBody, HttpServletRequest request) {
+//    @PostMapping("/reports")
+//    public ResponseEntity<?> createReport(@RequestBody Map<String, Object> requestBody, HttpServletRequest request) {
+    @PostMapping(value = "/reports", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> createReport(@RequestParam(value = "file", required = false) MultipartFile file,
+                                          @RequestParam Map<String, String> requestParams,
+                                          HttpServletRequest request) {
         logger.info("Received a request to create a report.");
         // requestBody를 로깅하여 확인
-        logger.info("Request Body: {}", requestBody);
+//        logger.info("Request Body: {}", requestBody);
 
         try {
-            String category = (String) requestBody.get("category");
+            String category = (String) requestParams.get("category");
             logger.info("category: {}", category);
             // reportData 생성
             Map<String, Object> reportData = new HashMap<>();
-            reportData.put("name", requestBody.get("name"));
-            reportData.put("department", requestBody.get("department"));
-            reportData.put("studentId", requestBody.get("studentId"));
-            reportData.put("sshPort", requestBody.get("sshPort"));
-            reportData.put("category", requestBody.get("category"));
+            reportData.put("name", requestParams.get("name"));
+            reportData.put("department", requestParams.get("department"));
+            reportData.put("studentId", requestParams.get("studentId"));
+            reportData.put("sshPort", requestParams.get("sshPort"));
+            reportData.put("category", requestParams.get("category"));
 
             if (category == null ) {
                 logger.info("카테고리 누락");
@@ -65,17 +80,17 @@ public class ReportController {
             switch (category) {
                 case "Container Connection Error":
                     logger.info("카테고리 인식");
-                    return processReport("Container Connection Error", reportData, request);
+                    return processReport("Container Connection Error", reportData, file, request);
                 case "Container Relocation Request":
-                    reportData.put("reason", requestBody.get("reason"));
-                    return processReport("Container Relocation Request", reportData, request);
+                    reportData.put("reason", requestParams.get("reason"));
+                    return processReport("Container Relocation Request", reportData, file, request);
                 case "Extend Expiration Date":
-                    reportData.put("reason", requestBody.get("reason"));
-                    reportData.put("expirationDate", requestBody.get("expirationDate"));
-                    return processReport("Extend Expiration Date", reportData, request);
+                    reportData.put("reason", requestParams.get("reason"));
+                    reportData.put("expirationDate", requestParams.get("expirationDate"));
+                    return processReport("Extend Expiration Date", reportData, file, request);
                 case "Just Inquiry":
-                    reportData.put("inquiryDetails", requestBody.get("inquiryDetails"));
-                    return processReport("Just Inquiry", reportData, request);
+                    reportData.put("inquiryDetails", requestParams.get("inquiryDetails"));
+                    return processReport("Just Inquiry", reportData, file, request);
                 default:
                     return ResponseEntity.badRequest().build();
             }
@@ -85,7 +100,7 @@ public class ReportController {
         }
     }
 
-    private ResponseEntity<?> processReport(String category, Map<String, Object> reportData, HttpServletRequest request) {
+    private ResponseEntity<?> processReport(String category, Map<String, Object> reportData, MultipartFile file, HttpServletRequest request) {
         HttpSession session = request.getSession(false);
         String userId = "";
         if (session != null) {
@@ -94,6 +109,35 @@ public class ReportController {
 
         // Add userId to reportData
         reportData.put("userId", userId);
+
+        // Handle file upload
+        if (file != null && !file.isEmpty()) {
+            String originalFilename = file.getOriginalFilename();
+            String ext = originalFilename.substring(originalFilename.lastIndexOf("."));
+            String newFilename = System.currentTimeMillis() + ext;
+
+
+            Path uploadPath = Paths.get(uploadDir);
+
+            if (!Files.exists(uploadPath)) {
+                try {
+                    Files.createDirectories(uploadPath);
+                } catch (IOException e) {
+                    logger.error("Failed to create upload directory: {}", e.getMessage());
+                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+                }
+            }
+
+            Path filePath = uploadPath.resolve(newFilename);
+            try {
+                Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+            } catch (IOException e) {
+                logger.error("Failed to save uploaded file: {}", e.getMessage());
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            }
+
+            reportData.put("imagePath", filePath.toString());
+        }
 
         // Handle report based on category
         switch (category) {
@@ -147,6 +191,7 @@ public class ReportController {
         dto.setUserId((String) reportData.get("userId"));
         dto.setStudentId((String) reportData.get("studentId"));
         dto.setCategory((String) reportData.get("category"));
+        dto.setImagePath((String) reportData.get("imagePath"));
 
         // SSH 포트를 정수로 변환하여 저장, 예외 처리 추가
         try {

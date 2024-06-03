@@ -10,6 +10,7 @@ function AdminPage() {
   const [selectedRequests, setSelectedRequests] = useState({ tableType: 'allowOrDeny' });
   const [answeredReports, setAnsweredReports] = useState([]);
   const [selectedRequestIds, setSelectedRequestIds] = useState({});
+  const [hoveredReportId, setHoveredReportId] = useState(null);
   useEffect(() => {
     axios.get('/api/check-auth', { withCredentials: true })
       .then(response => {
@@ -157,45 +158,53 @@ const fetchData = async () => {
 
 
     {selectedRequests.tableType === 'report' && (
-     <>
-
-       <table style={styles.table}>
-         <thead>
-           <tr>
-             <th style={styles.th}>reportId</th>
-             <th style={styles.th}>formattedDate</th>
-             <th style={styles.th}>User ID</th>
-             <th style={styles.th}>Department</th>
-             <th style={styles.th}>category</th>
-             <th style={styles.th}>requirement</th>
-             <th style={styles.th}>sshPort</th>
-             <th style={styles.th}>studentId</th>
-             <th style={styles.th}>why</th>
-             <th style={styles.th}>postId</th>
-           </tr>
-         </thead>
-         <tbody>
-           {answeredReports.map((report, index) => {
-                     const date = new Date(report.createdAt);
-                     const formattedDate = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')} ${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
-                     return (
-                       <tr key={index}>
-                         <td style={styles.td}>{report.reportId}</td>
-                         <td style={styles.td}>{formattedDate}</td>
-                         <td style={styles.td}>{report.userId}</td>
-                         <td style={styles.td}>{report.department}</td>
-                         <td style={styles.td}>{report.category}</td>
-                         <td style={styles.td}>{report.requirement}</td>
-                         <td style={styles.td}>{report.sshPort}</td>
-                         <td style={styles.td}>{report.studentId}</td>
-                         <td style={styles.td}>{report.why}</td>
-                         <td style={styles.td}>{report.postId}</td>
-                       </tr>
-                     );
-                   })}
-         </tbody>
-       </table>
-     </>
+      <>
+        <table style={styles.table}>
+          <thead>
+            <tr>
+              <th style={styles.th}>reportId</th>
+              <th style={styles.th}>formattedDate</th>
+              <th style={styles.th}>User ID</th>
+              <th style={styles.th}>Department</th>
+              <th style={styles.th}>category</th>
+              <th style={styles.th}>requirement</th>
+              <th style={styles.th}>sshPort</th>
+              <th style={styles.th}>studentId</th>
+              <th style={styles.th}>why</th>
+              <th style={styles.th}>postId</th>
+            </tr>
+          </thead>
+          <tbody>
+            {answeredReports.map((report, index) => {
+              const date = new Date(report.createdAt);
+              const formattedDate = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')} ${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
+              return (
+                <tr
+                  key={index}
+                  onClick={() => navigate(`/post/${report.postId}`)}
+                  style={{
+                    ...styles.reportRow,
+                    backgroundColor: report.postId === hoveredReportId ? '#f5f5f5' : 'white',
+                  }}
+                  onMouseEnter={() => setHoveredReportId(report.postId)}
+                  onMouseLeave={() => setHoveredReportId(null)}
+                >
+                  <td style={styles.td}>{report.reportId}</td>
+                  <td style={styles.td}>{formattedDate}</td>
+                  <td style={styles.td}>{report.userId}</td>
+                  <td style={styles.td}>{report.department}</td>
+                  <td style={styles.td}>{report.category}</td>
+                  <td style={styles.td}>{report.requirement}</td>
+                  <td style={styles.td}>{report.sshPort}</td>
+                  <td style={styles.td}>{report.studentId}</td>
+                  <td style={styles.td}>{report.why}</td>
+                  <td style={styles.td}>{report.postId}</td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </>
     )}
 
 
@@ -280,6 +289,10 @@ denyButton: {
   tableHeaderItem: {
     marginRight: '20px',
   },
+  reportRow: {
+      cursor: 'pointer',
+      transition: 'background-color 0.3s',
+    },
 };
 
 export default AdminPage;

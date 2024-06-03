@@ -30,6 +30,9 @@ public class Post {
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
 
+    @Column(name = "imagePath", length = 500)
+    private String imagePath;
+
     @ManyToOne
     @JoinColumn(name = "userID")
     private User user;

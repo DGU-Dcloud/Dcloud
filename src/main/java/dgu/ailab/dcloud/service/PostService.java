@@ -65,6 +65,7 @@ public class PostService {
         dto.setContent(post.getContent());
         dto.setUserId(post.getUser().getUserID()); // Assuming User entity has a getUserID method
         dto.setCreatedAt(post.getCreatedAt());
+        dto.setImagePath(post.getImagePath());
 
         return dto;
     }
