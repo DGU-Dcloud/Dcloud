@@ -18,6 +18,7 @@ public class ContainerConnectionErrorDto {
     private int sshPort;
     private String category;
     private int postid;
+    private String imagePath;
 
     public ContainerConnectionErrorDto save(ReportService reportService) {
         return reportService.insertContainerConnectionErrorReport(this);

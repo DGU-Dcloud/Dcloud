@@ -122,6 +122,11 @@ function PostDetail() {
         return <div>Loading...</div>;
     }
 
+    const extractFileNameFromPath = (path) => {
+      const parts = path.split('/');
+      return parts[parts.length - 1];
+    };
+
     return (
         <div>
             <NavigationBar />
@@ -131,6 +136,13 @@ function PostDetail() {
                 <button style={styles.postDeleteButton} onClick={handleDeletePost}>x</button>
               )}
               <h1 style={styles.heading}>{post.title}</h1>
+              {post.imagePath && (
+                  <div style={styles.imageContainer}>
+                    <a href={`/api/images/${post.imagePath}`} download style={styles.downloadLink}>
+                      <i className="fas fa-download"></i> Download Image
+                    </a>
+                  </div>
+                )}
               <div style={styles.metaInfo}>
                 <span style={styles.author}>
                   {post.userId} |{' '}
@@ -329,6 +341,30 @@ const styles = {
         cursor: 'pointer',
         fontSize: '16px',
         },
+    imageContainer: {
+        marginBottom: '20px',
+        textAlign: 'center',
+      },
+  image: {
+    maxWidth: '100%',
+    height: 'auto',
+    marginBottom: '10px',
+  },
+  downloadLink: {
+      display: 'inline-block',
+      padding: '10px 20px',
+      backgroundColor: '#f1f1f1',
+      color: '#333',
+      textDecoration: 'none',
+      borderRadius: '4px',
+      fontWeight: 'bold',
+      transition: 'background-color 0.3s ease',
+      marginTop: '10px',
+      boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+      '&:hover': {
+        backgroundColor: '#e1e1e1',
+      },
+    },
 };
 
 export default PostDetail;

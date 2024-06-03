@@ -52,6 +52,7 @@ public class ReportService {
         post.setTitle("Report by "+reportDto.getUserId());
         post.setContent(reportDto.toString());
         post.setUser(user);
+        post.setImagePath(reportDto.getImagePath());
 
         report.setPost(post);
 

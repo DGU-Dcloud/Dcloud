@@ -12,6 +12,8 @@ public class PostDto {
     private String content;
     private String userId;
     private Date createdAt;
+    private String imagePath;
+
 
     public void setCreatedAt(Date createdAt) {
         this.createdAt = createdAt;

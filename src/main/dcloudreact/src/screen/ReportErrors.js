@@ -45,53 +45,11 @@ function ReportErrors() {
     formData.append('category', event.target.category.value);
     formData.append('file', file);
   }
-
-//    // 폼 데이터 객체 생성
-//    let formData = {};
-//    if (selectedIssue === 'Container Connection Error') {
-//      formData = {
-//        name: event.target.name.value,
-//        department: event.target.department.value,
-//        studentId: event.target.studentId.value,
-//        sshPort: event.target.sshPort.value,
-//        category: event.target.category.value,
-//      };
-//      formData.append('file', file);
-//    } else if (selectedIssue === 'Container Relocation Request') {
-//      formData = {
-//        name: event.target.name.value,
-//        department: event.target.department.value,
-//        studentId: event.target.studentId.value,
-//        sshPort: event.target.sshPort.value,
-//        reason: event.target.reason.value,
-//        category: event.target.category.value,
-//      };
-//    } else if (selectedIssue === 'Extend Expiration Date') {
-//      formData = {
-//        name: event.target.name.value,
-//        department: event.target.department.value,
-//        studentId: event.target.studentId.value,
-//        sshPort: event.target.sshPort.value,
-//        permission: event.target.permission.value,
-//        expirationDate: event.target.expirationDate.value,
-//        reason: event.target.reason.value,
-//        category: event.target.category.value,
-//      };
-//    } else if (selectedIssue === 'Just Inquiry') {
-//      formData = {
-//        name: event.target.name.value,
-//        department: event.target.department.value,
-//        studentId: event.target.studentId.value,
-//        inquiryDetails: event.target.inquiryDetails.value,
-//        category: event.target.category.value,
-//      };
-//      formData.append('file', file);
-//    }
-//    console.log('Submitting form data:', formData);
+    console.log('Submitting form data:', formData);
     try {
       const response = await axios.post('/api/reports', formData, {
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'multipart/form-data'
         },
         withCredentials: true // 쿠키 전송 설정 추가
       });
