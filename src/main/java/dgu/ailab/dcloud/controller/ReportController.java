@@ -13,10 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-<<<<<<< HEAD
-=======
-import org.springframework.core.env.Environment;
->>>>>>> 994bbdd43aa6129d79ff16f038f05a6b3a336eb9
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -46,6 +43,7 @@ public class ReportController {
     private final ReportService reportService;
     private static final Logger logger = LoggerFactory.getLogger(ReportController.class);
 
+    @Value("${slack.webhook-url}")
     private String slackWebhookUrl;
 
 
@@ -60,18 +58,14 @@ public class ReportController {
         System.out.println("Slack Webhook URL from @Value: " + this.slackWebhookUrl);
     }
 
-<<<<<<< HEAD
+
 //    @PostMapping("/reports")
 //    public ResponseEntity<?> createReport(@RequestBody Map<String, Object> requestBody, HttpServletRequest request) {
     @PostMapping(value = "/reports", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> createReport(@RequestParam(value = "file", required = false) MultipartFile file,
                                           @RequestParam Map<String, String> requestParams,
                                           HttpServletRequest request) {
-=======
 
-    @PostMapping("/reports")
-    public ResponseEntity<?> createReport(@RequestBody Map<String, Object> requestBody, HttpServletRequest request) {
->>>>>>> 994bbdd43aa6129d79ff16f038f05a6b3a336eb9
         logger.info("Received a request to create a report.");
         // requestBody를 로깅하여 확인
 //        logger.info("Request Body: {}", requestBody);
