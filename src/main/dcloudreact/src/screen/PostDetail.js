@@ -231,6 +231,7 @@ const styles = {
         color: '#777',
     },
     author: {
+        fontWeight: 'bold',
         marginBottom: '10px',
         color: '#777',
     },
@@ -245,9 +246,6 @@ const styles = {
                 fontSize: '14px',
                 color: '#777',
                 position: 'relative',
-    },
-    author: {
-        fontWeight: 'bold',
     },
     separator: {
         border: 'none',

@@ -19,9 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -149,7 +147,7 @@ public class ContainerService {
             command+=emptyPort1+":22 -p "+emptyPort2+":8888"
                     +" -it --runtime=nvidia --cap-add=SYS_ADMIN --ipc=host --mount type=bind,source=\"/home/tako"
                     + port % 10 +"/share/user-share/\",target=/home/ --name "
-                    +request.getUser().getUserID()+"_dcloud"+"  -e USER_ID="
+                    +request.getUser().getUserID()+emptyPort1+"_dcloud"+"  -e USER_ID="
                     +request.getUser().getUserID()+" -e USER_PW=ailab2260 -e USER_GROUP=default -e UID="
                     +(random.nextInt(65000 - 2000 + 1) + 2000) +" dguailab/"
                     +request.getDockerImages().getId().getImageName()+":"
@@ -173,14 +171,14 @@ public class ContainerService {
                 container.setServer(serverRepository.findByServerName(serverName)); // 서버 정보 설정
                 container.setUser(request.getUser());
                 container.setCreatedAt(new Date());
-                container.setContainerName(request.getUser().getUserID() + "_dcloud");
+                container.setContainerName(request.getUser().getUserID() +emptyPort1+ "_dcloud");
                 container.setSshPort(emptyPort1);
                 container.setJupyterPort(emptyPort2);
                 container.setNote("Created by applyRequests");
                 container.setStatus("active");
                 container.setContainerRequest(request);
                 container.setDeletedAt(request.getExpectedExpirationDate());
-
+                logger.info("{}",container);
                 containerRepository.save(container);
             } else {
                 logger.error("Container creation failed for request: {}", request.getRequestId());
@@ -228,7 +226,7 @@ public class ContainerService {
 
     private int findAvailablePort(String host, int port) {
         int basePort = 9000 + (port - 8081) * 100; // 랩1이면 9000부터.. 이런식임. 랩2면 9100부터..
-        List<Integer> usedPorts;
+        List<Object[]> usedPorts;
 
         if (host.equals("210.94.179.18")) {
             usedPorts = containerRepository.findUsedPortsByServerNameContaining("LAB");
@@ -238,8 +236,14 @@ public class ContainerService {
             throw new IllegalArgumentException("Invalid host: " + host);
         }
 
+        Set<Integer> allUsedPorts = new HashSet<>();
+        for (Object[] ports : usedPorts) {
+            allUsedPorts.add((Integer) ports[0]); // sshPort
+            allUsedPorts.add((Integer) ports[1]); // jupyterPort
+        }
+
         for (int i = basePort; i < basePort + 100; i++) {
-            if (!usedPorts.contains(i)) {
+            if (!allUsedPorts.contains(i)) {
                 return i;
             }
         }
@@ -247,6 +251,7 @@ public class ContainerService {
         // 사용 가능한 포트를 찾지 못한 경우 예외 처리
         throw new RuntimeException("Available port not found for host: " + host);
     }
+
 
     public List<ContainerDto> getActiveContainer(String userId) {
         List<Container> activeContainers = containerRepository.findByUser_UserIDAndStatus(userId, "active");
