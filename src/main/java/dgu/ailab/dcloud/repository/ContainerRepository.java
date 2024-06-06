@@ -12,8 +12,9 @@ import java.util.List;
 public interface ContainerRepository extends JpaRepository<Container, Long> {
     // 필요한 경우 여기에 쿼리 메소드를 추가할 수 있습니다.
     int countByServer_ServerName(String serverName);
-    @Query("SELECT c.sshPort FROM Container c WHERE c.server.serverName LIKE %:serverName%")
-    List<Integer> findUsedPortsByServerNameContaining(@Param("serverName") String serverName);
+    @Query("SELECT c.sshPort, c.jupyterPort FROM Container c WHERE c.server.serverName LIKE %:serverName%")
+    List<Object[]> findUsedPortsByServerNameContaining(@Param("serverName") String serverName);
+
     List<Container> findByUser_UserIDAndStatus(String userId, String status);
 
 }
