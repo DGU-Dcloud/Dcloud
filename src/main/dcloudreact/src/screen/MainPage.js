@@ -43,9 +43,8 @@ useEffect(() => {
       <div style={{ height: '10vh' }}></div>
       <main style={styles.container}>
         <h1>Welcome to Dcloud!</h1>
-        <p>This is the main area of our application. From here, you can navigate to different sections of our site.</p>
 
-        <h1>Server Spec Table</h1>
+        <h2>Server Spec Table</h2>
         <table style={styles.table}>
           <thead>
             <tr>

@@ -106,7 +106,7 @@ function ContainerRequestForm() {
                                   </tr>
                               </thead>
                               <tbody>
-                                  {images.map((image, index) => ( // index 추가
+                                  {images.filter(image => image.imageName !== 'ailab_base').map((image, index) => (
                                       <tr key={index}>
                                           <td style={styles.tableCell}>
                                               <input

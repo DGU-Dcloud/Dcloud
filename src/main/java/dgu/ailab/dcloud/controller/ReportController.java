@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -42,6 +43,7 @@ public class ReportController {
     private final ReportService reportService;
     private static final Logger logger = LoggerFactory.getLogger(ReportController.class);
 
+    @Value("${slack.webhook-url}")
     private String slackWebhookUrl;
 
 
@@ -55,6 +57,7 @@ public class ReportController {
         logger.info("Slack Webhook URL from @Value: {}", this.slackWebhookUrl);
         System.out.println("Slack Webhook URL from @Value: " + this.slackWebhookUrl);
     }
+
 
 //    @PostMapping("/reports")
 //    public ResponseEntity<?> createReport(@RequestBody Map<String, Object> requestBody, HttpServletRequest request) {
