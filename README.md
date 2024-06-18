@@ -2,7 +2,7 @@
 ### 🖥️ Dcloud
 <img src="https://avatars.githubusercontent.com/DGU-Dcloud" width=100px alt="박민균"/>
 
-### 🖥️ Architecture (미완성)
+### 🖥️ Architecture
 ![Untitled (1)](https://github.com/DGU-Dcloud/Dcloud/assets/86116666/8e40893b-1f33-400e-8360-d7d19143516d)
 
 ### 🖥️ ERD
