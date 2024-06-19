@@ -39,7 +39,7 @@ function Forum() {
 
   const fetchPosts = async () => {
     try {
-      const response = await fetch('http://localhost:8080/api/posts');
+      const response = await fetch('/api/posts');
       const data = await response.json();
       setPosts(data);
       setLoading(false);

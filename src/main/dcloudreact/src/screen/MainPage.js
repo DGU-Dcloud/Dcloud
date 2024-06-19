@@ -25,7 +25,7 @@ useEffect(() => {
 
   const fetchData = async () => {
     try {
-      const response = await fetch('http://localhost:8080/api/servers');
+      const response = await fetch('/api/servers');
       const data = await response.json();
       setServers(data);
       setLoading(false);

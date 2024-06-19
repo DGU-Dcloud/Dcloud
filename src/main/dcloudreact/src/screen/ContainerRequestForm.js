@@ -74,7 +74,7 @@ function ContainerRequestForm() {
         }, [navigate]);
 
         const fetchData = async () => {
-            const response = await fetch('http://localhost:8080/api/images');
+            const response = await fetch('/api/images');
             const data = await response.json();
             console.log("Received data:", data);
             setImages(data);

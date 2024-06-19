@@ -17,7 +17,7 @@ import java.util.Map;
 // AuthController는 로그아웃과 세션 검증을 위한 컨트롤러 입니다.
 
 @RestController
-@CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")  // CORS 설정 추가
+@CrossOrigin
 public class AuthController {
     private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
 
