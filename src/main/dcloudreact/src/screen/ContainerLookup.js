@@ -27,7 +27,7 @@ function ContainerLookup() {
 
       // 데이터를 불러오는 함수
       const fetchData = async () => {
-        const response = await fetch('http://localhost:8080/api/containers');
+        const response = await fetch('/api/containers');
         const data = await response.json();
         setContainers(data);
       };

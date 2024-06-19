@@ -20,7 +20,7 @@ import java.util.List;
 // MyPageController는 유저의 개인정보를 불러오는 컨트롤러 입니다.
 
 @RestController
-@CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true") // CORS 설정 변경
+@CrossOrigin // CORS 설정 변경
 public class MyPageController {
 
     private final UserService userService;

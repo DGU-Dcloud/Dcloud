@@ -38,7 +38,7 @@ function App() {
                 e.preventDefault(); // 폼 기본 제출 동작 방지
 
                 try {
-                    const response = await axios.post('http://localhost:8080/api/login', {
+                    const response = await axios.post('/api/login', {
                         userID: userId,
                         password: userPassword,
                     }, {
@@ -85,7 +85,7 @@ function App() {
                 };
 
                try {
-                       const response = await axios.post('http://localhost:8080/api/signup', formData);
+                       const response = await axios.post('/api/signup', formData);
                        const message = response.data; // 서버로부터 받은 메시지
 
                        switch(message) {
