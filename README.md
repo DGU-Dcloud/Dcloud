@@ -16,4 +16,4 @@
 
 
 ### 🖥️ UI
-![uiux](https://github.com/DGU-Dcloud/Dcloud/assets/86116666/93dad449-f63d-412b-9928-88ac901409b2)
+![ui_dcloud](https://github.com/user-attachments/assets/01e630d5-bb66-43d6-9139-4643633d145d)
