@@ -3,7 +3,7 @@
 <img src="https://avatars.githubusercontent.com/DGU-Dcloud" width=100px alt="박민균"/>
 
 ### 🖥️ Architecture
-![architecture_dcloud](https://github.com/user-attachments/assets/ddb4d1d4-71cc-4429-aed2-7742abd78e34)
+![architecture_dcloud (1)](https://github.com/user-attachments/assets/857aa4bf-473f-40cb-801b-70e65a46a069)
 
 
 ### 🖥️ ERD
