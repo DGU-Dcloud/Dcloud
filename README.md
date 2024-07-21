@@ -3,7 +3,8 @@
 <img src="https://avatars.githubusercontent.com/DGU-Dcloud" width=100px alt="박민균"/>
 
 ### 🖥️ Architecture
-![Untitled (1)](https://github.com/DGU-Dcloud/Dcloud/assets/86116666/8e40893b-1f33-400e-8360-d7d19143516d)
+![architecture_dcloud](https://github.com/user-attachments/assets/ddb4d1d4-71cc-4429-aed2-7742abd78e34)
+
 
 ### 🖥️ ERD
 ![Copy of ERD_PMG (1)](https://github.com/DGU-Dcloud/Dcloud/assets/86116666/0698a627-36cb-4983-b702-104ff08ed3ad)
@@ -14,5 +15,5 @@
 | [박민균](https://github.com/parkmingyun99) |  [이지연](https://github.com/JiiiYeonn) |
 
 
-### 🖥️ UI (일부 페이지 미완성)
+### 🖥️ UI
 ![uiux](https://github.com/DGU-Dcloud/Dcloud/assets/86116666/93dad449-f63d-412b-9928-88ac901409b2)
