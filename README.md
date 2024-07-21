@@ -1,5 +1,5 @@
 
-### 🖥️ Dcloud
+### 🖥️ Dcloud (QHD 이상의 모니터에서 정상 지원)
 <img src="https://avatars.githubusercontent.com/DGU-Dcloud" width=100px alt="박민균"/>
 
 ### 🖥️ Architecture
